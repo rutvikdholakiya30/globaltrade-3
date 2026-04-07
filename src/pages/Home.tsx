@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, Globe, ShieldCheck, Truck, BarChart3, Package, Star, ArrowUpRight, ChevronRight, User, Box, Zap, Anchor, Activity } from 'lucide-react';
+import { ArrowRight, Globe, ShieldCheck, Truck, Star, ArrowUpRight, ChevronRight, Box, Zap, Activity } from 'lucide-react';
 import { useCategories, useProducts, useTestimonials, usePartners } from '@/hooks/useData';
 import { formatPrice, cn } from '@/lib/utils';
+
+const getInitials = (name: string) =>
+  name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
 
 export function Home() {
   const { categories } = useCategories();
@@ -313,8 +316,8 @@ export function Home() {
                   "{t.message}"
                 </p>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                    <User className="h-4 w-4 sm:h-6 sm:w-6" />
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-black text-[10px] sm:text-sm shrink-0">
+                    {getInitials(t.name)}
                   </div>
                   <div className="min-w-0">
                     <div className="font-bold text-[10px] sm:text-base text-slate-900 truncate">{t.name}</div>

@@ -8,6 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { cn } from '@/lib/utils';
 
+const getInitials = (name: string) =>
+  name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+
 const testimonialSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   message: z.string().min(10, 'Message must be at least 10 characters'),
@@ -116,8 +119,8 @@ export function Testimonials() {
                     </p>
 
                     <div className="flex items-center gap-2 sm:gap-6 pt-3 sm:pt-10 border-t border-slate-50 relative z-10">
-                      <div className="w-6 h-6 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-[8px] sm:text-2xl">
-                        {t.name[0]}
+                      <div className="w-6 h-6 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-[8px] sm:text-xl shrink-0">
+                        {getInitials(t.name)}
                       </div>
                       <div className="min-w-0">
                         <p className="text-[8px] sm:text-lg font-extrabold text-slate-900 truncate">{t.name}</p>
@@ -130,9 +133,9 @@ export function Testimonials() {
                       </div>
                     </div>
                     
-                    {/* Indicator for extra content on mobile */}
-                    {!expandedId && (
-                      <div className="sm:hidden absolute bottom-2 right-3 text-[6px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
+                    {/* Read more indicator - all screen sizes when collapsed */}
+                    {expandedId !== t.id && (
+                      <div className="absolute bottom-2 right-3 text-[6px] sm:text-[9px] font-black uppercase text-brand-primary/40 flex items-center gap-1 group-hover:text-brand-primary transition-colors">
                         Read more <ArrowUpRight className="h-1.5 w-1.5" />
                       </div>
                     )}
