@@ -72,37 +72,31 @@ export function Footer() {
             <h4 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-2">Operational Presence</h4>
             
             <div className="space-y-6">
-              {/* Addresses */}
-              <div className="space-y-4">
-                {contactInfo.addresses.map((addr, i) => (
-                  <div key={i} className="flex items-start space-x-3 group">
-                    <MapPin className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
-                    <span className="text-[11px] sm:text-xs text-slate-500 leading-relaxed font-medium uppercase tracking-tight">
-                      {addr}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {/* Primary Address */}
+              {contactInfo.addresses[0] && (
+                <div className="flex items-start space-x-3 group">
+                  <MapPin className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
+                  <span className="text-[11px] sm:text-xs text-slate-500 leading-relaxed font-medium uppercase tracking-tight">
+                    {contactInfo.addresses[0]}
+                  </span>
+                </div>
+              )}
 
-              {/* Phones */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                {contactInfo.phones.map((phone, i) => (
-                  <div key={i} className="flex items-center space-x-3 group">
-                    <Phone className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
-                    <span className="text-[11px] sm:text-xs text-slate-500 font-bold tracking-widest">{phone}</span>
-                  </div>
-                ))}
-              </div>
+              {/* Primary Phone */}
+              {contactInfo.phones[0] && (
+                <div className="flex items-center space-x-3 group pt-2 border-t border-slate-100">
+                  <Phone className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
+                  <span className="text-[11px] sm:text-xs text-slate-500 font-bold tracking-widest">{contactInfo.phones[0]}</span>
+                </div>
+              )}
 
-              {/* Emails */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                {contactInfo.emails.map((email, i) => (
-                  <div key={i} className="flex items-center space-x-3 group">
-                    <Mail className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
-                    <span className="text-[11px] sm:text-xs text-slate-500 font-medium lowercase tracking-tight break-all">{email}</span>
-                  </div>
-                ))}
-              </div>
+              {/* Primary Email */}
+              {contactInfo.emails[0] && (
+                <div className="flex items-center space-x-3 group pt-2 border-t border-slate-100">
+                  <Mail className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
+                  <span className="text-[11px] sm:text-xs text-slate-500 font-medium lowercase tracking-tight break-all">{contactInfo.emails[0]}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
