@@ -85,23 +85,47 @@ export function useTestimonials(limit?: number) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchTestimonials() {
-      let query = supabase
-        .from('testimonials')
-        .select('*, product:products(title)')
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false });
+  const fetchTestimonials = async () => {
+    let query = supabase
+      .from('testimonials')
+      .select('*, product:products(title)')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false });
 
-      if (limit) {
-        query = query.limit(limit);
-      }
-
-      const { data, error } = query;
-      if (!error && data) setTestimonials(data);
-      setLoading(false);
+    if (limit) {
+      query = query.limit(limit);
     }
+
+    const { data, error } = await query;
+    if (!error && data) setTestimonials(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchTestimonials();
+
+    // Fix: Unique Realtime sync for testimonials to instantly show approved reviews
+    const channelId = `testimonials-sync-${Math.random().toString(36).substring(7)}`;
+    const channel = supabase.channel(channelId);
+
+    channel
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'testimonials',
+        },
+        () => {
+          console.log('Realtime update: Testimonial status changed');
+          fetchTestimonials();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [limit]);
 
   return { testimonials, loading };
@@ -202,7 +226,6 @@ export function useContactInfo() {
   useEffect(() => {
     fetchContactInfo();
 
-    // Fix: Use a randomized channel name to prevent collisions across multiple components or re-mounts
     const channelId = `contact-realtime-${Math.random().toString(36).substring(7)}`;
     const channel = supabase.channel(channelId);
 
@@ -216,21 +239,13 @@ export function useContactInfo() {
           filter: 'slug=eq.site-contact-settings',
         },
         () => {
-          console.log('Realtime update detected for contact info');
           fetchContactInfo();
         }
       )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('Realtime sync established');
-        }
-      });
+      .subscribe();
 
     return () => {
-      // Ensure the unique channel is removed on unmount
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
+      supabase.removeChannel(channel);
     };
   }, []);
 
