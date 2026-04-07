@@ -159,33 +159,33 @@ export function Contact() {
                         <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                           <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Contact Name
                         </label>
-                        <input {...register('name')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 uppercase" placeholder="NAME" />
+                        <input {...register('name')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-base font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 uppercase" placeholder="NAME" />
                       </div>
                       <div className="space-y-4">
                         <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                           <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Email Address
                         </label>
-                        <input {...register('email')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 lowercase" placeholder="EMAIL" />
+                        <input {...register('email')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-base font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 lowercase" placeholder="EMAIL" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                         <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Inquiry Subject
                       </label>
-                      <input {...register('subject')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 uppercase" placeholder="SUBJECT" />
+                      <input {...register('subject')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-base font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 uppercase" placeholder="SUBJECT" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                         <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Inquiry Details
                       </label>
-                      <textarea {...register('message')} rows={5} className="w-full bg-white border-2 border-white/10 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:ring-4 focus:ring-brand-accent/50 transition-all resize-none text-slate-900 placeholder:text-slate-400 uppercase" placeholder="ENTER MESSAGE / REQUIREMENTS..." />
+                      <textarea {...register('message')} rows={5} className="w-full bg-white border-2 border-white/10 px-8 py-6 rounded-3xl text-base font-bold focus:outline-none focus:border-white focus:ring-4 focus:ring-brand-accent/50 transition-all resize-none text-slate-900 placeholder:text-slate-400 uppercase" placeholder="ENTER MESSAGE / REQUIREMENTS..." />
                     </div>
                     <button type="submit" disabled={submitting} className="w-full py-6 bg-white text-brand-primary font-black uppercase tracking-[0.5em] rounded-[2rem] shadow-2xl hover:bg-brand-accent hover:text-white transition-all transform active:scale-95 disabled:opacity-50">
                       {submitting ? 'Sending...' : 'Send Inquiry'}
                     </button>
                     <div className="text-center pt-2 opacity-70">
                       <p className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3">
-                        <Send className="h-3 w-3" /> Encrypted Inquiry Protocol v2.5
+                        <Send className="h-3 w-3" /> Encrypted Inquiry Protocol v2.6
                       </p>
                     </div>
                   </form>
