@@ -183,8 +183,9 @@ export function Products() {
                                 <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
                                 <span className="text-[6px] sm:text-[8px] font-bold uppercase tracking-wider">In Stock</span>
                               </div>
-                              <div className="px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600 w-fit border border-blue-100">
-                                <span className="text-[6px] sm:text-[8px] font-black uppercase tracking-wider">{product.category?.name || 'Asset'}</span>
+                              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600 w-fit">
+                                <div className="w-1 h-1 bg-blue-500 rounded-full" />
+                                <span className="text-[6px] sm:text-[8px] font-bold uppercase tracking-wider truncate max-w-[50px] sm:max-w-[80px]">{product.category?.name || 'Asset'}</span>
                               </div>
                             </div>
                           </div>
