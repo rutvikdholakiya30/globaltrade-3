@@ -62,6 +62,7 @@ export interface Page {
 export interface GalleryItem {
   id: string;
   image_url: string;
+  video_url?: string;
   caption?: string;
   created_at: string;
 }
