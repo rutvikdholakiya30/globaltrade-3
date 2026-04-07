@@ -179,55 +179,55 @@ export function ProductDetail() {
           </div>
         </div>
 
-        {/* Combined Technical Specifications & Features Block */}
-        {( (product.specifications && product.specifications.length > 0) || (product.features && product.features.length > 0) ) && (
+        {/* Dynamic Technical Specifications & Feature Groups Block */}
+        {product.specifications && product.specifications.length > 0 && (
           <div className="mt-24 sm:mt-32">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16 gap-6 px-4">
               <div className="max-w-2xl">
                 <span className="section-label">Engineering Manifest</span>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 flex items-center gap-4">
-                  <Settings className="h-8 w-8 text-brand-primary hidden sm:block" /> TECHNICAL SPECIFICATIONS
+                  <Settings className="h-8 w-8 text-brand-primary hidden sm:block" /> TECHNICAL ANALYSIS
                 </h2>
               </div>
               <div className="px-4 py-2 sm:px-6 sm:py-3 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3">
                 <Info className="h-4 w-4 sm:h-5 sm:w-5 text-brand-primary" />
-                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified Logistical Parameters</span>
+                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified Logistical Data</span>
               </div>
             </div>
             
             <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden divide-y divide-slate-50">
-              {/* Feature Points as part of Specifications */}
-              {product.features && product.features.length > 0 && (
-                <div className="group transition-all duration-300">
-                  <div className="bg-slate-50/50 px-8 sm:px-12 py-3 sm:py-4 border-b border-slate-50">
-                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">FEATURES / HIGHLIGHTS</span>
-                  </div>
-                  <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors space-y-4">
-                    {product.features.map((feature, i) => (
-                      <div key={i} className="flex items-start gap-4">
-                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
-                        <span className="text-slate-900 font-bold uppercase tracking-tight leading-tight block">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {product.specifications.map((spec) => {
+                const lines = spec.spec_value.split('\n').filter(line => line.trim() !== '');
+                const isMultiLine = lines.length > 1;
 
-              {/* Regular Key-Value Specifications */}
-              {product.specifications?.map((spec) => (
-                <div key={spec.id} className="group transition-all duration-300">
-                  <div className="bg-slate-50/50 px-8 sm:px-12 py-3 sm:py-4 border-b border-slate-50">
-                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{spec.spec_key}</span>
+                return (
+                  <div key={spec.id} className="group transition-all duration-300">
+                    {/* Label Bar */}
+                    <div className="bg-slate-50/50 px-8 sm:px-12 py-3 sm:py-4 border-b border-slate-50">
+                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{spec.spec_key}</span>
+                    </div>
+                    {/* Value Content (Handles multi-line bullets) */}
+                    <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors">
+                      {isMultiLine ? (
+                        <div className="space-y-4">
+                          {lines.map((line, idx) => (
+                            <div key={idx} className="flex items-start gap-4">
+                              <div className="mt-2.5 w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
+                              <span className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
+                                {line.replace(/^[-•*]\s*/, '')} {/* Strip existing markers if present */}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xl sm:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
+                          {spec.spec_value}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors">
-                    <span className="text-xl sm:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
-                      {spec.spec_value}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

@@ -18,9 +18,8 @@ export function ProductsAdmin() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [productImages, setProductImages] = useState<{ id?: string; url: string; file?: File; isMain: boolean }[]>([]);
   
-  // New States for Specs and Features
+  // New States for Specs (Features array will be merged into specs)
   const [specifications, setSpecifications] = useState<Partial<ProductSpecification>[]>([{ spec_key: '', spec_value: '' }]);
-  const [features, setFeatures] = useState<string[]>(['']);
 
   useEffect(() => {
     fetchData();
@@ -100,15 +99,6 @@ export function ProductsAdmin() {
     setSpecifications(newSpecs);
   };
 
-  // Feature Handlers
-  const addFeature = () => setFeatures([...features, '']);
-  const removeFeature = (index: number) => setFeatures(features.filter((_, i) => i !== index));
-  const updateFeature = (index: number, value: string) => {
-    const newFeatures = [...features];
-    newFeatures[index] = value;
-    setFeatures(newFeatures);
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (productImages.length === 0) {
@@ -131,9 +121,8 @@ export function ProductsAdmin() {
       const mainImage = processedImages.find(img => img.isMain) || processedImages[0];
       const galleryImages = processedImages.filter(img => !img.isMain);
 
-      // Filter empty specs and features
+      // Filter empty specs
       const cleanSpecs = specifications.filter(s => s.spec_key?.trim() && s.spec_value?.trim());
-      const cleanFeatures = features.filter(f => f.trim());
 
       const productData = {
         title: formData.get('title') as string,
@@ -143,7 +132,6 @@ export function ProductsAdmin() {
         main_image: mainImage.url,
         status: formData.get('status') === 'true',
         slug: slugify(formData.get('title') as string),
-        features: cleanFeatures
       };
 
       let productId = editingProduct?.id;
@@ -206,7 +194,7 @@ export function ProductsAdmin() {
   );
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 sm:space-y-8 text-black">
       <AnimatePresence mode="wait">
         {!isFormOpen ? (
           <motion.div
@@ -226,7 +214,6 @@ export function ProductsAdmin() {
                   setEditingProduct(null);
                   setProductImages([]);
                   setSpecifications([{ spec_key: '', spec_value: '' }]);
-                  setFeatures(['']);
                   setIsFormOpen(true);
                 }}
                 className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-blue-700 hover:shadow-2xl hover:shadow-blue-200 transition-all active:scale-95 group"
@@ -303,7 +290,6 @@ export function ProductsAdmin() {
                               onClick={() => {
                                 setEditingProduct(product);
                                 setSpecifications(product.specifications?.length ? product.specifications : [{ spec_key: '', spec_value: '' }]);
-                                setFeatures(product.features?.length ? product.features : ['']);
                                 const images = [
                                   { url: product.main_image, isMain: true },
                                   ...(product.images?.map(img => ({ id: img.id, url: img.image_url, isMain: false })) || [])
@@ -363,7 +349,7 @@ export function ProductsAdmin() {
             <form onSubmit={handleSubmit} className="p-6 sm:p-12 space-y-8 sm:space-y-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Asset Identity / Title</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Asset Identity / Title</label>
                   <input
                     name="title"
                     required
@@ -373,7 +359,7 @@ export function ProductsAdmin() {
                   />
                 </div>
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Market Valuation (USD)</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Market Valuation (USD)</label>
                   <input
                     name="price"
                     type="number"
@@ -388,7 +374,7 @@ export function ProductsAdmin() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Asset Sector / Category</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Asset Sector / Category</label>
                   <select
                     name="category_id"
                     required
@@ -402,7 +388,7 @@ export function ProductsAdmin() {
                   </select>
                 </div>
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Availability Status</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Availability Status</label>
                   <select
                     name="status"
                     defaultValue={editingProduct?.status?.toString() || 'true'}
@@ -417,7 +403,7 @@ export function ProductsAdmin() {
               {/* Visual Assets */}
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Visual Manifest (Gallery)</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Visual Manifest (Gallery)</label>
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{productImages.length}/9 ASSETS</span>
                 </div>
                 
@@ -468,7 +454,7 @@ export function ProductsAdmin() {
                       <div className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl group-hover:bg-blue-100 transition-colors">
                         <Upload className="h-6 w-6 sm:h-8 sm:w-8" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-4 uppercase tracking-widest text-center">Add Asset</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-4 uppercase tracking-widest text-center text-slate-400">Add Asset</span>
                     </button>
                   )}
                 </div>
@@ -483,68 +469,41 @@ export function ProductsAdmin() {
                 />
               </div>
 
-              {/* Key Features / Bullet Points */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <List className="h-5 w-5 text-blue-600 shrink-0" />
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Key Product Highlights (Bullet Points)</label>
-                </div>
-                <div className="space-y-4">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex gap-3 sm:gap-4 group">
-                      <input
-                        value={feature}
-                        onChange={(e) => updateFeature(index, e.target.value)}
-                        placeholder={`FEATURE POINT #${index + 1}...`}
-                        className="flex-grow px-5 py-3.5 sm:px-6 sm:py-4 bg-gray-50 border border-gray-100 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
-                      />
-                      <button 
-                        type="button" 
-                        onClick={() => removeFeature(index)}
-                        className="p-3 sm:p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl sm:rounded-2xl transition-all shrink-0"
-                      >
-                        <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </button>
-                    </div>
-                  ))}
-                  <button 
-                    type="button" 
-                    onClick={addFeature}
-                    className="w-full p-3.5 sm:p-4 border-2 border-dashed border-gray-100 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:border-blue-500 hover:text-blue-500 transition-all"
-                  >
-                    + Add Highlight Point
-                  </button>
-                </div>
-              </div>
-
-              {/* Specifications / Table */}
+              {/* Enhanced Specifications (Includes Multi-line support) */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <Settings className="h-5 w-5 text-blue-600 shrink-0" />
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Technical Specifications (Table Data)</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] text-slate-500">Technical Specifications & Performance Data</label>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {specifications.map((spec, index) => (
-                    <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-center group">
-                      <input
-                        value={spec.spec_key}
-                        onChange={(e) => updateSpec(index, 'spec_key', e.target.value)}
-                        placeholder="ATTRIBUTE (E.G. MATERIAL)"
-                        className="px-5 py-3.5 sm:px-6 sm:py-4 bg-gray-50 border border-gray-100 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
-                      />
-                      <div className="flex gap-3 sm:gap-4">
+                    <div key={index} className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start group p-6 bg-gray-50/50 rounded-3xl border border-gray-100 hover:border-blue-100 transition-all">
+                      <div className="lg:col-span-4 space-y-2">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Identity / Label</label>
                         <input
+                          value={spec.spec_key}
+                          onChange={(e) => updateSpec(index, 'spec_key', e.target.value)}
+                          placeholder="E.G. FEATURES / SIZE / MATERIAL"
+                          className="w-full px-5 py-3 sm:px-6 sm:py-4 bg-white border border-gray-100 rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
+                        />
+                      </div>
+                      <div className="lg:col-span-7 space-y-2">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Content / Values (One point per line for bullets)</label>
+                        <textarea
+                          rows={4}
                           value={spec.spec_value}
                           onChange={(e) => updateSpec(index, 'spec_value', e.target.value)}
-                          placeholder="VALUE (E.G. TITANIUM)"
-                          className="flex-grow px-5 py-3.5 sm:px-6 sm:py-4 bg-gray-50 border border-gray-100 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
+                          placeholder="ENTER VALUES... &#10;FOR BULLETS, START EACH POINT ON A NEW LINE."
+                          className="w-full px-5 py-3 sm:px-6 sm:py-4 bg-white border border-gray-100 rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all resize-none"
                         />
+                      </div>
+                      <div className="lg:col-span-1 pt-7 flex justify-end">
                         <button 
                           type="button" 
                           onClick={() => removeSpec(index)}
-                          className="p-3 sm:p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl sm:rounded-2xl transition-all shrink-0"
+                          className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
                         >
-                          <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <Trash2 className="h-5 w-5" />
                         </button>
                       </div>
                     </div>
@@ -552,15 +511,15 @@ export function ProductsAdmin() {
                   <button 
                     type="button" 
                     onClick={addSpec}
-                    className="w-full p-3.5 sm:p-4 border-2 border-dashed border-gray-100 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:border-blue-500 hover:text-blue-500 transition-all"
+                    className="w-full p-6 border-2 border-dashed border-gray-100 rounded-[2rem] text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50/50 transition-all"
                   >
-                    + Add Technical Specification
+                    + APPEND TECHNICAL PARAMETER
                   </button>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Asset Description / Technical Brief</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Public Manifest Description</label>
                 <textarea
                   name="description"
                   rows={6}
