@@ -133,7 +133,7 @@ export function About() {
             <div className="bg-slate-900 rounded-[40px] p-12 sm:p-20 text-white relative overflow-hidden flex flex-col justify-center">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
               <div className="relative z-10 space-y-8">
-                <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">Our Vision</h2>
+                <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight !text-white italic">Our Vision</h2>
                 <p className="text-slate-400 text-lg sm:text-xl leading-relaxed italic">
                   "To create a world where geographical boundaries are no longer a barrier to 
                   industrial excellence. We envision a future of borderless trade powered by 
