@@ -80,7 +80,7 @@ export function Products() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Sidebar Filters */}
           <aside className="lg:col-span-3 space-y-10">
-            <div>
+            <div className="sticky top-32">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-widest mb-6 flex items-center">
                 <Filter className="h-4 w-4 mr-2 text-brand-primary" /> Filter by Sector
               </h3>
@@ -109,18 +109,18 @@ export function Products() {
                   </button>
                 ))}
               </div>
-            </div>
 
-            <div className="p-8 rounded-[32px] bg-brand-primary text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
-              <div className="relative z-10">
-                <h4 className="text-lg font-bold mb-3">Bulk Procurement</h4>
-                <p className="text-white/70 text-sm leading-relaxed mb-6">
-                  Custom logistics solutions available for large scale industrial procurement.
-                </p>
-                <Link to="/contact" className="inline-flex items-center text-sm font-bold hover:gap-3 transition-all">
-                  Inquire Now <ArrowUpRight className="ml-2 h-4 w-4" />
-                </Link>
+              <div className="mt-10 p-8 rounded-[32px] bg-brand-primary text-white relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
+                <div className="relative z-10">
+                  <h4 className="text-lg font-bold mb-3">Bulk Procurement</h4>
+                  <p className="text-white/70 text-sm leading-relaxed mb-6">
+                    Custom logistics solutions available for large scale industrial procurement.
+                  </p>
+                  <Link to="/contact" className="inline-flex items-center text-sm font-bold hover:gap-3 transition-all">
+                    Inquire Now <ArrowUpRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </div>
           </aside>
@@ -128,15 +128,15 @@ export function Products() {
           {/* Product Grid */}
           <main className="lg:col-span-9">
             {loading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="aspect-[4/3] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="aspect-[4/5] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
                 ))}
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className={cn(
-                "grid gap-4 sm:gap-8",
-                viewMode === 'grid' ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+                "grid gap-4 sm:gap-6",
+                viewMode === 'grid' ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-1"
               )}>
                 <AnimatePresence mode="popLayout">
                   {filteredProducts.map((product) => (
@@ -151,14 +151,14 @@ export function Products() {
                       <Link
                         to={`/product/${product.slug}`}
                         className={cn(
-                          "group bg-white rounded-2xl sm:rounded-[32px] border border-slate-100 p-2 sm:p-4 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex h-full",
+                          "group bg-white rounded-xl sm:rounded-[28px] border border-slate-100 p-2 sm:p-3 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex h-full",
                           viewMode === 'grid' ? "flex-col" : "flex-row h-72"
                         )}
                       >
                         {/* Image Container */}
                         <div className={cn(
-                          "rounded-xl sm:rounded-2xl overflow-hidden relative bg-slate-50 shrink-0",
-                          viewMode === 'grid' ? "aspect-[16/10] mb-3 sm:mb-6" : "w-1/3 h-full mr-8"
+                          "rounded-lg sm:rounded-2xl overflow-hidden relative bg-slate-50 shrink-0",
+                          viewMode === 'grid' ? "aspect-square mb-2 sm:mb-4" : "w-1/3 h-full mr-8"
                         )}>
                           <img
                             src={product.main_image || '/placeholder-image.jpg'}
@@ -166,11 +166,6 @@ export function Products() {
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                             referrerPolicy="no-referrer"
                           />
-                          <div className="absolute top-2 left-2 sm:top-4 sm:left-4">
-                            <div className="bg-white/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-bold text-slate-500 shadow-sm border border-white/20 uppercase tracking-wider">
-                              {product.category?.name || 'General Product'}
-                            </div>
-                          </div>
                         </div>
                         
                         {/* Content Container */}
@@ -179,37 +174,37 @@ export function Products() {
                           viewMode === 'grid' ? "px-1 sm:px-2" : "w-2/3 py-4"
                         )}>
                           {/* Title and In-Stock Row */}
-                          <div className="mb-4">
-                            <h3 className="text-sm sm:text-2xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-2">
+                          <div className="mb-2 sm:mb-4">
+                            <h3 className="text-xs sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-1">
                               {product.title}
                             </h3>
-                            <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-full bg-emerald-50 text-emerald-600 w-fit">
-                              <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                              <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider">In Stock</span>
+                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 w-fit">
+                              <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                              <span className="text-[7px] sm:text-[9px] font-bold uppercase tracking-wider">In Stock</span>
                             </div>
                           </div>
                           
                           <p className={cn(
-                            "text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-6",
+                            "text-slate-500 text-[10px] sm:text-xs leading-relaxed line-clamp-2 mb-4",
                             viewMode === 'grid' ? "hidden sm:block" : ""
                           )}>
                             {product.description || 'Professional grade industrial asset for international procurement.'}
                           </p>
                           
                           {/* Bottom Row - Price and Arrow Button */}
-                          <div className="mt-auto flex justify-between items-center pt-4 sm:pt-6 border-t border-slate-50">
+                          <div className="mt-auto flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
                             <div className="flex flex-col">
-                              <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 sm:mb-1">Unit Price</span>
+                              <span className="text-[7px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest">Price</span>
                               <span className={cn(
-                                "text-sm font-extrabold text-slate-900",
-                                product.price ? "sm:text-2xl" : "sm:text-lg italic text-blue-600 uppercase tracking-tight"
+                                "text-[10px] font-extrabold text-slate-900",
+                                product.price ? "sm:text-lg" : "sm:text-[10px] italic text-blue-600 uppercase tracking-tight"
                               )}>
-                                {product.price && product.price > 0 ? formatPrice(product.price) : 'Inquiry for Price'}
+                                {product.price && product.price > 0 ? formatPrice(product.price) : 'Inquiry'}
                               </span>
                             </div>
                             
-                            <div className="flex w-10 h-10 rounded-xl bg-slate-50 items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-all shadow-sm">
-                              <ArrowUpRight className="h-5 w-5" />
+                            <div className="flex w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-slate-50 items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-all shadow-sm">
+                              <ArrowUpRight className="h-4 w-4" />
                             </div>
                           </div>
                         </div>

@@ -7,7 +7,7 @@ import { formatPrice, cn } from '@/lib/utils';
 
 export function Home() {
   const { categories } = useCategories();
-  const { products, loading: productsLoading } = useProducts(undefined, 6);
+  const { products, loading: productsLoading } = useProducts(undefined, 8);
   const { testimonials } = useTestimonials(3);
   const { partners } = usePartners();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -135,9 +135,9 @@ export function Home() {
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Premium Shipments</h2>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {productsLoading ? (
-              [...Array(6)].map((_, i) => (
+              [...Array(4)].map((_, i) => (
                 <div key={i} className="h-64 sm:h-[450px] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
               ))
             ) : (
