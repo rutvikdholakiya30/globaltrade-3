@@ -97,7 +97,7 @@ export function useTestimonials(limit?: number) {
         query = query.limit(limit);
       }
 
-      const { data, error } = await query;
+      const { data, error } = query;
       if (!error && data) setTestimonials(data);
       setLoading(false);
     }
@@ -118,7 +118,7 @@ export function usePage(slug: string) {
         .select('*')
         .eq('slug', slug)
         .eq('is_active', true)
-        .single();
+        .maybeSingle(); // Changed from single() to maybeSingle() to handle RLS/PostgREST better
       
       if (!error && data) setPage(data);
       setLoading(false);
@@ -174,32 +174,56 @@ export function useContactInfo() {
   const [contactInfo, setContactInfo] = useState<ContactInfo>(DEFAULT_CONTACT_INFO);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchContactInfo() {
-      const { data, error } = await supabase
+  const fetchContactInfo = async () => {
+    // Crucial Change: Using maybeSingle() instead of single() to avoid 406 errors in public contexts
+    const { data, error } = await supabase
         .from('pages')
         .select('content')
         .eq('slug', 'site-contact-settings')
-        .single();
+        .maybeSingle(); 
       
-      if (!error && data && data.content) {
-        try {
-          const parsed = JSON.parse(data.content);
-          setContactInfo({
-            addresses: parsed.addresses || DEFAULT_CONTACT_INFO.addresses,
-            phones: parsed.phones || DEFAULT_CONTACT_INFO.phones,
-            emails: parsed.emails || DEFAULT_CONTACT_INFO.emails,
-            working_hours: Array.isArray(parsed.working_hours) 
-              ? parsed.working_hours 
-              : DEFAULT_CONTACT_INFO.working_hours,
-          });
-        } catch (e) {
-          console.error('Failed to parse contact settings:', e);
-        }
+    if (!error && data && data.content) {
+      try {
+        const parsed = JSON.parse(data.content);
+        setContactInfo({
+          addresses: parsed.addresses || DEFAULT_CONTACT_INFO.addresses,
+          phones: parsed.phones || DEFAULT_CONTACT_INFO.phones,
+          emails: parsed.emails || DEFAULT_CONTACT_INFO.emails,
+          working_hours: Array.isArray(parsed.working_hours) 
+            ? parsed.working_hours 
+            : DEFAULT_CONTACT_INFO.working_hours,
+        });
+      } catch (e) {
+        console.error('Failed to parse contact settings:', e);
       }
-      setLoading(false);
+    } else if (error) {
+      console.warn('Contact info fetch restricted/missing:', error.message);
     }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchContactInfo();
+
+    const channel = supabase
+      .channel('public:pages')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'pages',
+          filter: 'slug=eq.site-contact-settings',
+        },
+        () => {
+          fetchContactInfo();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return { contactInfo, loading };
