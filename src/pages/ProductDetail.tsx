@@ -73,33 +73,53 @@ export function ProductDetail() {
           <div className="lg:col-span-7 space-y-6 sm:space-y-8">
             <div className="relative aspect-[16/10] bg-slate-50 rounded-3xl sm:rounded-[40px] overflow-hidden group shadow-2xl shadow-slate-200 border border-slate-100">
               <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentImage}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  src={currentImage}
-                  alt={product.title}
-                  className={cn(
-                    "w-full h-full object-cover transition-all duration-700",
-                    isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in"
-                  )}
-                  onClick={() => setIsZoomed(!isZoomed)}
-                  referrerPolicy="no-referrer"
-                />
+                {activeImage === 'video' ? (
+                  <motion.div
+                    key="video-player"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="w-full h-full bg-black"
+                  >
+                    <video 
+                      src={product.video_url} 
+                      controls 
+                      className="w-full h-full object-contain"
+                      autoPlay
+                      playsInline
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.img
+                    key={currentImage}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    src={currentImage}
+                    alt={product.title}
+                    className={cn(
+                      "w-full h-full object-cover transition-all duration-700",
+                      isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in"
+                    )}
+                    onClick={() => setIsZoomed(!isZoomed)}
+                    referrerPolicy="no-referrer"
+                  />
+                )}
               </AnimatePresence>
               
-              <button 
-                onClick={() => setIsZoomed(!isZoomed)}
-                className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 sm:p-4 bg-white/90 backdrop-blur-md rounded-xl sm:rounded-2xl text-slate-400 hover:text-brand-primary transition-all shadow-lg border border-white/20"
-              >
-                <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
+              {activeImage !== 'video' && (
+                <button 
+                  onClick={() => setIsZoomed(!isZoomed)}
+                  className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 sm:p-4 bg-white/90 backdrop-blur-md rounded-xl sm:rounded-2xl text-slate-400 hover:text-brand-primary transition-all shadow-lg border border-white/20"
+                >
+                  <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              )}
 
               <div className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8">
                 <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold text-slate-500 shadow-sm border border-white/20 uppercase tracking-widest">
-                  IMAGE {allImages.length > 0 ? allImages.indexOf(activeImage || product.main_image || '') + 1 : 0} / {allImages.length}
+                  {activeImage === 'video' ? 'VIDEO STREAM' : `IMAGE ${allImages.indexOf(currentImage) + 1} / ${allImages.length}`}
                 </div>
               </div>
             </div>
@@ -108,15 +128,30 @@ export function ProductDetail() {
               {allImages.map((img, i) => (
                 <button
                   key={i}
-                  onClick={() => setActiveImage(img)}
+                  onClick={() => { setActiveImage(img); setIsZoomed(false); }}
                   className={cn(
                     "aspect-square rounded-xl sm:rounded-2xl transition-all overflow-hidden bg-slate-50 border-2",
-                    currentImage === img ? "border-brand-primary scale-95 shadow-lg shadow-brand-primary/10" : "border-transparent hover:border-slate-200"
+                    currentImage === img && activeImage !== 'video' ? "border-brand-primary scale-95 shadow-lg shadow-brand-primary/10" : "border-transparent hover:border-slate-200"
                   )}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </button>
               ))}
+              
+              {product.video_url && (
+                <button
+                  onClick={() => { setActiveImage('video'); setIsZoomed(false); }}
+                  className={cn(
+                    "aspect-square rounded-xl sm:rounded-2xl transition-all overflow-hidden bg-slate-900 border-2 flex flex-col items-center justify-center gap-1 group",
+                    activeImage === 'video' ? "border-brand-primary scale-95 shadow-lg shadow-brand-primary/10" : "border-transparent hover:border-slate-700"
+                  )}
+                >
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                    <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5 rotate-45" /> 
+                  </div>
+                  <span className="text-[7px] sm:text-[8px] font-bold text-white/40 uppercase tracking-widest">Play Video</span>
+                </button>
+              )}
             </div>
           </div>
 

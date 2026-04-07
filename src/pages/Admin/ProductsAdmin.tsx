@@ -17,6 +17,9 @@ export function ProductsAdmin() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [productImages, setProductImages] = useState<{ id?: string; url: string; file?: File; isMain: boolean }[]>([]);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   
   // New States for Specs (Features array will be merged into specs)
   const [specifications, setSpecifications] = useState<Partial<ProductSpecification>[]>([{ spec_key: '', spec_value: '' }]);
@@ -125,12 +128,20 @@ export function ProductsAdmin() {
 
       const title = (formData.get('title') as string) || `Untitled Product ${Date.now()}`;
 
+      let uploadedVideoUrl = editingProduct?.video_url || null;
+      if (videoFile) {
+        uploadedVideoUrl = await uploadImage(videoFile); // uploadImage function works for videos too since it uses the Storage API
+      } else if (videoPreview === null) {
+        uploadedVideoUrl = null; // Video was removed
+      }
+
       const productData = {
         title: title,
         price: parsedPrice, // Can be null now
         category_id: (formData.get('category_id') as string) || null,
         description: (formData.get('description') as string) || '',
         main_image: mainImage?.url || null,
+        video_url: uploadedVideoUrl,
         status: formData.get('status') === 'true',
         slug: slugify(title),
       };
@@ -214,6 +225,8 @@ export function ProductsAdmin() {
                 onClick={() => {
                   setEditingProduct(null);
                   setProductImages([]);
+                  setVideoFile(null);
+                  setVideoPreview(null);
                   setSpecifications([{ spec_key: '', spec_value: '' }]);
                   setIsFormOpen(true);
                 }}
@@ -298,6 +311,8 @@ export function ProductsAdmin() {
                                   ...(product.images?.map(img => ({ id: img.id, url: img.image_url, isMain: false })) || [])
                                 ];
                                 setProductImages(images.filter(img => img.url));
+                                setVideoFile(null);
+                                setVideoPreview(product.video_url || null);
                                 setIsFormOpen(true);
                               }}
                               className="p-2.5 sm:p-3 bg-white text-gray-400 shadow-sm border border-gray-100 hover:text-blue-600 hover:border-blue-100 rounded-xl transition-all hover:scale-110"
@@ -468,6 +483,64 @@ export function ProductsAdmin() {
                   multiple
                   className="hidden"
                 />
+              </div>
+
+              {/* Video Upload Support */}
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Video Manifest (Optional - MP4/WebM)</label>
+                  {videoPreview && (
+                    <button
+                      type="button"
+                      onClick={() => { setVideoFile(null); setVideoPreview(null); }}
+                      className="text-[10px] font-bold text-red-500 bg-red-50 px-3 py-1 rounded-full uppercase tracking-widest hover:bg-red-100 transition-colors"
+                    >
+                      Delete Video
+                    </button>
+                  )}
+                </div>
+                
+                <div className="w-full">
+                  {!videoPreview ? (
+                    <button
+                      type="button"
+                      onClick={() => videoInputRef.current?.click()}
+                      className="w-full h-32 sm:h-48 rounded-2xl sm:rounded-[40px] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group"
+                    >
+                      <div className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl group-hover:bg-blue-100 transition-colors">
+                        <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+                      </div>
+                      <span className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-4 uppercase tracking-widest text-center text-slate-400">Initialize Video Stream</span>
+                    </button>
+                  ) : (
+                    <div className="relative aspect-video w-full max-w-2xl mx-auto rounded-2xl sm:rounded-[40px] overflow-hidden bg-black shadow-2xl border border-gray-100 group">
+                      <video 
+                        src={videoPreview} 
+                        className="w-full h-full object-contain" 
+                        controls 
+                        playsInline
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                        <button type="button" className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white">
+                          <Settings className="h-6 w-6 animate-spin-slow" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    ref={videoInputRef}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setVideoFile(file);
+                        setVideoPreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    accept="video/*"
+                    className="hidden"
+                  />
+                </div>
               </div>
 
               {/* Specifications */}

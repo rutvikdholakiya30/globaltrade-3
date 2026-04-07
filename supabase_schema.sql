@@ -20,6 +20,7 @@ CREATE TABLE products (
   price DECIMAL(12, 2),
   description TEXT,
   main_image TEXT,
+  video_url TEXT,
   status BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
