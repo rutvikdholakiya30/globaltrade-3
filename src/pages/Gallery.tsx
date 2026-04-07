@@ -13,6 +13,8 @@ export function Gallery() {
       return url.match(/\.(mp4|webm|ogg|mov)$/i);
     };
 
+    const loading = galleryLoading || pageLoading;
+
     return (
       <div className="bg-white min-h-screen">
         {/* Header */}
