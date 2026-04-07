@@ -332,13 +332,13 @@ export function Home() {
             ))}
           </div>
 
-          {/* View All Button */}
+          {/* View All Button - matches "View All Sectors" style */}
           <div className="text-center mt-10 sm:mt-16">
             <Link
               to="/testimonials"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-primary text-white font-bold rounded-2xl hover:bg-brand-primary/90 transition-all duration-300 shadow-lg shadow-brand-primary/20 hover:shadow-xl hover:shadow-brand-primary/30 hover:-translate-y-0.5 text-sm sm:text-base"
+              className="group inline-flex items-center gap-2 text-sm font-bold text-brand-primary hover:gap-3 transition-all duration-300"
             >
-              View All Reviews <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5" />
+              View All Reviews <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>
