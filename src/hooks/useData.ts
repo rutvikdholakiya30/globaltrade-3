@@ -160,6 +160,26 @@ export function usePage(slug: string) {
   return { page, loading };
 }
 
+export function usePages() {
+  const [pages, setPages] = useState<Page[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPages() {
+      const { data, error } = await supabase
+        .from('pages')
+        .select('*')
+        .order('title');
+      
+      if (!error && data) setPages(data);
+      setLoading(false);
+    }
+    fetchPages();
+  }, []);
+
+  return { pages, loading };
+}
+
 export function useGallery() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);

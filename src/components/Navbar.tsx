@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Globe, ShoppingBag, Image, MessageSquare, ShieldCheck, ArrowUpRight, ChevronRight, Mail } from 'lucide-react';
+import { usePages } from '@/hooks/useData';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -7,15 +8,22 @@ import { motion, AnimatePresence } from 'motion/react';
 const navItems = [
   { name: 'Home', path: '/', icon: Globe },
   { name: 'Products', path: '/products', icon: ShoppingBag },
-  { name: 'Gallery', path: '/gallery', icon: Image },
+  { name: 'Gallery', path: '/gallery', icon: Image, slug: 'gallery' },
   { name: 'Testimonials', path: '/testimonials', icon: MessageSquare },
-  { name: 'About', path: '/about-us', icon: ShieldCheck },
+  { name: 'About', path: '/about-us', icon: ShieldCheck, slug: 'about-us' },
   { name: 'Contact', path: '/contact-us', icon: Mail },
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { pages } = usePages();
+
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.slug) return true;
+    const cmsPage = pages.find(p => p.slug === item.slug);
+    return cmsPage ? cmsPage.is_active : true; // Default to visible if not found (during build)
+  });
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
@@ -36,7 +44,7 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map((item) => (
+            {filteredNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -79,7 +87,7 @@ export function Navbar() {
             className="lg:hidden bg-white border-b border-slate-100 shadow-xl"
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
-              {navItems.map((item) => (
+              {filteredNavItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}

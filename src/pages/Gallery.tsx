@@ -40,6 +40,27 @@ export function Gallery() {
       return acc;
     }, {} as Record<string, GalleryItem[]>);
 
+    if (!loading && !page) {
+      return (
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+          <div className="text-center space-y-8 max-w-lg">
+            <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-2xl shadow-red-100">
+              <Maximize2 className="h-10 w-10 text-red-500" />
+            </div>
+            <div className="space-y-4">
+              <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic">Operational <span className="text-red-600">Restricted</span></h1>
+              <p className="text-slate-500 font-bold text-sm uppercase tracking-widest leading-relaxed">
+                The visual archive has been temporarily taken offline for mandatory security auditing or operational maintenance. Please contact your administrative lead for credentialed access.
+              </p>
+            </div>
+            <a href="/" className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-brand-primary transition-all shadow-xl shadow-slate-200">
+              Return to Control Center
+            </a>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="bg-white min-h-screen">
         {/* Header */}
