@@ -8,7 +8,7 @@ import { formatPrice, cn } from '@/lib/utils';
 export function Home() {
   const { categories } = useCategories();
   const { products, loading: productsLoading } = useProducts(undefined, 8);
-  const { testimonials } = useTestimonials(3);
+  const { testimonials } = useTestimonials(4);
   const { partners } = usePartners();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -101,8 +101,8 @@ export function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
-            {categories.slice(0, 3).map((category) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+            {categories.slice(0, 4).map((category) => (
               <Link
                 key={category.id}
                 to={`/products?category=${category.slug}`}
@@ -290,7 +290,7 @@ export function Home() {
             <h2 className="text-2xl md:text-5xl font-extrabold text-slate-900">Voices of Trust</h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
             {testimonials.map((t) => (
               <motion.div
                 key={t.id}
