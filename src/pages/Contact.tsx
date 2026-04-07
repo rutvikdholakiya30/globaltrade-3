@@ -138,54 +138,54 @@ export function Contact() {
             </div>
           </div>
 
-          {/* Contact Form - CONVERTED TO BLUE BOX */}
+          {/* Contact Form */}
           <div className="lg:col-span-7">
-            <div className="bg-brand-primary p-8 md:p-16 rounded-[60px] shadow-[0_20px_50px_rgba(37,99,235,0.3)] border border-white/10 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mb-32 blur-3xl" />
+            <div className="bg-brand-primary p-8 md:p-16 rounded-[60px] shadow-[0_30px_70px_rgba(37,99,235,0.4)] border border-white/20 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-40 -mt-40 blur-[100px]" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-accent/20 rounded-full -ml-40 -mb-40 blur-[100px]" />
               
               <div className="relative z-10">
                 {submitted ? (
                   <div className="text-center space-y-10 py-16">
-                    <CheckCircle2 className="h-16 w-16 text-white mx-auto animate-bounce" />
+                    <CheckCircle2 className="h-20 w-20 text-white mx-auto animate-bounce" />
                     <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Transmission <span className="text-brand-accent">Logged!</span></h2>
-                    <p className="text-white/60 font-medium">Your request has been prioritized in our global queue.</p>
-                    <button onClick={() => setSubmitted(false)} className="px-12 py-5 bg-white text-brand-primary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-accent hover:text-white transition-all shadow-xl">Send Another</button>
+                    <p className="text-white/80 font-medium">Our global coordination unit has received your manifest.</p>
+                    <button onClick={() => setSubmitted(false)} className="px-12 py-5 bg-white text-brand-primary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-accent hover:text-white transition-all shadow-2xl">Send Another</button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Transmit To
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-4">
+                        <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
+                          <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Transmit To
                         </label>
-                        <input {...register('name')} className="w-full bg-white/10 border-2 border-white/5 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all text-white placeholder:text-white/20 uppercase" placeholder="NAME" />
+                        <input {...register('name')} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all text-white placeholder:text-white/30 uppercase" placeholder="NAME" />
                       </div>
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Return Path
+                      <div className="space-y-4">
+                        <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
+                          <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Return Path
                         </label>
-                        <input {...register('email')} className="w-full bg-white/10 border-2 border-white/5 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all text-white placeholder:text-white/20 lowercase" placeholder="EMAIL" />
+                        <input {...register('email')} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all text-white placeholder:text-white/30 lowercase" placeholder="EMAIL" />
                       </div>
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Subject Header
+                    <div className="space-y-4">
+                      <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
+                        <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Subject Header
                       </label>
-                      <input {...register('subject')} className="w-full bg-white/10 border-2 border-white/5 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all text-white placeholder:text-white/20 uppercase" placeholder="SUBJECT" />
+                      <input {...register('subject')} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all text-white placeholder:text-white/30 uppercase" placeholder="SUBJECT" />
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Transmission Message
+                    <div className="space-y-4">
+                      <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
+                        <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Transmission Message
                       </label>
-                      <textarea {...register('message')} rows={5} className="w-full bg-white/10 border-2 border-white/5 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all resize-none text-white placeholder:text-white/20 uppercase" placeholder="ENTER MESSAGE..." />
+                      <textarea {...register('message')} rows={5} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all resize-none text-white placeholder:text-white/30 uppercase" placeholder="ENTER MESSAGE..." />
                     </div>
-                    <button type="submit" disabled={submitting} className="w-full py-6 bg-white text-brand-primary font-black uppercase tracking-[0.4em] rounded-[2rem] shadow-[0_20px_40px_rgba(255,255,255,0.1)] hover:bg-brand-accent hover:text-white transition-all transform active:scale-95 disabled:opacity-50">
+                    <button type="submit" disabled={submitting} className="w-full py-6 bg-white text-brand-primary font-black uppercase tracking-[0.5em] rounded-[2rem] shadow-2xl hover:bg-brand-accent hover:text-white transition-all transform active:scale-95 disabled:opacity-50">
                       {submitting ? 'Transmitting...' : 'Execute Transmission'}
                     </button>
-                    <div className="text-center pt-4 opacity-50">
-                      <p className="text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                        <Send className="h-3 w-3" /> Secure End-to-End Encryption Enabled
+                    <div className="text-center pt-2 opacity-70">
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3">
+                        <Send className="h-3 w-3" /> Encrypted Manifest Protocol v2.0
                       </p>
                     </div>
                   </form>
