@@ -117,7 +117,7 @@ export function Products() {
                   <p className="text-white/70 text-sm leading-relaxed mb-6">
                     Custom logistics solutions available for large scale industrial procurement.
                   </p>
-                  <Link to="/contact" className="inline-flex items-center text-sm font-bold hover:gap-3 transition-all">
+                  <Link to="/contact-us" className="inline-flex items-center text-sm font-bold hover:gap-3 transition-all">
                     Inquire Now <ArrowUpRight className="ml-2 h-4 w-4" />
                   </Link>
                 </div>
