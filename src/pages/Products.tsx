@@ -129,7 +129,7 @@ export function Products() {
           <main className="lg:col-span-9">
             {loading ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-                {[...Array(4)].map((_, i) => (
+                {[...Array(6)].map((_, i) => (
                   <div key={i} className="aspect-[4/3] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
                 ))}
               </div>
@@ -146,16 +146,18 @@ export function Products() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       key={product.id}
+                      className="h-full"
                     >
                       <Link
                         to={`/product/${product.slug}`}
                         className={cn(
-                          "group bg-white rounded-2xl sm:rounded-[32px] border border-slate-100 p-2 sm:p-4 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex",
+                          "group bg-white rounded-2xl sm:rounded-[32px] border border-slate-100 p-2 sm:p-4 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex h-full",
                           viewMode === 'grid' ? "flex-col" : "flex-row h-72"
                         )}
                       >
+                        {/* Image Container */}
                         <div className={cn(
-                          "rounded-xl sm:rounded-2xl overflow-hidden relative bg-slate-50",
+                          "rounded-xl sm:rounded-2xl overflow-hidden relative bg-slate-50 shrink-0",
                           viewMode === 'grid' ? "aspect-[16/10] mb-3 sm:mb-6" : "w-1/3 h-full mr-8"
                         )}>
                           <img
@@ -171,31 +173,38 @@ export function Products() {
                           </div>
                         </div>
                         
+                        {/* Content Container */}
                         <div className={cn(
-                          "px-1 sm:px-4 pb-2 sm:pb-4 flex flex-col",
-                          viewMode === 'grid' ? "" : "w-2/3 py-4"
+                          "flex flex-col flex-grow",
+                          viewMode === 'grid' ? "px-1 sm:px-2" : "w-2/3 py-4"
                         )}>
-                          <div className="flex justify-between items-start mb-1 sm:mb-3">
-                            <h3 className="text-sm sm:text-2xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1">
+                          {/* Title and In-Stock Row */}
+                          <div className="mb-4">
+                            <h3 className="text-sm sm:text-2xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-2">
                               {product.title}
                             </h3>
-                            <div className="hidden sm:flex w-10 h-10 rounded-xl bg-slate-50 items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-all">
-                              <ArrowUpRight className="h-5 w-5" />
+                            <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-full bg-emerald-50 text-emerald-600 w-fit">
+                              <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                              <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider">In Stock</span>
                             </div>
                           </div>
                           
-                          <p className="hidden sm:block text-slate-500 text-sm leading-relaxed line-clamp-2 mb-8">
+                          <p className={cn(
+                            "text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-6",
+                            viewMode === 'grid' ? "hidden sm:block" : ""
+                          )}>
                             {product.description}
                           </p>
                           
-                          <div className="mt-auto flex justify-between items-center pt-2 sm:pt-6 border-t border-slate-50">
+                          {/* Bottom Row - Price and Arrow Button */}
+                          <div className="mt-auto flex justify-between items-center pt-4 sm:pt-6 border-t border-slate-50">
                             <div className="flex flex-col">
                               <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 sm:mb-1">Unit Price</span>
                               <span className="text-sm sm:text-2xl font-extrabold text-slate-900">{formatPrice(product.price)}</span>
                             </div>
-                            <div className="flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-emerald-50 text-emerald-600">
-                              <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                              <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider">In Stock</span>
+                            
+                            <div className="flex w-10 h-10 rounded-xl bg-slate-50 items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-all shadow-sm">
+                              <ArrowUpRight className="h-5 w-5" />
                             </div>
                           </div>
                         </div>
@@ -223,26 +232,5 @@ export function Products() {
         </div>
       </div>
     </div>
-  );
-}
-
-function ShoppingBag(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-      <path d="M3 6h18" />
-      <path d="M16 10a4 4 0 0 1-8 0" />
-    </svg>
   );
 }
