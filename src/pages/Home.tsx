@@ -160,7 +160,7 @@ export function Home() {
                   </div>
                   
                   <div className="px-1 sm:px-4 pb-2 sm:pb-4">
-                    <h3 className="text-[10px] sm:text-[14px] font-bold text-slate-900 group-hover:text-brand-primary transition-colors mb-2 sm:mb-3 leading-[1.1] tracking-wide">
+                    <h3 className="text-[12px] sm:text-[18px] font-bold text-slate-900 group-hover:text-brand-primary transition-colors mb-2 sm:mb-3 leading-[1.1] tracking-wide">
                       {product.title}
                     </h3>
                     <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
