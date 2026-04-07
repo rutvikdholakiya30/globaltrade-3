@@ -56,18 +56,23 @@ export function StaticPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto"
+          className="max-w-3xl mx-auto px-1 sm:px-0"
         >
-          <div className="prose prose-lg prose-slate max-w-none bg-white p-10 md:p-16 rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-200">
-            <ReactMarkdown>{page.content}</ReactMarkdown>
+          <div className="bg-white p-6 md:p-16 rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-100/50">
+            <div className="prose prose-slate prose-headings:text-slate-900 prose-headings:font-black prose-p:text-slate-500 prose-p:leading-relaxed prose-strong:text-brand-primary max-w-none prose-sm sm:prose-lg">
+              <ReactMarkdown>{page.content}</ReactMarkdown>
+            </div>
           </div>
 
-          <div className="mt-12 text-center text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-            Last updated: {new Date(page.updated_at).toLocaleDateString()}
+          <div className="mt-12 flex flex-col items-center gap-4">
+            <div className="h-px w-12 bg-slate-200" />
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">
+              Document Manifest ID: {page.id.split('-')[0]} • Last synchronized: {new Date(page.updated_at).toLocaleDateString()}
+            </div>
           </div>
         </motion.div>
       </div>
