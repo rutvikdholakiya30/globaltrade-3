@@ -159,26 +159,26 @@ export function Contact() {
                         <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                           <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Transmit To
                         </label>
-                        <input {...register('name')} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all text-white placeholder:text-white/30 uppercase" placeholder="NAME" />
+                        <input {...register('name')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 uppercase" placeholder="NAME" />
                       </div>
                       <div className="space-y-4">
                         <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                           <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Return Path
                         </label>
-                        <input {...register('email')} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all text-white placeholder:text-white/30 lowercase" placeholder="EMAIL" />
+                        <input {...register('email')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 lowercase" placeholder="EMAIL" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                         <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Subject Header
                       </label>
-                      <input {...register('subject')} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all text-white placeholder:text-white/30 uppercase" placeholder="SUBJECT" />
+                      <input {...register('subject')} className="w-full bg-white border-2 border-white/10 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all text-slate-900 placeholder:text-slate-400 uppercase" placeholder="SUBJECT" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em] px-2 flex items-center gap-3">
                         <div className="w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(14,165,233,1)]" /> Transmission Message
                       </label>
-                      <textarea {...register('message')} rows={5} className="w-full bg-slate-900/40 border-2 border-white/10 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-slate-900/60 transition-all resize-none text-white placeholder:text-white/30 uppercase" placeholder="ENTER MESSAGE..." />
+                      <textarea {...register('message')} rows={5} className="w-full bg-white border-2 border-white/10 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-accent/50 transition-all resize-none text-slate-900 placeholder:text-slate-400 uppercase" placeholder="ENTER MESSAGE..." />
                     </div>
                     <button type="submit" disabled={submitting} className="w-full py-6 bg-white text-brand-primary font-black uppercase tracking-[0.5em] rounded-[2rem] shadow-2xl hover:bg-brand-accent hover:text-white transition-all transform active:scale-95 disabled:opacity-50">
                       {submitting ? 'Transmitting...' : 'Execute Transmission'}
