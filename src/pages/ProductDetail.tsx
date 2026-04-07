@@ -206,15 +206,15 @@ export function ProductDetail() {
                 const isMultiLine = lines.length > 1;
 
                 return (
-                  <div key={spec.id} className="group transition-all duration-300">
+                  <div key={spec.id} className="group transition-all duration-300 grid grid-cols-1 md:grid-cols-12 min-h-[100px]">
                     {/* Identity Label (16px, Bold, Uppercase) */}
-                    <div className="bg-slate-50/50 px-8 sm:px-12 py-4 sm:py-5 border-b border-slate-50">
+                    <div className="md:col-span-4 bg-slate-50/50 px-8 sm:px-12 py-6 sm:py-10 border-b md:border-b-0 md:border-r border-slate-50 flex items-center">
                       <span className="text-[16px] font-bold text-slate-900 uppercase tracking-wider">{spec.spec_key}</span>
                     </div>
                     {/* Content Value (14px, Light Bold, Lowercase) */}
-                    <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors">
+                    <div className="md:col-span-8 px-8 sm:px-12 py-6 sm:py-10 group-hover:bg-blue-50/30 transition-colors flex items-center">
                       {isMultiLine ? (
-                        <div className="space-y-3">
+                        <div className="space-y-3 w-full">
                           {lines.map((line, idx) => (
                             <div key={idx} className="flex items-start gap-4">
                               <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
