@@ -118,14 +118,14 @@ export function About() {
                   global industrial supply chain.
                 </p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-10">
                 {values.map((value, i) => (
                   <div key={i} className="space-y-4">
                     <div className={`w-12 h-12 ${value.color} rounded-xl flex items-center justify-center`}>
                       <value.icon className="h-6 w-6" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">{value.title}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed">{value.description}</p>
+                    <h3 className="text-sm sm:text-xl font-bold text-slate-900">{value.title}</h3>
+                    <p className="text-slate-400 text-[10px] sm:text-sm leading-relaxed">{value.description}</p>
                   </div>
                 ))}
               </div>
