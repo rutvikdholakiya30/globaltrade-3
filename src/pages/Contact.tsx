@@ -138,40 +138,59 @@ export function Contact() {
             </div>
           </div>
 
-          {/* Contact Form */}
+          {/* Contact Form - CONVERTED TO BLUE BOX */}
           <div className="lg:col-span-7">
-            <div className="bg-white p-8 md:p-16 rounded-[60px] border border-slate-100 shadow-2xl shadow-slate-200">
-              {submitted ? (
-                <div className="text-center space-y-10 py-16">
-                  <CheckCircle2 className="h-12 w-12 text-emerald-500 mx-auto" />
-                  <h2 className="text-4xl font-black text-slate-900 uppercase">Message Logged!</h2>
-                  <button onClick={() => setSubmitted(false)} className="btn-primary px-12 py-5 text-xs uppercase tracking-widest">Send Another</button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] px-2">Transmit To</label>
-                      <input {...register('name')} className="w-full bg-slate-50 border-2 border-slate-50 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-brand-primary transition-all text-slate-900 uppercase" placeholder="NAME" />
+            <div className="bg-brand-primary p-8 md:p-16 rounded-[60px] shadow-[0_20px_50px_rgba(37,99,235,0.3)] border border-white/10 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mb-32 blur-3xl" />
+              
+              <div className="relative z-10">
+                {submitted ? (
+                  <div className="text-center space-y-10 py-16">
+                    <CheckCircle2 className="h-16 w-16 text-white mx-auto animate-bounce" />
+                    <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Transmission <span className="text-brand-accent">Logged!</span></h2>
+                    <p className="text-white/60 font-medium">Your request has been prioritized in our global queue.</p>
+                    <button onClick={() => setSubmitted(false)} className="px-12 py-5 bg-white text-brand-primary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-accent hover:text-white transition-all shadow-xl">Send Another</button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Transmit To
+                        </label>
+                        <input {...register('name')} className="w-full bg-white/10 border-2 border-white/5 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all text-white placeholder:text-white/20 uppercase" placeholder="NAME" />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Return Path
+                        </label>
+                        <input {...register('email')} className="w-full bg-white/10 border-2 border-white/5 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all text-white placeholder:text-white/20 lowercase" placeholder="EMAIL" />
+                      </div>
                     </div>
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] px-2">Return Path</label>
-                      <input {...register('email')} className="w-full bg-slate-50 border-2 border-slate-50 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-brand-primary transition-all text-slate-900 lowercase" placeholder="EMAIL" />
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Subject Header
+                      </label>
+                      <input {...register('subject')} className="w-full bg-white/10 border-2 border-white/5 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all text-white placeholder:text-white/20 uppercase" placeholder="SUBJECT" />
                     </div>
-                  </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] px-2">Subject Header</label>
-                    <input {...register('subject')} className="w-full bg-slate-50 border-2 border-slate-50 px-8 py-5 rounded-3xl text-sm font-bold focus:outline-none focus:border-brand-primary transition-all text-slate-900 uppercase" placeholder="SUBJECT" />
-                  </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] px-2">Transmission Message</label>
-                    <textarea {...register('message')} rows={6} className="w-full bg-slate-50 border-2 border-slate-50 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:border-brand-primary transition-all resize-none text-slate-900 uppercase" placeholder="ENTER MESSAGE..." />
-                  </div>
-                  <button type="submit" disabled={submitting} className="btn-primary w-full py-6 text-sm font-black uppercase tracking-[0.4em] rounded-[2rem] shadow-2xl">
-                    {submitting ? 'Transmitting...' : 'Execute Transmission'}
-                  </button>
-                </form>
-              )}
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-brand-accent rounded-full animate-pulse" /> Transmission Message
+                      </label>
+                      <textarea {...register('message')} rows={5} className="w-full bg-white/10 border-2 border-white/5 px-8 py-6 rounded-3xl text-sm font-bold focus:outline-none focus:border-white focus:bg-white/20 transition-all resize-none text-white placeholder:text-white/20 uppercase" placeholder="ENTER MESSAGE..." />
+                    </div>
+                    <button type="submit" disabled={submitting} className="w-full py-6 bg-white text-brand-primary font-black uppercase tracking-[0.4em] rounded-[2rem] shadow-[0_20px_40px_rgba(255,255,255,0.1)] hover:bg-brand-accent hover:text-white transition-all transform active:scale-95 disabled:opacity-50">
+                      {submitting ? 'Transmitting...' : 'Execute Transmission'}
+                    </button>
+                    <div className="text-center pt-4 opacity-50">
+                      <p className="text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                        <Send className="h-3 w-3" /> Secure End-to-End Encryption Enabled
+                      </p>
+                    </div>
+                  </form>
+                )}
+              </div>
             </div>
           </div>
         </div>
