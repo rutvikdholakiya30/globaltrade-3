@@ -20,6 +20,7 @@ export interface Product {
   category?: Category;
   images?: ProductImage[];
   specifications?: ProductSpecification[];
+  features?: string[];
 }
 
 export interface ProductImage {

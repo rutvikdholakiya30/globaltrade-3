@@ -56,21 +56,21 @@ export function ProductDetail() {
       {/* Breadcrumbs */}
       <div className="bg-slate-50 pt-32 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">
             <Link to="/" className="hover:text-brand-primary transition-colors">Home</Link>
             <ChevronRight className="h-3 w-3" />
             <Link to="/products" className="hover:text-brand-primary transition-colors">Inventory</Link>
             <ChevronRight className="h-3 w-3" />
-            <span className="text-brand-primary">{product.title}</span>
+            <span className="text-brand-primary truncate max-w-[150px] sm:max-w-none">{product.title}</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-16">
           {/* Left: Image Gallery */}
-          <div className="lg:col-span-7 space-y-8">
-            <div className="relative aspect-[16/10] bg-slate-50 rounded-[40px] overflow-hidden group shadow-2xl shadow-slate-200 border border-slate-100">
+          <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+            <div className="relative aspect-[16/10] bg-slate-50 rounded-3xl sm:rounded-[40px] overflow-hidden group shadow-2xl shadow-slate-200 border border-slate-100">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentImage}
@@ -91,25 +91,25 @@ export function ProductDetail() {
               
               <button 
                 onClick={() => setIsZoomed(!isZoomed)}
-                className="absolute top-8 right-8 p-4 bg-white/90 backdrop-blur-md rounded-2xl text-slate-400 hover:text-brand-primary transition-all shadow-lg border border-white/20"
+                className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 sm:p-4 bg-white/90 backdrop-blur-md rounded-xl sm:rounded-2xl text-slate-400 hover:text-brand-primary transition-all shadow-lg border border-white/20"
               >
-                <Maximize2 className="h-5 w-5" />
+                <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
 
-              <div className="absolute bottom-8 left-8">
-                <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl text-[10px] font-bold text-slate-500 shadow-sm border border-white/20 uppercase tracking-widest">
+              <div className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8">
+                <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold text-slate-500 shadow-sm border border-white/20 uppercase tracking-widest">
                   IMAGE {allImages.indexOf(currentImage) + 1} / {allImages.length}
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-4 sm:grid-cols-6 gap-4">
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 sm:gap-4">
               {allImages.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveImage(img)}
                   className={cn(
-                    "aspect-square rounded-2xl transition-all overflow-hidden bg-slate-50 border-2",
+                    "aspect-square rounded-xl sm:rounded-2xl transition-all overflow-hidden bg-slate-50 border-2",
                     currentImage === img ? "border-brand-primary scale-95 shadow-lg shadow-brand-primary/10" : "border-transparent hover:border-slate-200"
                   )}
                 >
@@ -121,97 +121,81 @@ export function ProductDetail() {
 
           {/* Right: Product Info */}
           <div className="lg:col-span-5 flex flex-col">
-            <div className="mb-10">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="px-4 py-1.5 bg-brand-primary/10 text-brand-primary text-[10px] font-bold rounded-full uppercase tracking-widest">
+            <div className="mb-8 sm:mb-10">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-brand-primary/10 text-brand-primary text-[9px] sm:text-[10px] font-bold rounded-full uppercase tracking-widest">
                   {product.category?.name}
                 </span>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600">
+                <div className="flex items-center gap-2 px-3 py-1 sm:px-3 sm:py-1.5 rounded-full bg-emerald-50 text-emerald-600">
                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider">In Stock</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">In Stock</span>
                 </div>
               </div>
               
-              <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-slate-900 mb-4 sm:mb-6 leading-tight">
                 {product.title}
               </h1>
               
-              <div className="flex items-baseline gap-4 mb-10">
-                <span className="text-4xl font-extrabold text-slate-900">{formatPrice(product.price)}</span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Excl. VAT & Shipping</span>
+              <div className="flex items-baseline gap-3 sm:gap-4 mb-8 sm:mb-10">
+                <span className="text-3xl sm:text-4xl font-extrabold text-slate-900">{formatPrice(product.price)}</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Excl. VAT & Shipping</span>
               </div>
               
-              <p className="text-slate-500 text-lg leading-relaxed mb-12">
+              <p className="text-slate-500 text-base sm:text-lg leading-relaxed mb-10 sm:mb-12">
                 {product.description}
               </p>
             </div>
 
-            <div className="space-y-4 mb-16">
-              <button className="btn-primary w-full py-5 text-lg">
+            <div className="space-y-3 sm:space-y-4 mb-12 sm:mb-16">
+              <button className="btn-primary w-full py-4 sm:py-5 text-base sm:text-lg">
                 Request Quotation <ArrowUpRight className="h-5 w-5" />
               </button>
-              <button className="btn-outline w-full py-5 text-lg">
+              <button className="btn-outline w-full py-4 sm:py-5 text-base sm:text-lg">
                 Download Technical Datasheet
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 pt-12 border-t border-slate-100">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-brand-primary">
-                  <Truck className="h-6 w-6" />
+            <div className="grid grid-cols-2 gap-6 sm:gap-8 pt-8 sm:pt-12 border-t border-slate-100">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-brand-primary shrink-0">
+                  <Truck className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-widest mb-1">Global Shipping</h4>
-                  <p className="text-[10px] text-slate-500 uppercase font-medium leading-tight">Express logistics to 180+ countries</p>
+                  <h4 className="text-[10px] sm:text-xs font-bold text-slate-900 uppercase tracking-widest mb-1">Global Shipping</h4>
+                  <p className="text-[8px] sm:text-[10px] text-slate-500 uppercase font-medium leading-tight">Express logistics to 180+ countries</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-brand-primary">
-                  <ShieldCheck className="h-6 w-6" />
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-brand-primary shrink-0">
+                  <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-widest mb-1">Quality Assured</h4>
-                  <p className="text-[10px] text-slate-500 uppercase font-medium leading-tight">ISO 9001:2015 Certified standards</p>
+                  <h4 className="text-[10px] sm:text-xs font-bold text-slate-900 uppercase tracking-widest mb-1">Quality Assured</h4>
+                  <p className="text-[8px] sm:text-[10px] text-slate-500 uppercase font-medium leading-tight">ISO 9001:2015 Certified standards</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Technical Specifications */}
-        {product.specifications && product.specifications.length > 0 && (
-          <div className="mt-32">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-              <div className="lg:col-span-4 space-y-8">
-                <div>
-                  <span className="section-label">Engineering Data</span>
-                  <h2 className="text-4xl font-extrabold text-slate-900 mb-6">Technical Specifications</h2>
-                  <p className="text-slate-500 leading-relaxed">
-                    Detailed engineering parameters and material composition for industrial verification.
-                  </p>
-                </div>
-                
-                <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100">
-                  <div className="flex items-center gap-3 text-brand-primary mb-4">
-                    <Info className="h-5 w-5" />
-                    <span className="text-xs font-bold uppercase tracking-widest">Compliance Note</span>
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    All specifications are subject to standard industrial tolerances of ±0.5%. 
-                    Verified by GlobalTrade Quality Control.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="lg:col-span-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-slate-100 rounded-[40px] overflow-hidden border border-slate-100">
-                  {product.specifications.map((spec) => (
-                    <div 
-                      key={spec.id} 
-                      className="p-10 bg-white flex flex-col justify-center hover:bg-slate-50 transition-colors"
-                    >
-                      <span className="text-[10px] font-bold text-brand-primary uppercase tracking-widest mb-3">{spec.spec_key}</span>
-                      <span className="text-2xl font-bold text-slate-900">{spec.spec_value}</span>
+        {/* Key Features & Points */}
+        {product.features && product.features.length > 0 && (
+          <div className="mt-16 sm:mt-24 bg-slate-900 rounded-3xl sm:rounded-[60px] p-8 sm:p-24 relative overflow-hidden text-white">
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:40px_40px]" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="max-w-3xl">
+                <span className="text-brand-accent text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-4 block">Core Attributes</span>
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-8 sm:mb-12">Performance Features</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 sm:gap-x-16 gap-y-6 sm:gap-y-8">
+                  {product.features.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-4 sm:gap-5 group">
+                      <div className="mt-1 h-5 w-5 sm:h-6 sm:w-6 rounded-lg bg-brand-primary/20 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-slate-900 transition-all duration-300 shrink-0">
+                        <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="text-slate-300 text-sm sm:text-base font-medium leading-relaxed group-hover:text-white transition-colors">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -220,23 +204,60 @@ export function ProductDetail() {
           </div>
         )}
 
+        {/* Technical Specifications - Table Format */}
+        {product.specifications && product.specifications.length > 0 && (
+          <div className="mt-24 sm:mt-32">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16 gap-6">
+              <div className="max-w-2xl">
+                <span className="section-label">Engineering Manifest</span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Technical Specifications</h2>
+              </div>
+              <div className="px-4 py-2 sm:px-6 sm:py-3 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3">
+                <Info className="h-4 w-4 sm:h-5 sm:w-5 text-brand-primary" />
+                <span className="text-[8px] sm:text-[10px] font-extra-bold text-slate-500 uppercase tracking-widest">Verified Logistical Parameters</span>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[300px]">
+                  <thead className="bg-slate-50/50 border-b border-slate-100">
+                    <tr>
+                      <th className="px-6 sm:px-12 py-4 sm:py-8 text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Parameter Identity</th>
+                      <th className="px-6 sm:px-12 py-4 sm:py-8 text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Specification Value</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50 px-6 sm:px-12">
+                    {product.specifications.map((spec) => (
+                      <tr key={spec.id} className="group hover:bg-blue-50/30 transition-all duration-300">
+                        <td className="px-6 sm:px-12 py-6 sm:py-10 text-[9px] sm:text-[10px] font-black text-brand-primary uppercase tracking-widest leading-none border-r border-slate-50/50">{spec.spec_key}</td>
+                        <td className="px-6 sm:px-12 py-6 sm:py-10 text-lg sm:text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{spec.spec_value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Global Logistics Section */}
-        <div className="mt-32 p-16 md:p-32 rounded-[60px] bg-slate-900 text-white text-center relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:40px_40px]" />
+        <div className="mt-24 sm:mt-32 p-10 sm:p-32 rounded-3xl sm:rounded-[60px] bg-slate-50 border border-slate-100 text-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 group-hover:rotate-12 transition-transform duration-1000">
+            <Globe className="h-64 w-64" />
           </div>
           
           <div className="relative z-10">
-            <Globe className="h-16 w-16 text-brand-accent mx-auto mb-10" />
-            <h2 className="text-4xl md:text-6xl font-extrabold mb-8 max-w-3xl mx-auto leading-tight">
+            <Globe className="h-12 w-12 sm:h-16 sm:h-16 text-brand-primary mx-auto mb-6 sm:mb-10" />
+            <h2 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 sm:mb-8 max-w-3xl mx-auto leading-tight">
               Ready for Global Deployment
             </h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-16">
-              Our logistics network ensures this product reaches your facility with maximum efficiency and minimal downtime.
+            <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto mb-10 sm:mb-16">
+              Our logistics network ensures this asset reaches your facility with maximum efficiency and certified security protocols.
             </p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+            <div className="flex flex-wrap justify-center gap-6 sm:gap-16">
               {['Port of Dubai', 'Port of Singapore', 'Port of Rotterdam', 'Port of Shanghai'].map(port => (
-                <span key={port} className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">{port}</span>
+                <span key={port} className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-slate-400 hover:text-brand-primary cursor-default transition-colors">{port}</span>
               ))}
             </div>
           </div>
