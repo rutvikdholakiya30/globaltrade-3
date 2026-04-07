@@ -1,0 +1,5 @@
+{
+  "name": "GlobalTrade Connect",
+  "description": "A comprehensive import-export business platform featuring dynamic product management, category filtering, and a full-featured admin dashboard powered by Supabase.",
+  "requestFramePermissions": []
+}
