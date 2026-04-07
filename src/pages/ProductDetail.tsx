@@ -11,7 +11,8 @@ import {
   Maximize2,
   CheckCircle2,
   Info,
-  Share2
+  Share2,
+  Settings
 } from 'lucide-react';
 import { useProduct } from '@/hooks/useData';
 import { formatPrice, cn } from '@/lib/utils';
@@ -178,34 +179,8 @@ export function ProductDetail() {
           </div>
         </div>
 
-        {/* Key Features & Points */}
-        {product.features && product.features.length > 0 && (
-          <div className="mt-16 sm:mt-24 bg-slate-900 rounded-3xl sm:rounded-[60px] p-8 sm:p-24 relative overflow-hidden text-white">
-            <div className="absolute inset-0 opacity-10 pointer-events-none">
-              <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:40px_40px]" />
-            </div>
-            
-            <div className="relative z-10">
-              <div className="max-w-3xl">
-                <span className="text-brand-accent text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-4 block">Core Attributes</span>
-                <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-8 sm:mb-12">Performance Features</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 sm:gap-x-16 gap-y-6 sm:gap-y-8">
-                  {product.features.map((feature, i) => (
-                    <div key={i} className="flex items-start gap-4 sm:gap-5 group">
-                      <div className="mt-1 h-5 w-5 sm:h-6 sm:w-6 rounded-lg bg-brand-primary/20 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-slate-900 transition-all duration-300 shrink-0">
-                        <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </div>
-                      <span className="text-slate-300 text-sm sm:text-base font-medium leading-relaxed group-hover:text-white transition-colors">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Technical Specifications - Responsive Card/Stack Format */}
-        {product.specifications && product.specifications.length > 0 && (
+        {/* Combined Technical Specifications & Features Block */}
+        {( (product.specifications && product.specifications.length > 0) || (product.features && product.features.length > 0) ) && (
           <div className="mt-24 sm:mt-32">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16 gap-6 px-4">
               <div className="max-w-2xl">
@@ -216,18 +191,36 @@ export function ProductDetail() {
               </div>
               <div className="px-4 py-2 sm:px-6 sm:py-3 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3">
                 <Info className="h-4 w-4 sm:h-5 sm:w-5 text-brand-primary" />
-                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified Data Sheet</span>
+                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified Logistical Parameters</span>
               </div>
             </div>
             
             <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden divide-y divide-slate-50">
-              {product.specifications.map((spec) => (
+              {/* Feature Points as part of Specifications */}
+              {product.features && product.features.length > 0 && (
+                <div className="group transition-all duration-300">
+                  <div className="bg-slate-50/50 px-8 sm:px-12 py-3 sm:py-4 border-b border-slate-50">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">FEATURES / HIGHLIGHTS</span>
+                  </div>
+                  <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors space-y-4">
+                    {product.features.map((feature, i) => (
+                      <div key={i} className="flex items-start gap-4">
+                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
+                        <span className="text-slate-900 font-bold uppercase tracking-tight leading-tight block">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Regular Key-Value Specifications */}
+              {product.specifications?.map((spec) => (
                 <div key={spec.id} className="group transition-all duration-300">
-                  {/* Label Bar */}
                   <div className="bg-slate-50/50 px-8 sm:px-12 py-3 sm:py-4 border-b border-slate-50">
                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{spec.spec_key}</span>
                   </div>
-                  {/* Value Content */}
                   <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors">
                     <span className="text-xl sm:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
                       {spec.spec_value}
@@ -264,6 +257,3 @@ export function ProductDetail() {
     </div>
   );
 }
-
-// Ensure lucide-react Settings is imported
-import { Settings } from 'lucide-react';
