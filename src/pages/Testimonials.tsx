@@ -96,11 +96,11 @@ export function Testimonials() {
                         {new Date(t.created_at).toLocaleDateString()}
                       </span>
                     </div>
-
-                    <p className="text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 line-clamp-4 sm:line-clamp-none">
-                      "{t.message}"
-                    </p>
-
+ 100: 
+ 101:                     <p className="text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 line-clamp-4 sm:line-clamp-none">
+ 102:                       "{t.message}"
+ 103:                     </p>
+ 104: 
                     <div className="flex items-center gap-3 sm:gap-6 pt-4 sm:pt-10 border-t border-slate-50 relative z-10">
                       <div className="w-8 h-8 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-sm sm:text-2xl">
                         {t.name[0]}
@@ -157,7 +157,7 @@ export function Testimonials() {
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Your Name</label>
                     <input
                       {...register('name')}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all text-white"
+                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all text-white placeholder:text-white/20"
                       placeholder="John Doe"
                     />
                     {errors.name && <p className="text-red-400 text-[10px] font-bold uppercase mt-1">{errors.name.message}</p>}
@@ -186,7 +186,7 @@ export function Testimonials() {
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Product (Optional)</label>
                     <select
                       {...register('product_id')}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all appearance-none text-white"
+                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all appearance-none text-white"
                     >
                       <option value="" className="bg-slate-900">General Feedback</option>
                       {products.map(p => (
@@ -200,7 +200,7 @@ export function Testimonials() {
                     <textarea
                       {...register('message')}
                       rows={4}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all resize-none text-white"
+                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all resize-none text-white placeholder:text-white/20"
                       placeholder="Tell us about your experience..."
                     />
                     {errors.message && <p className="text-red-400 text-[10px] font-bold uppercase mt-1">{errors.message.message}</p>}
