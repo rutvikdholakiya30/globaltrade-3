@@ -138,7 +138,7 @@ export function Home() {
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Premium Shipments</h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
             {productsLoading ? (
               [...Array(4)].map((_, i) => (
                 <div key={i} className="h-64 sm:h-[450px] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
