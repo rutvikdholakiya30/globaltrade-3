@@ -202,31 +202,35 @@ export function useContactInfo() {
   useEffect(() => {
     fetchContactInfo();
 
-    // Use unique channel name based on slug to avoid conflicts
-    const channel = supabase.channel('site-settings-changes');
+    // Fix: Use a randomized channel name to prevent collisions across multiple components or re-mounts
+    const channelId = `contact-realtime-${Math.random().toString(36).substring(7)}`;
+    const channel = supabase.channel(channelId);
 
     channel
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
           table: 'pages',
           filter: 'slug=eq.site-contact-settings',
         },
         () => {
+          console.log('Realtime update detected for contact info');
           fetchContactInfo();
         }
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log('Realtime connected for contact info');
+          console.log('Realtime sync established');
         }
       });
 
     return () => {
-      // Correct cleanup pattern to prevent memory leaks and crashes
-      supabase.removeChannel(channel);
+      // Ensure the unique channel is removed on unmount
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, []);
 
