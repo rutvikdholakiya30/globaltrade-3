@@ -97,18 +97,30 @@ export function Gallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-8 cursor-zoom-out"
+            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 cursor-zoom-out"
             onClick={() => setSelectedImage(null)}
           >
-            <motion.img
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              src={selectedImage}
-              alt="Full size"
-              className="max-w-full max-h-full rounded-[40px] shadow-2xl border border-white/10"
-              referrerPolicy="no-referrer"
-            />
+            {isVideo(selectedImage) ? (
+              <motion.video
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                src={selectedImage}
+                autoPlay
+                controls
+                className="max-w-full max-h-full rounded-2xl sm:rounded-[40px] shadow-2xl border border-white/10"
+              />
+            ) : (
+              <motion.img
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                src={selectedImage}
+                alt="Full size"
+                className="max-w-full max-h-full rounded-2xl sm:rounded-[40px] shadow-2xl border border-white/10"
+                referrerPolicy="no-referrer"
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
