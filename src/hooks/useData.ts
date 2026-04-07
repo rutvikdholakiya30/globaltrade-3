@@ -118,7 +118,7 @@ export function usePage(slug: string) {
         .select('*')
         .eq('slug', slug)
         .eq('is_active', true)
-        .maybeSingle(); // Changed from single() to maybeSingle() to handle RLS/PostgREST better
+        .maybeSingle(); 
       
       if (!error && data) setPage(data);
       setLoading(false);
@@ -175,7 +175,6 @@ export function useContactInfo() {
   const [loading, setLoading] = useState(true);
 
   const fetchContactInfo = async () => {
-    // Crucial Change: Using maybeSingle() instead of single() to avoid 406 errors in public contexts
     const { data, error } = await supabase
         .from('pages')
         .select('content')
@@ -196,8 +195,6 @@ export function useContactInfo() {
       } catch (e) {
         console.error('Failed to parse contact settings:', e);
       }
-    } else if (error) {
-      console.warn('Contact info fetch restricted/missing:', error.message);
     }
     setLoading(false);
   };
@@ -205,12 +202,14 @@ export function useContactInfo() {
   useEffect(() => {
     fetchContactInfo();
 
-    const channel = supabase
-      .channel('public:pages')
+    // Use unique channel name based on slug to avoid conflicts
+    const channel = supabase.channel('site-settings-changes');
+
+    channel
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'pages',
           filter: 'slug=eq.site-contact-settings',
@@ -219,9 +218,14 @@ export function useContactInfo() {
           fetchContactInfo();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Realtime connected for contact info');
+        }
+      });
 
     return () => {
+      // Correct cleanup pattern to prevent memory leaks and crashes
       supabase.removeChannel(channel);
     };
   }, []);
