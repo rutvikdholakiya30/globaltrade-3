@@ -214,7 +214,7 @@ export function SettingsAdmin() {
                       value={addr}
                       onChange={(e) => updateList('addresses', idx, e.target.value.toUpperCase())}
                       placeholder="ENTER ADDRESS (LINE 1, LINE 2, CITY, ZIP)..."
-                      className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase transition-all"
+                      className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-base uppercase transition-all"
                     />
                     <button onClick={() => removeFromList('addresses', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
                       <Trash2 className="h-5 w-5" />
@@ -241,7 +241,7 @@ export function SettingsAdmin() {
                         value={phone}
                         onChange={(e) => updateList('phones', idx, e.target.value)}
                         placeholder="+91 12345 67890"
-                        className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm transition-all"
+                        className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-base transition-all"
                       />
                       <button onClick={() => removeFromList('phones', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
                         <Trash2 className="h-5 w-5" />
@@ -267,7 +267,7 @@ export function SettingsAdmin() {
                         value={email}
                         onChange={(e) => updateList('emails', idx, e.target.value.toLowerCase())}
                         placeholder="info@globaltrade.com"
-                        className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm lowercase transition-all"
+                        className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-base lowercase transition-all"
                       />
                       <button onClick={() => removeFromList('emails', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
                         <Trash2 className="h-5 w-5" />
@@ -294,7 +294,7 @@ export function SettingsAdmin() {
                       value={hour}
                       onChange={(e) => updateList('working_hours', idx, e.target.value.toUpperCase())}
                       placeholder="E.G. MON - FRI: 9:00 AM - 6:00 PM (GMT)"
-                      className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase transition-all"
+                      className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-base uppercase transition-all"
                     />
                     <button onClick={() => removeFromList('working_hours', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
                       <Trash2 className="h-5 w-5" />
@@ -331,7 +331,7 @@ export function SettingsAdmin() {
                         setContactInfo({ ...contactInfo, social_links: newLinks });
                       }}
                       placeholder={`https://${input.id}.com/globaltrade`}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs sm:text-sm lowercase transition-all"
+                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base lowercase transition-all"
                     />
                   </div>
                 ))}
@@ -371,7 +371,7 @@ export function SettingsAdmin() {
                   type="text"
                   value={smtpSettings.smtp_host}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_host: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="smtp.example.com"
                 />
               </div>
@@ -383,7 +383,7 @@ export function SettingsAdmin() {
                   type="text"
                   value={smtpSettings.smtp_port}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_port: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="587"
                 />
               </div>
@@ -398,7 +398,7 @@ export function SettingsAdmin() {
                   type="text"
                   value={smtpSettings.smtp_user}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_user: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="user@example.com"
                 />
               </div>
@@ -410,7 +410,7 @@ export function SettingsAdmin() {
                   type="password"
                   value={smtpSettings.smtp_pass}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_pass: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="••••••••"
                 />
               </div>
@@ -425,7 +425,7 @@ export function SettingsAdmin() {
                   type="email"
                   value={smtpSettings.admin_email}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, admin_email: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="admin@globaltrade.com"
                 />
               </div>
@@ -437,7 +437,7 @@ export function SettingsAdmin() {
                   type="text"
                   value={smtpSettings.sender_name}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, sender_name: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="GlobalTrade Support"
                 />
               </div>
@@ -449,7 +449,7 @@ export function SettingsAdmin() {
                   type="text"
                   value={smtpSettings.reply_header}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, reply_header: e.target.value })}
-                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base"
                   placeholder="Reply Header"
                 />
               </div>
