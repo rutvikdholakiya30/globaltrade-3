@@ -120,7 +120,7 @@ export function About() {
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-10">
                 {values.map((value, i) => (
-                  <div key={i} className="space-y-4">
+                  <div key={i} className="space-y-4 text-center flex flex-col items-center">
                     <div className={`w-12 h-12 ${value.color} rounded-xl flex items-center justify-center`}>
                       <value.icon className="h-6 w-6" />
                     </div>
