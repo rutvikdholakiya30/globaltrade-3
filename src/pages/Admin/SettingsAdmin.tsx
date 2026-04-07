@@ -111,7 +111,7 @@ export function SettingsAdmin() {
         title: 'Site Contact Settings',
         slug: 'site-contact-settings',
         content: JSON.stringify(contactInfo),
-        is_active: false,
+        is_active: true,
         updated_at: new Date().toISOString()
       }, { onConflict: 'slug' });
 
