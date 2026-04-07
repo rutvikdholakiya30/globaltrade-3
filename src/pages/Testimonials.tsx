@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
+import { Star, MessageSquare, Send, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { useTestimonials, useProducts } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
 import { useForm } from 'react-hook-form';
