@@ -163,6 +163,10 @@ export function Home() {
                     <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-0.5 sm:mb-1 leading-tight">
                       {product.title}
                     </h3>
+                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 w-fit mb-2 sm:mb-3">
+                      <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                      <span className="text-[6px] sm:text-[8px] font-bold uppercase tracking-wider">In Stock</span>
+                    </div>
 
                     <div className="flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
                       <div className="text-[10px] sm:text-[13px] font-extrabold text-slate-900">
