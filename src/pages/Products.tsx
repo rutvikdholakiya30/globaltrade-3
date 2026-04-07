@@ -184,7 +184,12 @@ export function Products() {
                             </div>
                           </div>
                           
-
+                          {viewMode === 'list' && (
+                            <p className="text-slate-500 text-sm leading-relaxed mb-6">
+                              {product.description?.split(' ').slice(0, 20).join(' ')}
+                              {product.description?.split(' ').length > 20 ? '...' : ''}
+                            </p>
+                          )}
                           
                           {/* Bottom Row - Price and Arrow Button */}
                           <div className="mt-auto flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
