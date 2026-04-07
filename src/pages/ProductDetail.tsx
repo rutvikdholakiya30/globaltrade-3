@@ -16,13 +16,19 @@ import {
 } from 'lucide-react';
 import { useProduct } from '@/hooks/useData';
 import { formatPrice, cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { product, loading } = useProduct(slug || '');
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+
+  useEffect(() => {
+    if (product?.is_video_main && product.video_url) {
+      setActiveImage('video');
+    }
+  }, [product]);
 
   if (loading) {
     return (

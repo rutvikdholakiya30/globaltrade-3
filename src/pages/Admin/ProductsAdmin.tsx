@@ -19,6 +19,7 @@ export function ProductsAdmin() {
   const [productImages, setProductImages] = useState<{ id?: string; url: string; file?: File; isMain: boolean }[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [isVideoMain, setIsVideoMain] = useState(false);
   const videoInputRef = useRef<HTMLInputElement>(null);
   
   // New States for Specs (Features array will be merged into specs)
@@ -142,6 +143,7 @@ export function ProductsAdmin() {
         description: (formData.get('description') as string) || '',
         main_image: mainImage?.url || null,
         video_url: uploadedVideoUrl,
+        is_video_main: isVideoMain,
         status: formData.get('status') === 'true',
         slug: slugify(title),
       };
@@ -227,6 +229,7 @@ export function ProductsAdmin() {
                   setProductImages([]);
                   setVideoFile(null);
                   setVideoPreview(null);
+                  setIsVideoMain(false);
                   setSpecifications([{ spec_key: '', spec_value: '' }]);
                   setIsFormOpen(true);
                 }}
@@ -306,6 +309,7 @@ export function ProductsAdmin() {
                               onClick={() => {
                                 setEditingProduct(product);
                                 setSpecifications(product.specifications?.length ? product.specifications : [{ spec_key: '', spec_value: '' }]);
+                                setIsVideoMain(product.is_video_main || false);
                                 const images = [
                                   { url: product.main_image, isMain: true },
                                   ...(product.images?.map(img => ({ id: img.id, url: img.image_url, isMain: false })) || [])
@@ -416,30 +420,73 @@ export function ProductsAdmin() {
                 </div>
               </div>
 
-              {/* Visual Assets */}
-              <div className="space-y-6">
+              {/* Unified Visual Assets - Grid Density Reduced by another 50% for high volume */}
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Visual Manifest (Optional)</label>
-                  <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{productImages.length}/9 ASSETS</span>
+                  <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{productImages.length + (videoPreview ? 1 : 0)}/10 ASSETS</span>
                 </div>
                 
                 <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2 sm:gap-3">
+                  {/* Video Asset as first item in the same grid */}
+                  {videoPreview && (
+                    <div 
+                      className={cn(
+                        "relative aspect-square rounded-md sm:rounded-lg overflow-hidden bg-black group border transition-all",
+                        isVideoMain ? "border-blue-500 ring-1 ring-blue-50" : "border-gray-100"
+                      )}
+                    >
+                      <video src={videoPreview} className="w-full h-full object-cover" />
+                      
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-1">
+                        {!isVideoMain && (
+                          <button
+                            type="button"
+                            onClick={() => { setIsVideoMain(true); setProductImages(prev => prev.map(img => ({ ...img, isMain: false }))); }}
+                            className="w-full py-1 bg-white text-blue-600 rounded text-[6px] font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg"
+                          >
+                            Set Main
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => { setVideoFile(null); setVideoPreview(null); setIsVideoMain(false); }}
+                          className="w-full py-1 bg-red-500 text-white rounded text-[6px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors shadow-lg"
+                        >
+                          Delete
+                        </button>
+                      </div>
+
+                      {isVideoMain && (
+                        <div className="absolute top-1 left-1 px-1 py-0.5 bg-blue-600 text-white text-[5px] font-black uppercase tracking-widest rounded shadow-xl">
+                          PRIMARY VIDEO
+                        </div>
+                      )}
+                      {!isVideoMain && (
+                        <div className="absolute top-1 left-1 px-1 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[5px] font-black uppercase tracking-widest rounded">
+                          VIDEO
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Image Assets */}
                   {productImages.map((img, index) => (
                     <div 
                       key={index} 
                       className={cn(
                         "relative aspect-square rounded-md sm:rounded-lg overflow-hidden bg-gray-50 group border transition-all",
-                        img.isMain ? "border-blue-500 ring-1 ring-blue-50" : "border-gray-100"
+                        img.isMain && !isVideoMain ? "border-blue-500 ring-1 ring-blue-50" : "border-gray-100"
                       )}
                     >
                       <img src={img.url} alt="" className="w-full h-full object-cover" />
                       
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 sm:gap-3">
-                        {!img.isMain && (
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-1">
+                        {(!img.isMain || isVideoMain) && (
                           <button
                             type="button"
-                            onClick={() => setAsMain(index)}
-                            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-blue-600 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg"
+                            onClick={() => { setAsMain(index); setIsVideoMain(false); }}
+                            className="w-full py-1 bg-white text-blue-600 rounded text-[6px] font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg"
                           >
                             Set Main
                           </button>
@@ -447,14 +494,14 @@ export function ProductsAdmin() {
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="p-2 sm:p-3 bg-red-500 text-white rounded-lg sm:rounded-xl hover:bg-red-600 transition-colors shadow-lg"
+                          className="w-full py-1 bg-red-500 text-white rounded text-[6px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors shadow-lg text-center flex justify-center"
                         >
-                          <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <Trash2 className="h-2 w-2" />
                         </button>
                       </div>
 
-                      {img.isMain && (
-                        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 px-2 py-1 sm:px-3 sm:py-1.5 bg-blue-600 text-white text-[7px] sm:text-[8px] font-bold uppercase tracking-widest rounded-md sm:rounded-lg shadow-xl">
+                      {img.isMain && !isVideoMain && (
+                        <div className="absolute top-1 left-1 px-1 py-0.5 bg-blue-600 text-white text-[5px] font-black uppercase tracking-widest rounded shadow-xl">
                           PRIMARY
                         </div>
                       )}
@@ -462,16 +509,27 @@ export function ProductsAdmin() {
                   ))}
 
                   {productImages.length < 9 && (
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="aspect-square rounded-md sm:rounded-lg border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-0.5"
-                    >
-                      <div className="p-0.5 sm:p-1 bg-gray-50 rounded sm:rounded-md group-hover:bg-blue-100 transition-colors">
+                    <div className="flex gap-2">
+                       <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="aspect-square rounded-md sm:rounded-lg border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-0.5"
+                      >
                         <Upload className="h-3 w-3 sm:h-4 sm:w-4" />
-                      </div>
-                      <span className="text-[6px] sm:text-[7px] font-bold mt-0.5 sm:mt-1 uppercase tracking-widest text-center text-slate-400">Add</span>
-                    </button>
+                        <span className="text-[6px] font-bold mt-0.5 uppercase tracking-widest text-slate-400">IMG</span>
+                      </button>
+
+                      {!videoPreview && (
+                        <button
+                          type="button"
+                          onClick={() => videoInputRef.current?.click()}
+                          className="aspect-square rounded-md sm:rounded-lg border border-dashed border-gray-100 flex flex-col items-center justify-center text-blue-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-0.5"
+                        >
+                          <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="text-[6px] font-bold mt-0.5 uppercase tracking-widest text-blue-400">VID</span>
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -483,64 +541,20 @@ export function ProductsAdmin() {
                   multiple
                   className="hidden"
                 />
-              </div>
-
-              {/* Video Upload Support */}
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Video Manifest (Optional - MP4/WebM)</label>
-                  {videoPreview && (
-                    <button
-                      type="button"
-                      onClick={() => { setVideoFile(null); setVideoPreview(null); }}
-                      className="text-[10px] font-bold text-red-500 bg-red-50 px-3 py-1 rounded-full uppercase tracking-widest hover:bg-red-100 transition-colors"
-                    >
-                      Delete Video
-                    </button>
-                  )}
-                </div>
-                
-                <div className="w-full">
-                  {!videoPreview ? (
-                    <button
-                      type="button"
-                      onClick={() => videoInputRef.current?.click()}
-                      className="w-full h-12 sm:h-16 rounded-md sm:rounded-lg border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group"
-                    >
-                      <div className="p-1 sm:p-1.5 bg-gray-50 rounded sm:rounded-md group-hover:bg-blue-100 transition-colors">
-                        <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-                      </div>
-                      <span className="text-[6px] sm:text-[7px] font-bold mt-0.5 sm:mt-1 uppercase tracking-widest text-center text-slate-400">Init Video</span>
-                    </button>
-                  ) : (
-                    <div className="relative aspect-video w-full max-w-[200px] mx-auto rounded-md sm:rounded-lg overflow-hidden bg-black shadow-md border border-gray-100 group">
-                      <video 
-                        src={videoPreview} 
-                        className="w-full h-full object-contain" 
-                        controls 
-                        playsInline
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                        <button type="button" className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white">
-                          <Settings className="h-6 w-6 animate-spin-slow" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    ref={videoInputRef}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setVideoFile(file);
-                        setVideoPreview(URL.createObjectURL(file));
-                      }
-                    }}
-                    accept="video/*"
-                    className="hidden"
-                  />
-                </div>
+                <input
+                  type="file"
+                  ref={videoInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setVideoFile(file);
+                      setVideoPreview(URL.createObjectURL(file));
+                      if (productImages.length === 0) setIsVideoMain(true);
+                    }
+                  }}
+                  accept="video/*"
+                  className="hidden"
+                />
               </div>
 
               {/* Specifications */}

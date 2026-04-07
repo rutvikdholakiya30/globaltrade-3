@@ -16,6 +16,7 @@ export interface Product {
   description: string;
   main_image: string;
   video_url?: string;
+  is_video_main: boolean;
   status: boolean;
   created_at: string;
   category?: Category;

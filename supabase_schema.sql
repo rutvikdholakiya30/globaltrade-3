@@ -21,6 +21,7 @@ CREATE TABLE products (
   description TEXT,
   main_image TEXT,
   video_url TEXT,
+  is_video_main BOOLEAN DEFAULT false,
   status BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
