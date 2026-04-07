@@ -36,7 +36,7 @@ export function SettingsAdmin() {
     addresses: [''],
     phones: [''],
     emails: [''],
-    working_hours: ''
+    working_hours: ['']
   });
 
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,6 @@ export function SettingsAdmin() {
     try {
       const [smtpRes, contactRes] = await Promise.all([
         supabase.from('settings').select('*').eq('id', 'smtp_config').single(),
-        // Get contact data from 'pages' table to avoid 'column not found' errors
         supabase.from('pages').select('content').eq('slug', 'site-contact-settings').single()
       ]);
 
@@ -74,7 +73,7 @@ export function SettingsAdmin() {
             addresses: parsed.addresses || [''],
             phones: parsed.phones || [''],
             emails: parsed.emails || [''],
-            working_hours: parsed.working_hours || '',
+            working_hours: Array.isArray(parsed.working_hours) ? parsed.working_hours : [''],
           });
         } catch (e) {
           console.error('Failed to parse contact settings:', e);
@@ -108,12 +107,11 @@ export function SettingsAdmin() {
     setSaving(true);
     setMessage(null);
     try {
-      // Use 'pages' table to store the entire ContactInfo as a JSON string
       const { error } = await supabase.from('pages').upsert({
         title: 'Site Contact Settings',
         slug: 'site-contact-settings',
         content: JSON.stringify(contactInfo),
-        is_active: false, // Keep it internal only
+        is_active: false,
         updated_at: new Date().toISOString()
       }, { onConflict: 'slug' });
 
@@ -121,24 +119,23 @@ export function SettingsAdmin() {
       setMessage({ type: 'success', text: 'Contact Manifest synchronized!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      console.error('Save error:', err);
       setMessage({ type: 'error', text: err.message || 'Operation failed' });
     } finally {
       setSaving(false);
     }
   };
 
-  const updateList = (type: 'addresses' | 'phones' | 'emails', index: number, value: string) => {
+  const updateList = (type: keyof ContactInfo, index: number, value: string) => {
     const newList = [...contactInfo[type]];
     newList[index] = value;
     setContactInfo({ ...contactInfo, [type]: newList });
   };
 
-  const addToList = (type: 'addresses' | 'phones' | 'emails') => {
+  const addToList = (type: keyof ContactInfo) => {
     setContactInfo({ ...contactInfo, [type]: [...contactInfo[type], ''] });
   };
 
-  const removeFromList = (type: 'addresses' | 'phones' | 'emails', index: number) => {
+  const removeFromList = (type: keyof ContactInfo, index: number) => {
     const newList = contactInfo[type].filter((_, i) => i !== index);
     setContactInfo({ ...contactInfo, [type]: newList.length ? newList : [''] });
   };
@@ -161,7 +158,6 @@ export function SettingsAdmin() {
       </div>
 
       <div className="grid grid-cols-1 gap-12">
-        {/* Contact Manifest Section */}
         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl overflow-hidden">
           <div className="p-8 sm:p-12 border-b border-gray-50 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div className="flex items-center gap-6">
@@ -197,7 +193,7 @@ export function SettingsAdmin() {
                     <input
                       type="text"
                       value={addr}
-                      onChange={(e) => updateList('addresses', idx, e.target.value)}
+                      onChange={(e) => updateList('addresses', idx, e.target.value.toUpperCase())}
                       placeholder="ENTER ADDRESS (LINE 1, LINE 2, CITY, ZIP)..."
                       className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase transition-all"
                     />
@@ -225,7 +221,7 @@ export function SettingsAdmin() {
                         type="text"
                         value={phone}
                         onChange={(e) => updateList('phones', idx, e.target.value)}
-                        placeholder="+971 4 123 4567"
+                        placeholder="+91 12345 67890"
                         className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm transition-all"
                       />
                       <button onClick={() => removeFromList('phones', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
@@ -250,7 +246,7 @@ export function SettingsAdmin() {
                       <input
                         type="email"
                         value={email}
-                        onChange={(e) => updateList('emails', idx, e.target.value)}
+                        onChange={(e) => updateList('emails', idx, e.target.value.toLowerCase())}
                         placeholder="info@globaltrade.com"
                         className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm lowercase transition-all"
                       />
@@ -263,23 +259,35 @@ export function SettingsAdmin() {
               </div>
             </div>
 
-            {/* Working Hours */}
+            {/* Dynamic Working Hours */}
             <div className="space-y-6">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
-                <Clock className="h-4 w-4 text-emerald-600" /> Operational Windows / Hours
-              </label>
-              <textarea
-                rows={3}
-                value={contactInfo.working_hours}
-                onChange={(e) => setContactInfo({ ...contactInfo, working_hours: e.target.value })}
-                placeholder="E.G. MON - FRI: 9:00 AM - 6:00 PM (GMT)"
-                className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase transition-all resize-none"
-              />
+              <div className="flex justify-between items-center px-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3">
+                  <Clock className="h-4 w-4 text-emerald-600" /> Operational Windows / Hours
+                </label>
+                <button onClick={() => addToList('working_hours')} className="text-[10px] font-black text-emerald-600 uppercase hover:underline">+ Append Schedule</button>
+              </div>
+              <div className="space-y-4">
+                {contactInfo.working_hours.map((hour, idx) => (
+                  <div key={idx} className="flex gap-4 group">
+                    <input
+                      type="text"
+                      value={hour}
+                      onChange={(e) => updateList('working_hours', idx, e.target.value.toUpperCase())}
+                      placeholder="E.G. MON - FRI: 9:00 AM - 6:00 PM (GMT)"
+                      className="flex-grow px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase transition-all"
+                    />
+                    <button onClick={() => removeFromList('working_hours', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
+                      <Trash2 className="h-5 w-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Full Restored SMTP Section */}
+        {/* Existing SMTP Section */}
         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden opacity-90 hover:opacity-100 transition-opacity">
           <div className="p-8 sm:p-12 border-b border-gray-50 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div className="flex items-center gap-6">
@@ -301,7 +309,6 @@ export function SettingsAdmin() {
           </div>
 
           <div className="p-8 sm:p-12 space-y-12">
-            {/* Gateway Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
@@ -329,7 +336,6 @@ export function SettingsAdmin() {
               </div>
             </div>
 
-            {/* Authentication */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
@@ -357,7 +363,6 @@ export function SettingsAdmin() {
               </div>
             </div>
 
-            {/* Notification & Branding */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
@@ -392,7 +397,7 @@ export function SettingsAdmin() {
                   value={smtpSettings.reply_header}
                   onChange={(e) => setSmtpSettings({ ...smtpSettings, reply_header: e.target.value })}
                   className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
-                  placeholder="GlobalTrade Response Header"
+                  placeholder="Reply Header"
                 />
               </div>
             </div>
@@ -400,7 +405,6 @@ export function SettingsAdmin() {
         </div>
       </div>
 
-      {/* Persistence Message */}
       {message && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}

@@ -85,7 +85,7 @@ export interface ContactInfo {
   addresses: string[];
   phones: string[];
   emails: string[];
-  working_hours: string;
+  working_hours: string[];
 }
 
 export interface SiteSettings {

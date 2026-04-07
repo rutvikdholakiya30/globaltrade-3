@@ -6,7 +6,7 @@ const DEFAULT_CONTACT_INFO: ContactInfo = {
   addresses: ['123 Trade Center, Logistics Bay, Dubai, United Arab Emirates'],
   phones: ['+971 4 123 4567'],
   emails: ['contact@globaltrade.com'],
-  working_hours: 'Mon - Fri: 9:00 AM - 6:00 PM (GMT)'
+  working_hours: ['Mon - Fri: 9:00 AM - 6:00 PM (GMT)']
 };
 
 export function useCategories() {
@@ -176,8 +176,6 @@ export function useContactInfo() {
 
   useEffect(() => {
     async function fetchContactInfo() {
-      // Use 'pages' table with slug 'site-contact-settings' to store JSON data
-      // This avoids 'column not found' errors in the specialized 'settings' table
       const { data, error } = await supabase
         .from('pages')
         .select('content')
@@ -191,7 +189,9 @@ export function useContactInfo() {
             addresses: parsed.addresses || DEFAULT_CONTACT_INFO.addresses,
             phones: parsed.phones || DEFAULT_CONTACT_INFO.phones,
             emails: parsed.emails || DEFAULT_CONTACT_INFO.emails,
-            working_hours: parsed.working_hours || DEFAULT_CONTACT_INFO.working_hours,
+            working_hours: Array.isArray(parsed.working_hours) 
+              ? parsed.working_hours 
+              : DEFAULT_CONTACT_INFO.working_hours,
           });
         } catch (e) {
           console.error('Failed to parse contact settings:', e);
