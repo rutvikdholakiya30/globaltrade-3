@@ -186,8 +186,8 @@ export function Products() {
                           
                           {viewMode === 'list' && (
                             <p className="text-slate-500 text-sm leading-relaxed mb-6">
-                              {product.description?.split(' ').slice(0, 20).join(' ')}
-                              {product.description?.split(' ').length > 20 ? '...' : ''}
+                              {product.description?.split(' ').slice(0, 35).join(' ')}
+                              {product.description?.split(' ').length > 35 ? '...' : ''}
                             </p>
                           )}
                           
