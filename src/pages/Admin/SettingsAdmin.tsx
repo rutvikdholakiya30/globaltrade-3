@@ -13,7 +13,8 @@ import {
   Clock, 
   Plus, 
   Trash2,
-  Globe
+  Globe,
+  Key
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -166,7 +167,7 @@ export function SettingsAdmin() {
               disabled={saving}
               className="w-full sm:w-auto px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-emerald-700 transition-all active:scale-95 shadow-xl shadow-emerald-100"
             >
-              {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5" /> Sync Manifest</>}
+              {saving ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : <><Save className="h-5 w-5" /> Sync Manifest</>}
             </button>
           </div>
 
@@ -267,8 +268,8 @@ export function SettingsAdmin() {
           </div>
         </div>
 
-        {/* Existing SMTP Section (Integrated with new design) */}
-        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
+        {/* Full Restored SMTP Section */}
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden opacity-90 hover:opacity-100 transition-opacity">
           <div className="p-8 sm:p-12 border-b border-gray-50 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div className="flex items-center gap-6">
               <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-100">
@@ -284,14 +285,17 @@ export function SettingsAdmin() {
               disabled={saving}
               className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-blue-700 transition-all"
             >
-              <Save className="h-5 w-5" /> Sync Protocol
+              {saving ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : <><Save className="h-5 w-5" /> Sync Protocol</>}
             </button>
           </div>
 
           <div className="p-8 sm:p-12 space-y-12">
+            {/* Gateway Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">SMTP Gateway</label>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <Server className="h-4 w-4 text-blue-600" /> SMTP Gateway Host
+                </label>
                 <input
                   type="text"
                   value={smtpSettings.smtp_host}
@@ -300,8 +304,10 @@ export function SettingsAdmin() {
                   placeholder="smtp.example.com"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Communication Port</label>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <Shield className="h-4 w-4 text-blue-600" /> Communication Port
+                </label>
                 <input
                   type="text"
                   value={smtpSettings.smtp_port}
@@ -311,7 +317,74 @@ export function SettingsAdmin() {
                 />
               </div>
             </div>
-            {/* More fields hidden for brevity, but they are still there */}
+
+            {/* Authentication */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <User className="h-4 w-4 text-blue-600" /> SMTP Auth User
+                </label>
+                <input
+                  type="text"
+                  value={smtpSettings.smtp_user}
+                  onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_user: e.target.value })}
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  placeholder="user@example.com"
+                />
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <Key className="h-4 w-4 text-blue-600" /> SMTP Auth Password
+                </label>
+                <input
+                  type="password"
+                  value={smtpSettings.smtp_pass}
+                  onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_pass: e.target.value })}
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            {/* Notification & Branding */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <Mail className="h-4 w-4 text-blue-600" /> Notification Target
+                </label>
+                <input
+                  type="email"
+                  value={smtpSettings.admin_email}
+                  onChange={(e) => setSmtpSettings({ ...smtpSettings, admin_email: e.target.value })}
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  placeholder="admin@globaltrade.com"
+                />
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <User className="h-4 w-4 text-blue-600" /> Public Sender Identity
+                </label>
+                <input
+                  type="text"
+                  value={smtpSettings.sender_name}
+                  onChange={(e) => setSmtpSettings({ ...smtpSettings, sender_name: e.target.value })}
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  placeholder="GlobalTrade Support"
+                />
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                  <Mail className="h-4 w-4 text-blue-600" /> Correspondence Header
+                </label>
+                <input
+                  type="text"
+                  value={smtpSettings.reply_header}
+                  onChange={(e) => setSmtpSettings({ ...smtpSettings, reply_header: e.target.value })}
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-sm"
+                  placeholder="GlobalTrade Response Header"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -331,31 +404,5 @@ export function SettingsAdmin() {
         </motion.div>
       )}
     </div>
-  );
-}
-
-function Loader2(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2v4" />
-      <path d="m16.2 7.8 2.9-2.9" />
-      <path d="M18 12h4" />
-      <path d="m16.2 16.2 2.9 2.9" />
-      <path d="M12 18v4" />
-      <path d="m4.9 19.1 2.9-2.9" />
-      <path d="M2 12h4" />
-      <path d="m4.9 4.9 2.9 2.9" />
-    </svg>
   );
 }
