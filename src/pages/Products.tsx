@@ -128,7 +128,7 @@ export function Products() {
           {/* Product Grid */}
           <main className="lg:col-span-9">
             {loading ? (
-              <div className="grid grid-cols-2 gap-4 sm:gap-8">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="aspect-[4/3] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
                 ))}
@@ -136,7 +136,7 @@ export function Products() {
             ) : filteredProducts.length > 0 ? (
               <div className={cn(
                 "grid gap-4 sm:gap-8",
-                viewMode === 'grid' ? "grid-cols-2 lg:grid-cols-6" : "grid-cols-1"
+                viewMode === 'grid' ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
               )}>
                 <AnimatePresence mode="popLayout">
                   {filteredProducts.map((product) => (
