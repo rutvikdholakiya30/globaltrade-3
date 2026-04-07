@@ -163,12 +163,12 @@ export function Home() {
                     <h3 className="text-sm sm:text-xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-1 sm:mb-2">
                       {product.title}
                     </h3>
-                    <p className="hidden sm:block text-sm text-slate-500 line-clamp-2 mb-6">
-                      {product.description}
+                    <p className="hidden sm:block text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-1 sm:line-clamp-2 mb-6">
+                      {product.description || 'Professional grade industrial asset.'}
                     </p>
                     <div className="flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
-                      <div className="text-sm sm:text-xl font-extrabold text-slate-900">
-                        {formatPrice(product.price)}
+                      <div className="text-sm sm:text-lg font-extrabold text-slate-900">
+                        {product.price && product.price > 0 ? formatPrice(product.price) : 'Price for Inquiry'}
                       </div>
                       <div className="w-6 h-6 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-all">
                         <ArrowUpRight className="h-3 w-3 sm:h-5 sm:w-5" />

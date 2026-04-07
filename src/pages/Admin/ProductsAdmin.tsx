@@ -290,7 +290,7 @@ export function ProductsAdmin() {
                           </span>
                         </td>
                         <td className="px-6 sm:px-8 py-4 sm:py-6 font-display font-black text-slate-900 sm:text-xl whitespace-nowrap">
-                          {product.price ? formatPrice(product.price) : 'Inquiry'}
+                          {product.price && product.price > 0 ? formatPrice(product.price) : <span className="text-blue-600 italic text-[10px] sm:text-xs">Price for Inquiry</span>}
                         </td>
                         <td className="px-6 sm:px-8 py-4 sm:py-6">
                           <button

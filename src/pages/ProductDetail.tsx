@@ -183,7 +183,7 @@ export function ProductDetail() {
                   "font-extrabold text-slate-900",
                   product.price ? "text-3xl sm:text-4xl" : "text-xl sm:text-2xl italic text-blue-600 uppercase tracking-tighter"
                 )}>
-                  {product.price && product.price > 0 ? formatPrice(product.price) : 'Inquiry for Price'}
+                  {product.price && product.price > 0 ? formatPrice(product.price) : 'Price for Inquiry'}
                 </span>
                 <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Excl. VAT & Shipping</span>
               </div>
