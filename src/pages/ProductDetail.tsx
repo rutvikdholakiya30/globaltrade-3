@@ -204,39 +204,37 @@ export function ProductDetail() {
           </div>
         )}
 
-        {/* Technical Specifications - Table Format */}
+        {/* Technical Specifications - Responsive Card/Stack Format */}
         {product.specifications && product.specifications.length > 0 && (
           <div className="mt-24 sm:mt-32">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16 gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16 gap-6 px-4">
               <div className="max-w-2xl">
                 <span className="section-label">Engineering Manifest</span>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Technical Specifications</h2>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 flex items-center gap-4">
+                  <Settings className="h-8 w-8 text-brand-primary hidden sm:block" /> TECHNICAL SPECIFICATIONS
+                </h2>
               </div>
               <div className="px-4 py-2 sm:px-6 sm:py-3 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3">
                 <Info className="h-4 w-4 sm:h-5 sm:w-5 text-brand-primary" />
-                <span className="text-[8px] sm:text-[10px] font-extra-bold text-slate-500 uppercase tracking-widest">Verified Logistical Parameters</span>
+                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified Data Sheet</span>
               </div>
             </div>
             
-            <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[300px]">
-                  <thead className="bg-slate-50/50 border-b border-slate-100">
-                    <tr>
-                      <th className="px-6 sm:px-12 py-4 sm:py-8 text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Parameter Identity</th>
-                      <th className="px-6 sm:px-12 py-4 sm:py-8 text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Specification Value</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50 px-6 sm:px-12">
-                    {product.specifications.map((spec) => (
-                      <tr key={spec.id} className="group hover:bg-blue-50/30 transition-all duration-300">
-                        <td className="px-6 sm:px-12 py-6 sm:py-10 text-[9px] sm:text-[10px] font-black text-brand-primary uppercase tracking-widest leading-none border-r border-slate-50/50">{spec.spec_key}</td>
-                        <td className="px-6 sm:px-12 py-6 sm:py-10 text-lg sm:text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{spec.spec_value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden divide-y divide-slate-50">
+              {product.specifications.map((spec) => (
+                <div key={spec.id} className="group transition-all duration-300">
+                  {/* Label Bar */}
+                  <div className="bg-slate-50/50 px-8 sm:px-12 py-3 sm:py-4 border-b border-slate-50">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{spec.spec_key}</span>
+                  </div>
+                  {/* Value Content */}
+                  <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors">
+                    <span className="text-xl sm:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
+                      {spec.spec_value}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -266,3 +264,6 @@ export function ProductDetail() {
     </div>
   );
 }
+
+// Ensure lucide-react Settings is imported
+import { Settings } from 'lucide-react';
