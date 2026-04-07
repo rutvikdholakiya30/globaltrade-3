@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Star, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 import { useTestimonials, useProducts } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
@@ -22,6 +22,7 @@ export function Testimonials() {
   const { products } = useProducts();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<TestimonialForm>({
     resolver: zodResolver(testimonialSchema),
@@ -33,8 +34,6 @@ export function Testimonials() {
   const onSubmit = async (data: TestimonialForm) => {
     setSubmitting(true);
     try {
-      // Fix: If product_id is an empty string (General Feedback), set it to null
-      // This prevents UUID validation errors in the Supabase database
       const insertData = {
         ...data,
         product_id: data.product_id === "" ? null : data.product_id
@@ -44,11 +43,9 @@ export function Testimonials() {
       if (!error) {
         setSubmitted(true);
         reset();
-      } else {
-        console.error('Supabase Error:', error.message);
       }
     } catch (err) {
-      console.error('Submission Catch:', err);
+      console.error(err);
     } finally {
       setSubmitting(false);
     }
@@ -86,10 +83,15 @@ export function Testimonials() {
                 {testimonials.map((t) => (
                   <motion.div
                     key={t.id}
+                    layout
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="bg-white p-4 sm:p-10 md:p-12 rounded-2xl sm:rounded-[40px] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 space-y-4 sm:space-y-8 relative group overflow-hidden"
+                    onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
+                    className={cn(
+                      "bg-white p-4 sm:p-10 md:p-12 rounded-2xl sm:rounded-[40px] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 space-y-4 sm:space-y-8 relative group overflow-hidden cursor-pointer",
+                      expandedId === t.id && "shadow-2xl shadow-brand-primary/5 border-brand-primary/20"
+                    )}
                   >
                     <div className="absolute top-4 right-4 sm:top-10 sm:right-10 opacity-5 group-hover:opacity-10 transition-opacity">
                       <MessageSquare className="h-10 w-10 sm:h-20 sm:w-20" />
@@ -106,7 +108,10 @@ export function Testimonials() {
                       </span>
                     </div>
 
-                    <p className="text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 line-clamp-4 sm:line-clamp-none">
+                    <p className={cn(
+                      "text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 transition-all duration-500",
+                      expandedId === t.id ? "" : "line-clamp-4 sm:line-clamp-none"
+                    )}>
                       "{t.message}"
                     </p>
 
@@ -124,6 +129,13 @@ export function Testimonials() {
                         )}
                       </div>
                     </div>
+                    
+                    {/* Indicator for extra content on mobile */}
+                    {!expandedId && (
+                      <div className="sm:hidden absolute bottom-4 right-4 text-[8px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
+                        Tap for full review <ArrowUpRight className="h-2 w-2" />
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>
