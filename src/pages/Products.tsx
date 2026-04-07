@@ -161,14 +161,14 @@ export function Products() {
                           viewMode === 'grid' ? "aspect-[16/10] mb-3 sm:mb-6" : "w-1/3 h-full mr-8"
                         )}>
                           <img
-                            src={product.main_image}
+                            src={product.main_image || '/placeholder-image.jpg'}
                             alt={product.title}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                             referrerPolicy="no-referrer"
                           />
                           <div className="absolute top-2 left-2 sm:top-4 sm:left-4">
                             <div className="bg-white/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-bold text-slate-500 shadow-sm border border-white/20 uppercase tracking-wider">
-                              {product.category?.name}
+                              {product.category?.name || 'General Product'}
                             </div>
                           </div>
                         </div>
@@ -193,14 +193,19 @@ export function Products() {
                             "text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-6",
                             viewMode === 'grid' ? "hidden sm:block" : ""
                           )}>
-                            {product.description}
+                            {product.description || 'Professional grade industrial asset for international procurement.'}
                           </p>
                           
                           {/* Bottom Row - Price and Arrow Button */}
                           <div className="mt-auto flex justify-between items-center pt-4 sm:pt-6 border-t border-slate-50">
                             <div className="flex flex-col">
                               <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 sm:mb-1">Unit Price</span>
-                              <span className="text-sm sm:text-2xl font-extrabold text-slate-900">{formatPrice(product.price)}</span>
+                              <span className={cn(
+                                "text-sm font-extrabold text-slate-900",
+                                product.price ? "sm:text-2xl" : "sm:text-lg italic text-blue-600 uppercase tracking-tight"
+                              )}>
+                                {product.price && product.price > 0 ? formatPrice(product.price) : 'Inquiry for Price'}
+                              </span>
                             </div>
                             
                             <div className="flex w-10 h-10 rounded-xl bg-slate-50 items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-all shadow-sm">

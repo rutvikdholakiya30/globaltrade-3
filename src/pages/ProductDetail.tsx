@@ -49,11 +49,11 @@ export function ProductDetail() {
     );
   }
 
-  const currentImage = activeImage || product.main_image;
+  const currentImage = activeImage || product.main_image || '/placeholder-image.jpg';
   const allImages = [product.main_image, ...(product.images?.map(img => img.image_url) || [])].filter(Boolean);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen text-black">
       {/* Breadcrumbs */}
       <div className="bg-slate-50 pt-32 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +99,7 @@ export function ProductDetail() {
 
               <div className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8">
                 <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold text-slate-500 shadow-sm border border-white/20 uppercase tracking-widest">
-                  IMAGE {allImages.indexOf(currentImage) + 1} / {allImages.length}
+                  IMAGE {allImages.length > 0 ? allImages.indexOf(activeImage || product.main_image || '') + 1 : 0} / {allImages.length}
                 </div>
               </div>
             </div>
@@ -125,7 +125,7 @@ export function ProductDetail() {
             <div className="mb-8 sm:mb-10">
               <div className="flex items-center gap-3 mb-4 sm:mb-6">
                 <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-brand-primary/10 text-brand-primary text-[9px] sm:text-[10px] font-bold rounded-full uppercase tracking-widest">
-                  {product.category?.name}
+                  {product.category?.name || 'General Inventory'}
                 </span>
                 <div className="flex items-center gap-2 px-3 py-1 sm:px-3 sm:py-1.5 rounded-full bg-emerald-50 text-emerald-600">
                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
@@ -137,13 +137,18 @@ export function ProductDetail() {
                 {product.title}
               </h1>
               
-              <div className="flex items-baseline gap-3 sm:gap-4 mb-8 sm:mb-10">
-                <span className="text-3xl sm:text-4xl font-extrabold text-slate-900">{formatPrice(product.price)}</span>
+              <div className="flex flex-col gap-1 sm:gap-2 mb-8 sm:mb-10">
+                <span className={cn(
+                  "font-extrabold text-slate-900",
+                  product.price ? "text-3xl sm:text-4xl" : "text-xl sm:text-2xl italic text-blue-600 uppercase tracking-tighter"
+                )}>
+                  {product.price && product.price > 0 ? formatPrice(product.price) : 'Inquiry for Price'}
+                </span>
                 <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Excl. VAT & Shipping</span>
               </div>
               
               <p className="text-slate-500 text-base sm:text-lg leading-relaxed mb-10 sm:mb-12">
-                {product.description}
+                {product.description || 'GlobalTrade Connect provides verified industrial assets. This product is currently available for international procurement with certified logistics support.'}
               </p>
             </div>
 

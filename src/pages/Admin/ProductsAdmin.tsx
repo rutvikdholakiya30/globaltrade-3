@@ -101,10 +101,6 @@ export function ProductsAdmin() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (productImages.length === 0) {
-      alert('Please add at least one image.');
-      return;
-    }
     setUploading(true);
     const formData = new FormData(e.currentTarget);
 
@@ -118,20 +114,25 @@ export function ProductsAdmin() {
       });
 
       const processedImages = await Promise.all(uploadPromises);
-      const mainImage = processedImages.find(img => img.isMain) || processedImages[0];
+      const mainImage = processedImages.find(img => img.isMain) || (processedImages.length > 0 ? processedImages[0] : null);
       const galleryImages = processedImages.filter(img => !img.isMain);
 
       // Filter empty specs
       const cleanSpecs = specifications.filter(s => s.spec_key?.trim() && s.spec_value?.trim());
 
+      const priceVal = formData.get('price') as string;
+      const parsedPrice = priceVal ? parseFloat(priceVal) : null;
+
+      const title = (formData.get('title') as string) || `Untitled Product ${Date.now()}`;
+
       const productData = {
-        title: formData.get('title') as string,
-        price: parseFloat(formData.get('price') as string),
-        category_id: formData.get('category_id') as string,
-        description: formData.get('description') as string,
-        main_image: mainImage.url,
+        title: title,
+        price: parsedPrice, // Can be null now
+        category_id: (formData.get('category_id') as string) || null,
+        description: (formData.get('description') as string) || '',
+        main_image: mainImage?.url || null,
         status: formData.get('status') === 'true',
-        slug: slugify(formData.get('title') as string),
+        slug: slugify(title),
       };
 
       let productId = editingProduct?.id;
@@ -269,10 +270,12 @@ export function ProductsAdmin() {
                         </td>
                         <td className="px-6 sm:px-8 py-4 sm:py-6">
                           <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-50 text-blue-600 text-[9px] sm:text-[10px] font-bold rounded-full uppercase tracking-widest whitespace-nowrap">
-                            {product.category?.name}
+                            {product.category?.name || 'N/A'}
                           </span>
                         </td>
-                        <td className="px-6 sm:px-8 py-4 sm:py-6 font-display font-black text-slate-900 sm:text-xl whitespace-nowrap">{formatPrice(product.price)}</td>
+                        <td className="px-6 sm:px-8 py-4 sm:py-6 font-display font-black text-slate-900 sm:text-xl whitespace-nowrap">
+                          {product.price ? formatPrice(product.price) : 'Inquiry'}
+                        </td>
                         <td className="px-6 sm:px-8 py-4 sm:py-6">
                           <button
                             onClick={() => handleToggleStatus(product)}
@@ -294,7 +297,7 @@ export function ProductsAdmin() {
                                   { url: product.main_image, isMain: true },
                                   ...(product.images?.map(img => ({ id: img.id, url: img.image_url, isMain: false })) || [])
                                 ];
-                                setProductImages(images);
+                                setProductImages(images.filter(img => img.url));
                                 setIsFormOpen(true);
                               }}
                               className="p-2.5 sm:p-3 bg-white text-gray-400 shadow-sm border border-gray-100 hover:text-blue-600 hover:border-blue-100 rounded-xl transition-all hover:scale-110"
@@ -349,7 +352,7 @@ export function ProductsAdmin() {
             <form onSubmit={handleSubmit} className="p-6 sm:p-12 space-y-8 sm:space-y-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Asset Identity / Title</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Asset Identity / Title (Required for Manifest)</label>
                   <input
                     name="title"
                     required
@@ -359,29 +362,27 @@ export function ProductsAdmin() {
                   />
                 </div>
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Market Valuation (USD)</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Market Valuation (Optional - Blank for Inquiry)</label>
                   <input
                     name="price"
                     type="number"
                     step="0.01"
-                    required
                     defaultValue={editingProduct?.price}
                     className="w-full px-5 py-3.5 sm:px-6 sm:py-4 bg-gray-50 border border-gray-100 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-black text-base sm:text-lg transition-all"
-                    placeholder="0.00"
+                    placeholder="E.G. 1250.00"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
                 <div className="space-y-3 sm:space-y-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Asset Sector / Category</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Asset Sector / Category (Optional)</label>
                   <select
                     name="category_id"
-                    required
                     defaultValue={editingProduct?.category_id}
                     className="w-full px-5 py-3.5 sm:px-6 sm:py-4 bg-gray-50 border border-gray-100 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase appearance-none cursor-pointer transition-all"
                   >
-                    <option value="">SELECT SECTOR</option>
+                    <option value="">N/A (SELECT SECTOR)</option>
                     {categories.map(c => (
                       <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
@@ -403,7 +404,7 @@ export function ProductsAdmin() {
               {/* Visual Assets */}
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Visual Manifest (Gallery)</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Visual Manifest (Optional)</label>
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{productImages.length}/9 ASSETS</span>
                 </div>
                 
@@ -469,11 +470,11 @@ export function ProductsAdmin() {
                 />
               </div>
 
-              {/* Enhanced Specifications (Includes Multi-line support) */}
+              {/* Specifications */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <Settings className="h-5 w-5 text-blue-600 shrink-0" />
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] text-slate-500">Technical Specifications & Performance Data</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] text-slate-500">Technical Data Sheet (Optional)</label>
                 </div>
                 <div className="space-y-6">
                   {specifications.map((spec, index) => (
@@ -483,17 +484,17 @@ export function ProductsAdmin() {
                         <input
                           value={spec.spec_key}
                           onChange={(e) => updateSpec(index, 'spec_key', e.target.value)}
-                          placeholder="E.G. FEATURES / SIZE / MATERIAL"
+                          placeholder="E.G. MATERIAL / SIZE"
                           className="w-full px-5 py-3 sm:px-6 sm:py-4 bg-white border border-gray-100 rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
                         />
                       </div>
                       <div className="lg:col-span-7 space-y-2">
-                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Content / Values (One point per line for bullets)</label>
+                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Specification Content</label>
                         <textarea
                           rows={4}
                           value={spec.spec_value}
                           onChange={(e) => updateSpec(index, 'spec_value', e.target.value)}
-                          placeholder="ENTER VALUES... &#10;FOR BULLETS, START EACH POINT ON A NEW LINE."
+                          placeholder="ENTER VALUES... START NEW LINE FOR BULLETS."
                           className="w-full px-5 py-3 sm:px-6 sm:py-4 bg-white border border-gray-100 rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all resize-none"
                         />
                       </div>
@@ -519,13 +520,13 @@ export function ProductsAdmin() {
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Public Manifest Description</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1 text-slate-500">Public Brief / Overview (Optional)</label>
                 <textarea
                   name="description"
                   rows={6}
                   defaultValue={editingProduct?.description}
                   className="w-full px-6 py-5 sm:px-8 sm:py-6 bg-gray-50 border border-gray-100 rounded-2xl sm:rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-blue-500/10 resize-none text-slate-900 font-medium text-base sm:text-lg transition-all"
-                  placeholder="PROVIDE IN-DEPTH TECHNICAL PARAMETERS AND ASSET OVERVIEW..."
+                  placeholder="PROVIDE IN-DEPTH OVERVIEW..."
                 />
               </div>
 
