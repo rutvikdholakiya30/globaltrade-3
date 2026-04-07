@@ -304,11 +304,14 @@ export function Home() {
                   expandedId === t.id && "shadow-xl border-brand-primary/20"
                 )}
               >
-                <div className="flex gap-0.5 sm:gap-1 mb-2 sm:mb-6">
+                <div className="flex gap-0.5 sm:gap-1 mb-1 sm:mb-2">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className={cn("h-3 w-3 sm:h-4 sm:w-4", i < (t.rating || 5) ? "text-brand-primary fill-brand-primary" : "text-slate-200")} />
                   ))}
                 </div>
+                <p className="text-[7px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 sm:mb-6">
+                  {new Date(t.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </p>
                 <p className={cn(
                   "text-slate-600 text-xs sm:text-base leading-relaxed mb-4 sm:mb-8 italic transition-all duration-500",
                   expandedId === t.id ? "" : "line-clamp-4"

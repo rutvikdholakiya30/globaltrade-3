@@ -97,11 +97,14 @@ export function Testimonials() {
                     )}
                   >
                     {/* Stars */}
-                    <div className="flex gap-0.5 sm:gap-1 mb-2 sm:mb-4">
+                    <div className="flex gap-0.5 sm:gap-1 mb-1 sm:mb-2">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className={cn("h-2.5 w-2.5 sm:h-4 sm:w-4", i < (t.rating || 5) ? "text-brand-primary fill-brand-primary" : "text-slate-200")} />
                       ))}
                     </div>
+                    <p className="text-[6px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 sm:mb-4">
+                      {new Date(t.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
 
                     {/* Message */}
                     <p className={cn(
