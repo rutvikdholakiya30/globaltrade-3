@@ -88,7 +88,8 @@ export function GalleryAdmin() {
         fetchGallery();
         resetForm();
       } else {
-        alert('Failed to save to gallery database.');
+        console.error('Database Sync Error:', error);
+        alert(`Failed to save to gallery database: ${error.message}`);
       }
     }
 
@@ -285,7 +286,7 @@ export function GalleryAdmin() {
                       </label>
                       <input
                         name="category"
-                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs uppercase transition-all"
+                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base uppercase transition-all"
                         placeholder="E.G., TEXTILE IMAGES..."
                         disabled={uploading}
                       />
@@ -297,7 +298,7 @@ export function GalleryAdmin() {
                       </label>
                       <input
                         name="caption"
-                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs uppercase transition-all"
+                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-base uppercase transition-all"
                         placeholder="ENTER BATCH CAPTION..."
                         disabled={uploading}
                       />

@@ -99,7 +99,7 @@ export function AdminLogin() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all placeholder:text-slate-300"
+                    className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 text-base font-medium focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all placeholder:text-slate-300"
                     placeholder="admin@globaltrade.net"
                   />
                 </div>
@@ -116,7 +116,7 @@ export function AdminLogin() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all placeholder:text-slate-300 pr-12"
+                    className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 text-base font-medium focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all placeholder:text-slate-300 pr-12"
                     placeholder="••••••••••••"
                   />
                   <button
