@@ -14,7 +14,8 @@ import {
   Plus, 
   Trash2,
   Globe,
-  Key
+  Key,
+  Loader2
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -50,7 +51,8 @@ export function SettingsAdmin() {
     try {
       const [smtpRes, contactRes] = await Promise.all([
         supabase.from('settings').select('*').eq('id', 'smtp_config').single(),
-        supabase.from('settings').select('*').eq('id', 'contact_info').single()
+        // Get contact data from 'pages' table to avoid 'column not found' errors
+        supabase.from('pages').select('content').eq('slug', 'site-contact-settings').single()
       ]);
 
       if (smtpRes.data) {
@@ -65,13 +67,18 @@ export function SettingsAdmin() {
         });
       }
 
-      if (contactRes.data) {
-        setContactInfo({
-          addresses: contactRes.data.addresses || [''],
-          phones: contactRes.data.phones || [''],
-          emails: contactRes.data.emails || [''],
-          working_hours: contactRes.data.working_hours || '',
-        });
+      if (contactRes.data && contactRes.data.content) {
+        try {
+          const parsed = JSON.parse(contactRes.data.content);
+          setContactInfo({
+            addresses: parsed.addresses || [''],
+            phones: parsed.phones || [''],
+            emails: parsed.emails || [''],
+            working_hours: parsed.working_hours || '',
+          });
+        } catch (e) {
+          console.error('Failed to parse contact settings:', e);
+        }
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -88,6 +95,7 @@ export function SettingsAdmin() {
       const { error } = await supabase.from('settings').upsert({ id: 'smtp_config', ...smtpSettings, updated_at: new Date().toISOString() });
       if (error) throw error;
       setMessage({ type: 'success', text: 'SMTP Settings updated!' });
+      setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
     } finally {
@@ -100,15 +108,21 @@ export function SettingsAdmin() {
     setSaving(true);
     setMessage(null);
     try {
-      const { error } = await supabase.from('settings').upsert({
-        id: 'contact_info',
-        ...contactInfo,
+      // Use 'pages' table to store the entire ContactInfo as a JSON string
+      const { error } = await supabase.from('pages').upsert({
+        title: 'Site Contact Settings',
+        slug: 'site-contact-settings',
+        content: JSON.stringify(contactInfo),
+        is_active: false, // Keep it internal only
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'slug' });
+
       if (error) throw error;
-      setMessage({ type: 'success', text: 'Contact Information updated!' });
+      setMessage({ type: 'success', text: 'Contact Manifest synchronized!' });
+      setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message });
+      console.error('Save error:', err);
+      setMessage({ type: 'error', text: err.message || 'Operation failed' });
     } finally {
       setSaving(false);
     }
@@ -131,11 +145,8 @@ export function SettingsAdmin() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Hydrating System...</span>
-        </div>
+      <div className="flex items-center justify-center min-h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }

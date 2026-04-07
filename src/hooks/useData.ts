@@ -176,22 +176,26 @@ export function useContactInfo() {
 
   useEffect(() => {
     async function fetchContactInfo() {
+      // Use 'pages' table with slug 'site-contact-settings' to store JSON data
+      // This avoids 'column not found' errors in the specialized 'settings' table
       const { data, error } = await supabase
-        .from('settings')
-        .select('*')
-        .eq('id', 'contact_info')
+        .from('pages')
+        .select('content')
+        .eq('slug', 'site-contact-settings')
         .single();
       
-      if (!error && data) {
-        // If data.value exists and is a valid JSON object, use it
-        // Depending on schema, it might be separate columns or a JSONB column
-        // Here we assume separate columns based on SettingsAdmin's current logic
-        setContactInfo({
-          addresses: data.addresses || DEFAULT_CONTACT_INFO.addresses,
-          phones: data.phones || DEFAULT_CONTACT_INFO.phones,
-          emails: data.emails || DEFAULT_CONTACT_INFO.emails,
-          working_hours: data.working_hours || DEFAULT_CONTACT_INFO.working_hours,
-        });
+      if (!error && data && data.content) {
+        try {
+          const parsed = JSON.parse(data.content);
+          setContactInfo({
+            addresses: parsed.addresses || DEFAULT_CONTACT_INFO.addresses,
+            phones: parsed.phones || DEFAULT_CONTACT_INFO.phones,
+            emails: parsed.emails || DEFAULT_CONTACT_INFO.emails,
+            working_hours: parsed.working_hours || DEFAULT_CONTACT_INFO.working_hours,
+          });
+        } catch (e) {
+          console.error('Failed to parse contact settings:', e);
+        }
       }
       setLoading(false);
     }
