@@ -106,7 +106,7 @@ export function Home() {
               <Link
                 key={category.id}
                 to={`/products?category=${category.slug}`}
-                className="group relative h-64 sm:h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
+                className="group relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
               >
                 <img
                   src={category.image_url || `https://picsum.photos/seed/${category.slug}/800/1000`}
