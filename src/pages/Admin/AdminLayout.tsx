@@ -32,7 +32,7 @@ const menuItems = [
 ];
 
 export function AdminLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [user, setUser] = useState<any>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
@@ -59,6 +59,13 @@ export function AdminLayout() {
       supabase.removeChannel(channel);
     };
   }, [navigate]);
+
+  // Close sidebar on navigation for mobile
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname]);
 
   async function fetchUnreadCount() {
     const { count } = await supabase
