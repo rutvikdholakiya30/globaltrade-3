@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, Globe, ShieldCheck, Truck, BarChart3, Package, Star, ArrowUpRight, ChevronRight, User, Box, Zap, Anchor, Activity } from 'lucide-react';
@@ -9,6 +10,7 @@ export function Home() {
   const { products, loading: productsLoading } = useProducts(undefined, 6);
   const { testimonials } = useTestimonials(3);
   const { partners } = usePartners();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
     <div className="bg-white min-h-screen">
@@ -290,13 +292,24 @@ export function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((t) => (
-              <div key={t.id} className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500">
+              <motion.div
+                key={t.id}
+                layout
+                onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
+                className={cn(
+                  "bg-white p-6 sm:p-10 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden",
+                  expandedId === t.id && "shadow-xl border-brand-primary/20"
+                )}
+              >
                 <div className="flex gap-1 mb-6">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className={cn("h-4 w-4", i < (t.rating || 5) ? "text-brand-primary fill-brand-primary" : "text-slate-200")} />
                   ))}
                 </div>
-                <p className="text-slate-600 text-lg leading-relaxed mb-8 italic">
+                <p className={cn(
+                  "text-slate-600 text-base sm:text-lg leading-relaxed mb-8 italic transition-all duration-500",
+                  expandedId === t.id ? "" : "line-clamp-4 sm:line-clamp-none"
+                )}>
                   "{t.message}"
                 </p>
                 <div className="flex items-center gap-4">
@@ -305,10 +318,17 @@ export function Home() {
                   </div>
                   <div>
                     <div className="font-bold text-slate-900">{t.name}</div>
-                    <div className="text-xs text-slate-400 font-bold uppercase tracking-widest">{t.company}</div>
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Verified Partner</div>
                   </div>
                 </div>
-              </div>
+                
+                {/* Mobile Indicator */}
+                {!expandedId && (
+                  <div className="sm:hidden absolute bottom-4 right-6 text-[8px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
+                    Read more <ArrowUpRight className="h-2 w-2" />
+                  </div>
+                )}
+              </motion.div>
             ))}
           </div>
         </div>
