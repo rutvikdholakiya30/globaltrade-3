@@ -184,12 +184,7 @@ export function Products() {
                             </div>
                           </div>
                           
-                          <p className={cn(
-                            "text-slate-500 text-[10px] sm:text-xs leading-relaxed line-clamp-2 mb-4",
-                            viewMode === 'grid' ? "hidden sm:block" : ""
-                          )}>
-                            {product.description || 'Professional grade industrial asset for international procurement.'}
-                          </p>
+
                           
                           {/* Bottom Row - Price and Arrow Button */}
                           <div className="mt-auto flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
