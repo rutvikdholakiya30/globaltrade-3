@@ -48,7 +48,7 @@ export function Products() {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-white border border-slate-200 px-12 py-3.5 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary w-full md:w-80 transition-all text-slate-900 shadow-sm"
+                  className="bg-white border border-slate-200 px-12 py-3.5 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary w-full md:w-80 transition-all text-slate-900 shadow-sm"
                 />
               </div>
               <div className="hidden md:flex bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">

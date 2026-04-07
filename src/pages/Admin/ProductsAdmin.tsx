@@ -247,7 +247,7 @@ export function ProductsAdmin() {
                   placeholder="SEARCH MANIFEST / ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-6 py-3.5 sm:py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold placeholder:text-gray-300 uppercase text-[10px] sm:text-xs tracking-widest"
+                  className="w-full pl-12 pr-6 py-3.5 sm:py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold placeholder:text-gray-300 uppercase text-base tracking-widest"
                 />
               </div>
             </div>
