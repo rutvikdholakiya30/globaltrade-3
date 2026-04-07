@@ -138,18 +138,18 @@ export function Home() {
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Premium Shipments</h2>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
             {productsLoading ? (
               [...Array(4)].map((_, i) => (
                 <div key={i} className="h-64 sm:h-[450px] bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
               ))
             ) : (
               products.map((product) => (
-                <Link
-                  key={product.id}
-                  to={`/product/${product.slug}`}
-                  className="group bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-2 sm:p-4 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500"
-                >
+                  <Link
+                    key={product.id}
+                    to={`/product/${product.slug}`}
+                    className="group bg-white rounded-lg sm:rounded-2xl border border-slate-100 p-1.5 sm:p-2 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500"
+                  >
                   <div className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-6 bg-slate-50">
                     <img
                       src={product.main_image}
@@ -160,15 +160,15 @@ export function Home() {
                   </div>
                   
                   <div className="px-1 sm:px-4 pb-2 sm:pb-4">
-                    <h3 className="text-sm sm:text-xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-1 sm:mb-2">
+                    <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-0.5 sm:mb-1 leading-tight">
                       {product.title}
                     </h3>
                     <p className="hidden sm:block text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-2 mb-6">
                       {product.description || 'Professional grade industrial asset.'}
                     </p>
                     <div className="flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
-                      <div className="text-sm sm:text-lg font-extrabold text-slate-900">
-                        {product.price && product.price > 0 ? formatPrice(product.price) : 'Price for Inquiry'}
+                      <div className="text-[10px] sm:text-[13px] font-extrabold text-slate-900">
+                        {product.price && product.price > 0 ? formatPrice(product.price) : <span className="text-[8px] sm:text-[9px] text-blue-600 uppercase italic">Price for Inquiry</span>}
                       </div>
                       <div className="w-6 h-6 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-all">
                         <ArrowUpRight className="h-3 w-3 sm:h-5 sm:w-5" />

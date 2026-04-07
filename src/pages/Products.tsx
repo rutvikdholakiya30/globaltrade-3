@@ -135,8 +135,8 @@ export function Products() {
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className={cn(
-                "grid gap-4 sm:gap-6",
-                viewMode === 'grid' ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-1"
+                "grid gap-3 sm:gap-4",
+                viewMode === 'grid' ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6" : "grid-cols-1"
               )}>
                 <AnimatePresence mode="popLayout">
                   {filteredProducts.map((product) => (
@@ -151,8 +151,8 @@ export function Products() {
                       <Link
                         to={`/product/${product.slug}`}
                         className={cn(
-                          "group bg-white rounded-xl sm:rounded-[28px] border border-slate-100 p-2 sm:p-3 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex h-full",
-                          viewMode === 'grid' ? "flex-col" : "flex-row h-72"
+                          "group bg-white rounded-lg sm:rounded-2xl border border-slate-100 p-1.5 sm:p-2 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex h-full",
+                          viewMode === 'grid' ? "flex-col" : "flex-row h-64"
                         )}
                       >
                         {/* Image Container */}
@@ -174,8 +174,8 @@ export function Products() {
                           viewMode === 'grid' ? "px-1 sm:px-2" : "w-2/3 py-4"
                         )}>
                           {/* Title and In-Stock Row */}
-                          <div className="mb-2 sm:mb-4">
-                            <h3 className="text-xs sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-1">
+                          <div className="mb-2 sm:mb-2.5">
+                            <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-0.5 sm:mb-1 leading-tight">
                               {product.title}
                             </h3>
                             <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 w-fit">
@@ -194,10 +194,10 @@ export function Products() {
                           {/* Bottom Row - Price and Arrow Button */}
                           <div className="mt-auto flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
                             <div className="flex flex-col">
-                              <span className="text-[7px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest">Price</span>
+                              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase tracking-widest">UNIT VALUE</span>
                               <span className={cn(
-                                "text-[10px] font-extrabold text-slate-900",
-                                product.price ? "sm:text-lg" : "sm:text-[10px] italic text-blue-600 uppercase tracking-tight"
+                                "font-extrabold text-slate-900",
+                                product.price && product.price > 0 ? "text-[10px] sm:text-[13px]" : "text-[8px] sm:text-[9px] italic text-blue-600 uppercase tracking-tight"
                               )}>
                                 {product.price && product.price > 0 ? formatPrice(product.price) : 'Price for Inquiry'}
                               </span>
