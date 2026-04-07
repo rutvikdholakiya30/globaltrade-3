@@ -79,7 +79,7 @@ export function Testimonials() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-12">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-12">
                 {testimonials.map((t) => (
                   <motion.div
                     key={t.id}
@@ -89,42 +89,42 @@ export function Testimonials() {
                     viewport={{ once: true }}
                     onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
                     className={cn(
-                      "bg-white p-4 sm:p-10 md:p-12 rounded-2xl sm:rounded-[40px] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 space-y-4 sm:space-y-8 relative group overflow-hidden cursor-pointer",
+                      "bg-white p-4 sm:p-10 md:p-12 rounded-2xl sm:rounded-[40px] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 space-y-2 sm:space-y-8 relative group overflow-hidden cursor-pointer",
                       expandedId === t.id && "shadow-2xl shadow-brand-primary/5 border-brand-primary/20"
                     )}
                   >
                     <div className="absolute top-4 right-4 sm:top-10 sm:right-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                      <MessageSquare className="h-10 w-10 sm:h-20 sm:w-20" />
+                      <MessageSquare className="h-6 w-6 sm:h-20 sm:w-20" />
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2 relative z-10">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-1 relative z-10">
                       <div className="flex gap-0.5 sm:gap-1.5 text-brand-accent">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={cn("h-3 w-3 sm:h-5 sm:w-5", i < t.rating ? "fill-current" : "text-slate-100")} />
+                          <Star key={i} className={cn("h-2.5 w-2.5 sm:h-5 sm:w-5", i < t.rating ? "fill-current" : "text-slate-100")} />
                         ))}
                       </div>
-                      <span className="text-[8px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">
+                      <span className="text-[6px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">
                         {new Date(t.created_at).toLocaleDateString()}
                       </span>
                     </div>
 
                     <p className={cn(
-                      "text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 transition-all duration-500",
+                      "text-slate-900 text-[10px] sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 transition-all duration-500",
                       expandedId === t.id ? "" : "line-clamp-4 sm:line-clamp-none"
                     )}>
                       "{t.message}"
                     </p>
 
-                    <div className="flex items-center gap-3 sm:gap-6 pt-4 sm:pt-10 border-t border-slate-50 relative z-10">
-                      <div className="w-8 h-8 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-sm sm:text-2xl">
+                    <div className="flex items-center gap-2 sm:gap-6 pt-3 sm:pt-10 border-t border-slate-50 relative z-10">
+                      <div className="w-6 h-6 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-[8px] sm:text-2xl">
                         {t.name[0]}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] sm:text-lg font-extrabold text-slate-900 truncate">{t.name}</p>
+                        <p className="text-[8px] sm:text-lg font-extrabold text-slate-900 truncate">{t.name}</p>
                         {t.product && (
-                          <div className="flex items-center gap-1 mt-0.5 sm:mt-1">
+                          <div className="flex items-center gap-0.5 mt-0.5 sm:mt-1">
                             <CheckCircle2 className="h-2 w-2 sm:h-3.5 sm:w-3.5 text-emerald-500 shrink-0" />
-                            <p className="text-[8px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest truncate">Verified Partner</p>
+                            <p className="text-[6px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest truncate">Verified Partner</p>
                           </div>
                         )}
                       </div>
@@ -132,8 +132,8 @@ export function Testimonials() {
                     
                     {/* Indicator for extra content on mobile */}
                     {!expandedId && (
-                      <div className="sm:hidden absolute bottom-4 right-4 text-[8px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
-                        Tap for full review <ArrowUpRight className="h-2 w-2" />
+                      <div className="sm:hidden absolute bottom-2 right-3 text-[6px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
+                        Read more <ArrowUpRight className="h-1.5 w-1.5" />
                       </div>
                     )}
                   </motion.div>

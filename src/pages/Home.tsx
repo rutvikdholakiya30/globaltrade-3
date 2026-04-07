@@ -285,47 +285,47 @@ export function Home() {
       {/* Testimonials */}
       <section className="py-32 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
+          <div className="text-center mb-10 sm:mb-20">
             <span className="section-label">Client Success</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900">Voices of Trust</h2>
+            <h2 className="text-2xl md:text-5xl font-extrabold text-slate-900">Voices of Trust</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
             {testimonials.map((t) => (
               <motion.div
                 key={t.id}
                 layout
                 onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
                 className={cn(
-                  "bg-white p-6 sm:p-10 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden",
+                  "bg-white p-4 sm:p-10 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden",
                   expandedId === t.id && "shadow-xl border-brand-primary/20"
                 )}
               >
-                <div className="flex gap-1 mb-6">
+                <div className="flex gap-0.5 sm:gap-1 mb-2 sm:mb-6">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={cn("h-4 w-4", i < (t.rating || 5) ? "text-brand-primary fill-brand-primary" : "text-slate-200")} />
+                    <Star key={i} className={cn("h-3 w-3 sm:h-4 sm:w-4", i < (t.rating || 5) ? "text-brand-primary fill-brand-primary" : "text-slate-200")} />
                   ))}
                 </div>
                 <p className={cn(
-                  "text-slate-600 text-base sm:text-lg leading-relaxed mb-8 italic transition-all duration-500",
+                  "text-slate-600 text-xs sm:text-lg leading-relaxed mb-4 sm:mb-8 italic transition-all duration-500",
                   expandedId === t.id ? "" : "line-clamp-4 sm:line-clamp-none"
                 )}>
                   "{t.message}"
                 </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                    <User className="h-6 w-6" />
+                <div className="flex items-center gap-2 sm:gap-4">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
+                    <User className="h-4 w-4 sm:h-6 sm:w-6" />
                   </div>
-                  <div>
-                    <div className="font-bold text-slate-900">{t.name}</div>
-                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Verified Partner</div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-[10px] sm:text-base text-slate-900 truncate">{t.name}</div>
+                    <div className="text-[8px] sm:text-xs text-slate-400 font-bold uppercase tracking-widest truncate">Verified Partner</div>
                   </div>
                 </div>
                 
                 {/* Mobile Indicator */}
                 {!expandedId && (
-                  <div className="sm:hidden absolute bottom-4 right-6 text-[8px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
-                    Read more <ArrowUpRight className="h-2 w-2" />
+                  <div className="sm:hidden absolute bottom-2 right-4 text-[6px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
+                    Read more <ArrowUpRight className="h-1.5 w-1.5" />
                   </div>
                 )}
               </motion.div>
