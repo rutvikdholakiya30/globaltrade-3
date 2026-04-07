@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Globe, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram, ArrowUpRight } from 'lucide-react';
+import { useContactInfo } from '@/hooks/useData';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { contactInfo } = useContactInfo();
 
   return (
     <footer className="bg-slate-50 border-t border-slate-100">
@@ -55,7 +57,7 @@ export function Footer() {
               {['Contact Us', 'Terms & Conditions', 'Privacy Policy'].map((item) => (
                 <li key={item}>
                   <Link 
-                    to={`/${item.toLowerCase().replace(' & ', '-').replace(' ', '-')}`} 
+                    to={item === 'Contact Us' ? '/contact-us' : `/${item.toLowerCase().replace(' & ', '-').replace(' ', '-')}`} 
                     className="text-sm text-slate-500 hover:text-brand-primary transition-colors flex items-center group"
                   >
                     {item} <ArrowUpRight className="ml-1.5 h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
@@ -65,26 +67,43 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-6">
-            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-6">Headquarters</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-brand-primary shrink-0" />
-                <span className="text-sm text-slate-500 leading-relaxed">
-                  123 Trade Center, Logistics Bay,<br />
-                  Dubai, United Arab Emirates
-                </span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-brand-primary shrink-0" />
-                <span className="text-sm text-slate-500">+971 4 123 4567</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-brand-primary shrink-0" />
-                <span className="text-sm text-slate-500">contact@globaltrade.com</span>
-              </li>
-            </ul>
+          {/* Dynamic Contact Info */}
+          <div className="space-y-8">
+            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-2">Operational Presence</h4>
+            
+            <div className="space-y-6">
+              {/* Addresses */}
+              <div className="space-y-4">
+                {contactInfo.addresses.map((addr, i) => (
+                  <div key={i} className="flex items-start space-x-3 group">
+                    <MapPin className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
+                    <span className="text-[11px] sm:text-xs text-slate-500 leading-relaxed font-medium uppercase tracking-tight">
+                      {addr}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Phones */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                {contactInfo.phones.map((phone, i) => (
+                  <div key={i} className="flex items-center space-x-3 group">
+                    <Phone className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
+                    <span className="text-[11px] sm:text-xs text-slate-500 font-bold tracking-widest">{phone}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Emails */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                {contactInfo.emails.map((email, i) => (
+                  <div key={i} className="flex items-center space-x-3 group">
+                    <Mail className="h-4 w-4 text-brand-primary shrink-0 transition-transform group-hover:scale-110" />
+                    <span className="text-[11px] sm:text-xs text-slate-500 font-medium lowercase tracking-tight break-all">{email}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -94,8 +113,8 @@ export function Footer() {
             © {currentYear} GlobalTrade Connect. All Rights Reserved.
           </p>
           <div className="flex items-center space-x-8">
-            <span className="text-xs text-slate-400 font-medium">ISO 9001 Certified</span>
-            <span className="text-xs text-slate-400 font-medium">Verified Exporter</span>
+            <span className="text-xs text-slate-400 font-medium uppercase tracking-widest">ISO 9001 Certified System</span>
+            <span className="text-xs text-slate-400 font-medium uppercase tracking-widest">Verified Global Exporter</span>
           </div>
         </div>
       </div>

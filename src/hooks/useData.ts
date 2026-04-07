@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Category, Product, Testimonial, Page, GalleryItem, Partner } from '@/types';
+import type { Category, Product, Testimonial, Page, GalleryItem, Partner, ContactInfo } from '@/types';
+
+const DEFAULT_CONTACT_INFO: ContactInfo = {
+  addresses: ['123 Trade Center, Logistics Bay, Dubai, United Arab Emirates'],
+  phones: ['+971 4 123 4567'],
+  emails: ['contact@globaltrade.com'],
+  working_hours: 'Mon - Fri: 9:00 AM - 6:00 PM (GMT)'
+};
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -161,4 +168,35 @@ export function usePartners() {
   }, []);
 
   return { partners, loading };
+}
+
+export function useContactInfo() {
+  const [contactInfo, setContactInfo] = useState<ContactInfo>(DEFAULT_CONTACT_INFO);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchContactInfo() {
+      const { data, error } = await supabase
+        .from('settings')
+        .select('*')
+        .eq('id', 'contact_info')
+        .single();
+      
+      if (!error && data) {
+        // If data.value exists and is a valid JSON object, use it
+        // Depending on schema, it might be separate columns or a JSONB column
+        // Here we assume separate columns based on SettingsAdmin's current logic
+        setContactInfo({
+          addresses: data.addresses || DEFAULT_CONTACT_INFO.addresses,
+          phones: data.phones || DEFAULT_CONTACT_INFO.phones,
+          emails: data.emails || DEFAULT_CONTACT_INFO.emails,
+          working_hours: data.working_hours || DEFAULT_CONTACT_INFO.working_hours,
+        });
+      }
+      setLoading(false);
+    }
+    fetchContactInfo();
+  }, []);
+
+  return { contactInfo, loading };
 }

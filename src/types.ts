@@ -80,3 +80,16 @@ export interface ContactMessage {
   message: string;
   created_at: string;
 }
+
+export interface ContactInfo {
+  addresses: string[];
+  phones: string[];
+  emails: string[];
+  working_hours: string;
+}
+
+export interface SiteSettings {
+  id: string; // e.g., 'contact_info', 'smtp_config'
+  data: any; // JSONB storage
+  updated_at: string;
+}
