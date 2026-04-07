@@ -193,9 +193,9 @@ export function ProductsAdmin() {
 
       setIsFormOpen(false);
       fetchData();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Submit failed:', err);
-      alert('Operation failed. Please try again.');
+      alert(`Operation failed: ${err.message || 'Unknown error'}. Please check if you have updated your Supabase database schema with the video_url column.`);
     } finally {
       setUploading(false);
     }
@@ -428,8 +428,8 @@ export function ProductsAdmin() {
                     <div 
                       key={index} 
                       className={cn(
-                        "relative aspect-square rounded-2xl sm:rounded-[32px] overflow-hidden bg-gray-50 group border transition-all",
-                        img.isMain ? "border-blue-500 ring-4 sm:ring-8 ring-blue-50" : "border-gray-100"
+                        "relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-50 group border transition-all",
+                        img.isMain ? "border-blue-500 ring-2 sm:ring-4 ring-blue-50" : "border-gray-100"
                       )}
                     >
                       <img src={img.url} alt="" className="w-full h-full object-cover" />
@@ -465,12 +465,12 @@ export function ProductsAdmin() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="aspect-square rounded-2xl sm:rounded-[32px] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-4"
+                      className="aspect-square rounded-xl sm:rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-2"
                     >
-                      <div className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl group-hover:bg-blue-100 transition-colors">
-                        <Upload className="h-6 w-6 sm:h-8 sm:w-8" />
+                      <div className="p-2 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl group-hover:bg-blue-100 transition-colors">
+                        <Upload className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-4 uppercase tracking-widest text-center text-slate-400">Add Asset</span>
+                      <span className="text-[8px] sm:text-[9px] font-bold mt-1.5 sm:mt-2 uppercase tracking-widest text-center text-slate-400">Add Asset</span>
                     </button>
                   )}
                 </div>
@@ -505,15 +505,15 @@ export function ProductsAdmin() {
                     <button
                       type="button"
                       onClick={() => videoInputRef.current?.click()}
-                      className="w-full h-32 sm:h-48 rounded-2xl sm:rounded-[40px] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group"
+                      className="w-full h-24 sm:h-32 rounded-xl sm:rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group"
                     >
-                      <div className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl group-hover:bg-blue-100 transition-colors">
-                        <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+                      <div className="p-2 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl group-hover:bg-blue-100 transition-colors">
+                        <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-4 uppercase tracking-widest text-center text-slate-400">Initialize Video Stream</span>
+                      <span className="text-[8px] sm:text-[9px] font-bold mt-1.5 sm:mt-2 uppercase tracking-widest text-center text-slate-400">Initialize Video Stream</span>
                     </button>
                   ) : (
-                    <div className="relative aspect-video w-full max-w-2xl mx-auto rounded-2xl sm:rounded-[40px] overflow-hidden bg-black shadow-2xl border border-gray-100 group">
+                    <div className="relative aspect-video w-full max-w-lg mx-auto rounded-xl sm:rounded-3xl overflow-hidden bg-black shadow-xl border border-gray-100 group">
                       <video 
                         src={videoPreview} 
                         className="w-full h-full object-contain" 
@@ -551,33 +551,33 @@ export function ProductsAdmin() {
                 </div>
                 <div className="space-y-6">
                   {specifications.map((spec, index) => (
-                    <div key={index} className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start group p-6 bg-gray-50/50 rounded-3xl border border-gray-100 hover:border-blue-100 transition-all">
-                      <div className="lg:col-span-4 space-y-2">
-                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Identity / Label</label>
+                    <div key={index} className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start group p-4 bg-gray-50/50 rounded-2xl border border-gray-100 hover:border-blue-100 transition-all">
+                      <div className="lg:col-span-4 space-y-1.5">
+                        <label className="text-[8px] font-bold text-slate-400 uppercase tracking-widest ml-1">Identity / Label</label>
                         <input
                           value={spec.spec_key}
                           onChange={(e) => updateSpec(index, 'spec_key', e.target.value)}
                           placeholder="E.G. MATERIAL / SIZE"
-                          className="w-full px-5 py-3 sm:px-6 sm:py-4 bg-white border border-gray-100 rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
+                          className="w-full px-4 py-2.5 sm:px-5 sm:py-3 bg-white border border-gray-100 rounded-xl text-[9px] sm:text-[11px] font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all"
                         />
                       </div>
-                      <div className="lg:col-span-7 space-y-2">
-                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Specification Content</label>
+                      <div className="lg:col-span-7 space-y-1.5">
+                        <label className="text-[8px] font-bold text-slate-400 uppercase tracking-widest ml-1">Specification Content</label>
                         <textarea
-                          rows={4}
+                          rows={3}
                           value={spec.spec_value}
                           onChange={(e) => updateSpec(index, 'spec_value', e.target.value)}
-                          placeholder="ENTER VALUES... START NEW LINE FOR BULLETS."
-                          className="w-full px-5 py-3 sm:px-6 sm:py-4 bg-white border border-gray-100 rounded-2xl text-[10px] sm:text-xs font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all resize-none"
+                          placeholder="ENTER VALUES..."
+                          className="w-full px-4 py-2.5 sm:px-5 sm:py-3 bg-white border border-gray-100 rounded-xl text-[9px] sm:text-[11px] font-bold uppercase focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all resize-none"
                         />
                       </div>
-                      <div className="lg:col-span-1 pt-7 flex justify-end">
+                      <div className="lg:col-span-1 pt-6 flex justify-end">
                         <button 
                           type="button" 
                           onClick={() => removeSpec(index)}
-                          className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                          className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                         >
-                          <Trash2 className="h-5 w-5" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
