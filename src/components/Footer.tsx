@@ -111,6 +111,21 @@ export function Footer() {
             <span className="text-xs text-slate-400 font-medium uppercase tracking-widest">Verified Global Exporter</span>
           </div>
         </div>
+
+        {/* Developer Credit */}
+        <div className="mt-6 pt-4 border-t border-slate-100 text-center">
+          <p className="text-[10px] text-slate-300 font-medium tracking-widest uppercase">
+            Developed by{' '}
+            <a
+              href="https://codefixer.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-primary font-bold hover:underline hover:text-brand-primary/80 transition-colors"
+            >
+              CodeFixer
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
