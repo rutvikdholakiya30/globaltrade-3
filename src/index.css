@@ -12,6 +12,12 @@
   --color-surface-50: #f8fafc;
   --color-surface-100: #f1f5f9;
   --color-surface-200: #e2e8f0;
+
+  --color-industrial-black: #050607;
+  --color-industrial-gray: #0D0F12;
+  --color-industrial-border: #1B1E24;
+  --color-safety-amber: #FFB800;
+  --color-safety-glow: rgba(255, 184, 0, 0.15);
 }
 
 @layer base {
@@ -39,6 +45,23 @@
   
   .section-label {
     @apply text-xs font-bold text-brand-primary uppercase tracking-widest mb-4 block;
+  }
+
+  /* Premium Utilities */
+  .glass-panel {
+    @apply bg-industrial-gray/40 backdrop-blur-2xl border border-industrial-border/50 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)];
+  }
+
+  .glow-border {
+    @apply border-safety-amber/20 hover:border-safety-amber/40 transition-colors duration-500 shadow-[0_0_20px_rgba(255,184,0,0.05)];
+  }
+
+  .btn-premium {
+    @apply h-14 bg-safety-amber text-black font-mono text-[11px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-white active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(255,184,0,0.1)];
+  }
+
+  .input-premium {
+    @apply w-full h-14 px-5 bg-industrial-black/80 border border-industrial-border text-white text-sm font-mono focus:outline-none focus:border-safety-amber focus:ring-1 focus:ring-safety-amber/20 transition-all duration-300 placeholder:text-gray-600;
   }
 
   .nav-link {
