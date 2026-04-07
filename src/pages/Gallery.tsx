@@ -39,7 +39,7 @@ export function Gallery() {
               <div key={i} className="aspect-square bg-slate-50 rounded-xl sm:rounded-3xl animate-pulse mb-2 sm:mb-8" />
             ))}
           </div>
-        ) : (
+        ) : items.length > 0 ? (
           <div className="columns-3 lg:columns-6 gap-2 sm:gap-8 space-y-2 sm:space-y-8">
             {items.map((item) => (
               <motion.div
@@ -63,6 +63,14 @@ export function Gallery() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
+            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Maximize2 className="h-10 w-10 text-slate-300" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">No Gallery Items Found</h3>
+            <p className="text-slate-500 text-sm sm:text-base px-4">We are currently updating our visual portfolio. Please check back soon to see our latest operations.</p>
           </div>
         )}
       </div>
