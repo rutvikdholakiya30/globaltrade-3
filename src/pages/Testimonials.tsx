@@ -33,13 +33,22 @@ export function Testimonials() {
   const onSubmit = async (data: TestimonialForm) => {
     setSubmitting(true);
     try {
-      const { error } = await supabase.from('testimonials').insert([data]);
+      // Fix: If product_id is an empty string (General Feedback), set it to null
+      // This prevents UUID validation errors in the Supabase database
+      const insertData = {
+        ...data,
+        product_id: data.product_id === "" ? null : data.product_id
+      };
+
+      const { error } = await supabase.from('testimonials').insert([insertData]);
       if (!error) {
         setSubmitted(true);
         reset();
+      } else {
+        console.error('Supabase Error:', error.message);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Submission Catch:', err);
     } finally {
       setSubmitting(false);
     }
@@ -96,11 +105,11 @@ export function Testimonials() {
                         {new Date(t.created_at).toLocaleDateString()}
                       </span>
                     </div>
- 100: 
- 101:                     <p className="text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 line-clamp-4 sm:line-clamp-none">
- 102:                       "{t.message}"
- 103:                     </p>
- 104: 
+
+                    <p className="text-slate-900 text-xs sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 line-clamp-4 sm:line-clamp-none">
+                      "{t.message}"
+                    </p>
+
                     <div className="flex items-center gap-3 sm:gap-6 pt-4 sm:pt-10 border-t border-slate-50 relative z-10">
                       <div className="w-8 h-8 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-sm sm:text-2xl">
                         {t.name[0]}
@@ -157,7 +166,7 @@ export function Testimonials() {
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Your Name</label>
                     <input
                       {...register('name')}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all text-white placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all text-white placeholder:text-white/20"
                       placeholder="John Doe"
                     />
                     {errors.name && <p className="text-red-400 text-[10px] font-bold uppercase mt-1">{errors.name.message}</p>}
@@ -186,11 +195,11 @@ export function Testimonials() {
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Product (Optional)</label>
                     <select
                       {...register('product_id')}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all appearance-none text-white"
+                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all appearance-none text-white"
                     >
-                      <option value="" className="bg-slate-900">General Feedback</option>
+                      <option value="" className="bg-slate-900 font-bold">General Feedback</option>
                       {products.map(p => (
-                        <option key={p.id} value={p.id} className="bg-slate-900">{p.title}</option>
+                        <option key={p.id} value={p.id} className="bg-slate-900 font-bold">{p.title}</option>
                       ))}
                     </select>
                   </div>
@@ -200,7 +209,7 @@ export function Testimonials() {
                     <textarea
                       {...register('message')}
                       rows={4}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all resize-none text-white placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all resize-none text-white placeholder:text-white/20"
                       placeholder="Tell us about your experience..."
                     />
                     {errors.message && <p className="text-red-400 text-[10px] font-bold uppercase mt-1">{errors.message.message}</p>}
