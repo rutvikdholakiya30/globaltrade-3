@@ -297,7 +297,7 @@ export function Home() {
                 layout
                 onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
                 className={cn(
-                  "bg-white p-4 sm:p-10 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden",
+                  "bg-white p-4 sm:p-10 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden group",
                   expandedId === t.id && "shadow-xl border-brand-primary/20"
                 )}
               >
@@ -307,8 +307,8 @@ export function Home() {
                   ))}
                 </div>
                 <p className={cn(
-                  "text-slate-600 text-xs sm:text-lg leading-relaxed mb-4 sm:mb-8 italic transition-all duration-500",
-                  expandedId === t.id ? "" : "line-clamp-4 sm:line-clamp-none"
+                  "text-slate-600 text-xs sm:text-base leading-relaxed mb-4 sm:mb-8 italic transition-all duration-500",
+                  expandedId === t.id ? "" : "line-clamp-4"
                 )}>
                   "{t.message}"
                 </p>
@@ -322,10 +322,10 @@ export function Home() {
                   </div>
                 </div>
                 
-                {/* Mobile Indicator */}
-                {!expandedId && (
-                  <div className="sm:hidden absolute bottom-2 right-4 text-[6px] font-black uppercase text-brand-primary/40 flex items-center gap-1">
-                    Read more <ArrowUpRight className="h-1.5 w-1.5" />
+                {/* Read more indicator - shown on all devices when collapsed */}
+                {expandedId !== t.id && (
+                  <div className="absolute bottom-3 right-4 text-[7px] sm:text-[9px] font-black uppercase text-brand-primary/50 flex items-center gap-1 group-hover:text-brand-primary transition-colors">
+                    Read more <ArrowUpRight className="h-2 w-2" />
                   </div>
                 )}
               </motion.div>

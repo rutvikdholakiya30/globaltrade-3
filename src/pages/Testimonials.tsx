@@ -109,8 +109,8 @@ export function Testimonials() {
                     </div>
 
                     <p className={cn(
-                      "text-slate-900 text-[10px] sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight relative z-10 transition-all duration-500",
-                      expandedId === t.id ? "" : "line-clamp-4 sm:line-clamp-none"
+                      "text-slate-900 text-[10px] sm:text-xl font-bold leading-tight tracking-tight relative z-10 transition-all duration-500",
+                      expandedId === t.id ? "" : "line-clamp-4"
                     )}>
                       "{t.message}"
                     </p>
