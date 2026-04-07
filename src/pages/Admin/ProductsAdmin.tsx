@@ -423,13 +423,13 @@ export function ProductsAdmin() {
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{productImages.length}/9 ASSETS</span>
                 </div>
                 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
                   {productImages.map((img, index) => (
                     <div 
                       key={index} 
                       className={cn(
-                        "relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-50 group border transition-all",
-                        img.isMain ? "border-blue-500 ring-2 sm:ring-4 ring-blue-50" : "border-gray-100"
+                        "relative aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 group border transition-all",
+                        img.isMain ? "border-blue-500 ring-1 sm:ring-2 ring-blue-50" : "border-gray-100"
                       )}
                     >
                       <img src={img.url} alt="" className="w-full h-full object-cover" />
@@ -465,12 +465,12 @@ export function ProductsAdmin() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="aspect-square rounded-xl sm:rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-2"
+                      className="aspect-square rounded-lg sm:rounded-xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group p-1"
                     >
-                      <div className="p-2 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl group-hover:bg-blue-100 transition-colors">
-                        <Upload className="h-5 w-5 sm:h-6 sm:w-6" />
+                      <div className="p-1 sm:p-2 bg-gray-50 rounded-md sm:rounded-lg group-hover:bg-blue-100 transition-colors">
+                        <Upload className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <span className="text-[8px] sm:text-[9px] font-bold mt-1.5 sm:mt-2 uppercase tracking-widest text-center text-slate-400">Add Asset</span>
+                      <span className="text-[7px] sm:text-[8px] font-bold mt-1 sm:mt-1.5 uppercase tracking-widest text-center text-slate-400">Add Asset</span>
                     </button>
                   )}
                 </div>
@@ -505,15 +505,15 @@ export function ProductsAdmin() {
                     <button
                       type="button"
                       onClick={() => videoInputRef.current?.click()}
-                      className="w-full h-24 sm:h-32 rounded-xl sm:rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group"
+                      className="w-full h-20 sm:h-24 rounded-lg sm:rounded-xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all group"
                     >
-                      <div className="p-2 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl group-hover:bg-blue-100 transition-colors">
-                        <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
+                      <div className="p-1.5 sm:p-2 bg-gray-50 rounded-md sm:rounded-lg group-hover:bg-blue-100 transition-colors">
+                        <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <span className="text-[8px] sm:text-[9px] font-bold mt-1.5 sm:mt-2 uppercase tracking-widest text-center text-slate-400">Initialize Video Stream</span>
+                      <span className="text-[7px] sm:text-[8px] font-bold mt-1 sm:mt-1.5 uppercase tracking-widest text-center text-slate-400">Initialize Video Stream</span>
                     </button>
                   ) : (
-                    <div className="relative aspect-video w-full max-w-lg mx-auto rounded-xl sm:rounded-3xl overflow-hidden bg-black shadow-xl border border-gray-100 group">
+                    <div className="relative aspect-video w-full max-w-sm mx-auto rounded-lg sm:rounded-2xl overflow-hidden bg-black shadow-lg border border-gray-100 group">
                       <video 
                         src={videoPreview} 
                         className="w-full h-full object-contain" 
