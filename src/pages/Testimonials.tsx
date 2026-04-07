@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, MessageSquare, Send, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { Star, Send, CheckCircle2, ArrowUpRight, MessageSquare } from 'lucide-react';
 import { useTestimonials, useProducts } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
 import { useForm } from 'react-hook-form';
@@ -41,7 +41,6 @@ export function Testimonials() {
         ...data,
         product_id: data.product_id === "" ? null : data.product_id
       };
-
       const { error } = await supabase.from('testimonials').insert([insertData]);
       if (!error) {
         setSubmitted(true);
@@ -71,18 +70,19 @@ export function Testimonials() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-          {/* Testimonials List */}
-          <div className="lg:col-span-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+
+          {/* Testimonials Grid - 2 cols always */}
+          <div className="lg:col-span-8">
             {loading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-12">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-40 sm:h-64 bg-slate-50 rounded-2xl sm:rounded-[40px] animate-pulse" />
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-48 sm:h-64 bg-slate-50 rounded-2xl sm:rounded-3xl animate-pulse" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-12">
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 {testimonials.map((t) => (
                   <motion.div
                     key={t.id}
@@ -92,50 +92,39 @@ export function Testimonials() {
                     viewport={{ once: true }}
                     onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
                     className={cn(
-                      "bg-white p-4 sm:p-10 md:p-12 rounded-2xl sm:rounded-[40px] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 space-y-2 sm:space-y-8 relative group overflow-hidden cursor-pointer",
-                      expandedId === t.id && "shadow-2xl shadow-brand-primary/5 border-brand-primary/20"
+                      "bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden group",
+                      expandedId === t.id && "shadow-xl border-brand-primary/20"
                     )}
                   >
-                    <div className="absolute top-4 right-4 sm:top-10 sm:right-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                      <MessageSquare className="h-6 w-6 sm:h-20 sm:w-20" />
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-1 relative z-10">
-                      <div className="flex gap-0.5 sm:gap-1.5 text-brand-accent">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={cn("h-2.5 w-2.5 sm:h-5 sm:w-5", i < t.rating ? "fill-current" : "text-slate-100")} />
-                        ))}
-                      </div>
-                      <span className="text-[6px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">
-                        {new Date(t.created_at).toLocaleDateString()}
-                      </span>
+                    {/* Stars */}
+                    <div className="flex gap-0.5 sm:gap-1 mb-2 sm:mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={cn("h-2.5 w-2.5 sm:h-4 sm:w-4", i < (t.rating || 5) ? "text-brand-primary fill-brand-primary" : "text-slate-200")} />
+                      ))}
                     </div>
 
+                    {/* Message */}
                     <p className={cn(
-                      "text-slate-900 text-[10px] sm:text-xl font-bold leading-tight tracking-tight relative z-10 transition-all duration-500",
+                      "text-slate-600 text-[10px] sm:text-base leading-relaxed mb-3 sm:mb-6 italic transition-all duration-500",
                       expandedId === t.id ? "" : "line-clamp-4"
                     )}>
                       "{t.message}"
                     </p>
 
-                    <div className="flex items-center gap-2 sm:gap-6 pt-3 sm:pt-10 border-t border-slate-50 relative z-10">
-                      <div className="w-6 h-6 sm:w-16 sm:h-16 bg-brand-primary/10 rounded-lg sm:rounded-2xl flex items-center justify-center text-brand-primary font-extrabold text-[8px] sm:text-xl shrink-0">
+                    {/* Avatar + Name */}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-black text-[8px] sm:text-xs shrink-0">
                         {getInitials(t.name)}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[8px] sm:text-lg font-extrabold text-slate-900 truncate">{t.name}</p>
-                        {t.product && (
-                          <div className="flex items-center gap-0.5 mt-0.5 sm:mt-1">
-                            <CheckCircle2 className="h-2 w-2 sm:h-3.5 sm:w-3.5 text-emerald-500 shrink-0" />
-                            <p className="text-[6px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest truncate">Verified Partner</p>
-                          </div>
-                        )}
+                        <div className="font-bold text-[9px] sm:text-sm text-slate-900 truncate">{t.name}</div>
+                        <div className="text-[7px] sm:text-xs text-slate-400 font-bold uppercase tracking-widest">Verified Partner</div>
                       </div>
                     </div>
-                    
-                    {/* Read more indicator - all screen sizes when collapsed */}
+
+                    {/* Read more indicator */}
                     {expandedId !== t.id && (
-                      <div className="absolute bottom-2 right-3 text-[6px] sm:text-[9px] font-black uppercase text-brand-primary/40 flex items-center gap-1 group-hover:text-brand-primary transition-colors">
+                      <div className="absolute bottom-2 right-3 text-[6px] sm:text-[8px] font-black uppercase text-brand-primary/40 flex items-center gap-0.5 group-hover:text-brand-primary transition-colors">
                         Read more <ArrowUpRight className="h-1.5 w-1.5" />
                       </div>
                     )}
@@ -147,11 +136,14 @@ export function Testimonials() {
 
           {/* Submit Form */}
           <aside className="lg:col-span-4 h-fit lg:sticky lg:top-32">
-            <div className="bg-slate-900 rounded-[40px] p-10 space-y-10 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
+            <div className="bg-slate-900 rounded-[40px] p-8 sm:p-10 space-y-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16" />
               
               <div className="space-y-3 relative z-10">
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Share Your Experience</h2>
+                <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center">
+                  <MessageSquare className="h-5 w-5 text-white" />
+                </div>
+                <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Share Your Experience</h2>
                 <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">Your feedback helps us improve our global services and industrial catalog.</p>
               </div>
 
@@ -161,11 +153,11 @@ export function Testimonials() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="bg-white/5 backdrop-blur-md rounded-3xl p-8 text-center space-y-6 border border-white/10"
                 >
-                  <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+                  <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="h-8 w-8 text-emerald-400" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-bold">Thank You!</h3>
+                    <h3 className="text-lg font-bold">Thank You!</h3>
                     <p className="text-xs text-slate-400 leading-relaxed">Your review has been submitted and is pending admin approval.</p>
                   </div>
                   <button
@@ -176,41 +168,38 @@ export function Testimonials() {
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative z-10">
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Your Name</label>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 relative z-10">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Your Name</label>
                     <input
                       {...register('name')}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all text-white placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3.5 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all text-white placeholder:text-white/20"
                       placeholder="John Doe"
                     />
-                    {errors.name && <p className="text-red-400 text-[10px] font-bold uppercase mt-1">{errors.name.message}</p>}
+                    {errors.name && <p className="text-red-400 text-[10px] font-bold">{errors.name.message}</p>}
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Rating</label>
-                    <div className="flex gap-3">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Rating</label>
+                    <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((val) => (
                         <button
                           key={val}
                           type="button"
                           onClick={() => setValue('rating', val)}
-                          className={cn(
-                            "transition-all",
-                            rating >= val ? "text-brand-accent scale-110" : "text-white/20 hover:text-white/40"
-                          )}
+                          className={cn("transition-all", rating >= val ? "text-brand-accent scale-110" : "text-white/20 hover:text-white/40")}
                         >
-                          <Star className={cn("h-7 w-7", rating >= val && "fill-current")} />
+                          <Star className={cn("h-6 w-6", rating >= val && "fill-current")} />
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Product (Optional)</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Product (Optional)</label>
                     <select
                       {...register('product_id')}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all appearance-none text-white"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3.5 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all appearance-none text-white"
                     >
                       <option value="" className="bg-slate-900 font-bold">General Feedback</option>
                       {products.map(p => (
@@ -219,23 +208,23 @@ export function Testimonials() {
                     </select>
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-widest">Your Message</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Your Message</label>
                     <textarea
                       {...register('message')}
                       rows={4}
-                      className="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all resize-none text-white placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3.5 rounded-2xl text-base font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all resize-none text-white placeholder:text-white/20"
                       placeholder="Tell us about your experience..."
                     />
-                    {errors.message && <p className="text-red-400 text-[10px] font-bold uppercase mt-1">{errors.message.message}</p>}
+                    {errors.message && <p className="text-red-400 text-[10px] font-bold">{errors.message.message}</p>}
                   </div>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full py-5 bg-brand-primary text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-brand-primary/90 disabled:bg-slate-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-primary/20"
+                    className="w-full py-4 bg-brand-primary text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-brand-primary/90 disabled:bg-slate-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-primary/20"
                   >
-                    {submitting ? 'Submitting...' : <><Send className="h-5 w-5" /> Submit Review</>}
+                    {submitting ? 'Submitting...' : <><Send className="h-4 w-4" /> Submit Review</>}
                   </button>
                 </form>
               )}
