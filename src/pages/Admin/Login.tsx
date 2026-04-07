@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'motion/react';
-import { Lock, Mail, Globe, ArrowRight, Loader2, ShieldAlert, ChevronLeft } from 'lucide-react';
+import { Lock, Mail, Globe, ArrowRight, Loader2, ShieldAlert, ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -34,174 +35,131 @@ export function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-industrial-black flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-safety-amber/30 selection:text-safety-amber font-sans">
-      {/* Dynamic Background Elements */}
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-brand-primary/10 selection:text-brand-primary">
+      {/* Soft Background Decor */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Animated Gradient Orbs */}
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], x: [0, 100, 0], y: [0, 50, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-safety-amber/10 blur-[120px] rounded-full"
-        />
-        <motion.div 
-          animate={{ scale: [1.2, 1, 1.2], x: [0, -100, 0], y: [0, -50, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[20%] -right-[10%] w-[35%] h-[35%] bg-blue-500/10 blur-[100px] rounded-full"
-        />
-        <motion.div 
-          animate={{ scale: [1, 1.5, 1], x: [0, 50, 0], y: [0, 100, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-[10%] left-[20%] w-[30%] h-[30%] bg-indigo-500/10 blur-[110px] rounded-full"
-        />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[30%] h-[30%] bg-brand-accent/5 rounded-full blur-[100px]" />
         
-        {/* Mesh Grid */}
-        <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: 'linear-gradient(#1B1E24 1px, transparent 1px), linear-gradient(90deg, #1B1E24 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-industrial-black via-transparent to-industrial-black" />
+        {/* Subtle Grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#2563eb 1px, transparent 1px), linear-gradient(90deg, #2563eb 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
         className="w-full max-w-md z-10"
       >
-        <Link to="/" className="inline-flex items-center text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] hover:text-safety-amber transition-all duration-500 mb-10 group">
-          <ChevronLeft className="h-3 w-3 mr-2 group-hover:-translate-x-1 transition-transform" /> 
-          <span className="relative overflow-hidden inline-block text-gray-400 group-hover:text-safety-amber">
-            Back to Home
-            <span className="absolute bottom-0 left-0 w-full h-px bg-safety-amber -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-          </span>
+        <Link to="/" className="inline-flex items-center text-xs font-bold text-slate-400 hover:text-brand-primary transition-colors mb-8 group">
+          <ChevronLeft className="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Terminal
         </Link>
 
-        <div className="glass-panel overflow-hidden relative border-t-0 p-[1px] group">
-            {/* Animated border glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-industrial-border/50 via-safety-amber/20 to-industrial-border/50 z-[-1]" />
-          
-          <div className="bg-[#0A0C10]/90 backdrop-blur-3xl h-full w-full">
-            {/* Header */}
-            <div className="p-10 border-b border-industrial-border/30 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-5">
-                    <Globe className="h-32 w-32 -mr-16 -mt-16" />
-                </div>
-                
-                <div className="flex items-center justify-between mb-10 relative z-10">
+        <div className="glass-card overflow-hidden shadow-2xl shadow-slate-200/50 border-white/40 bg-white/70 backdrop-blur-xl rounded-[32px]">
+          {/* Header */}
+          <div className="p-10 border-b border-slate-100 bg-white/50">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center group">
+                <Globe className="h-8 w-8 text-brand-primary transition-transform duration-500 group-hover:rotate-180" />
+                <span className="ml-3 text-2xl font-display font-black tracking-tighter uppercase text-slate-900">
+                  Global<span className="text-brand-primary">Trade</span>
+                </span>
+              </div>
+              <div className="px-3 py-1 bg-brand-primary/5 rounded-full text-[10px] font-bold text-brand-primary uppercase tracking-widest">
+                Admin Area
+              </div>
+            </div>
+            
+            <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight mb-2">Secure Access</h1>
+            <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">Authorized Personnel Only</p>
+          </div>
+
+          {/* Form */}
+          <div className="p-10 bg-white/30">
+            <form onSubmit={handleLogin} className="space-y-6">
+              {error && (
                 <motion.div 
-                    whileHover={{ scale: 1.02 }}
-                    className="flex items-center group/logo cursor-default"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-2xl flex items-start gap-3"
                 >
-                    <div className="relative">
-                    <Globe className="h-10 w-10 text-safety-amber transition-transform duration-700 group-hover/logo:rotate-[360deg]" />
-                    <div className="absolute inset-0 bg-safety-amber/40 blur-xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-700" />
-                    </div>
-                    <span className="ml-4 text-2xl font-display font-black tracking-tighter uppercase text-white">
-                    Global<span className="text-safety-amber">Trade</span>
-                    </span>
+                  <ShieldAlert className="h-4 w-4 shrink-0" />
+                  <span>{error}</span>
                 </motion.div>
-                <div className="px-3 py-1.5 border border-safety-amber/20 bg-safety-amber/5 rounded-sm text-[8px] font-mono text-safety-amber uppercase tracking-[0.2em]">
-                    v4.0 Admin
-                </div>
-                </div>
-                
-                <h1 className="text-4xl font-display font-black uppercase tracking-tighter mb-3 leading-none italic text-white flex items-center gap-2">
-                Secure <span className="text-safety-amber">Login</span>
-                </h1>
-                <div className="flex items-center gap-3">
-                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em]">
-                    Authorization Protocol
-                </p>
-                <div className="flex-1 h-px bg-gradient-to-r from-industrial-border/30 to-transparent" />
-                </div>
-            </div>
+              )}
 
-            {/* Form */}
-            <div className="p-10 pt-8 relative z-10">
-                <form onSubmit={handleLogin} className="space-y-8">
-                {error && (
-                    <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="p-4 bg-red-500/10 border border-red-500/30 text-red-500 text-[10px] font-mono uppercase tracking-[0.1em] flex items-start gap-4"
-                    >
-                    <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
-                    <span className="leading-relaxed">{error}</span>
-                    </motion.div>
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-brand-primary" /> Identity / Email
+                </label>
+                <div className="relative">
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all placeholder:text-slate-300"
+                    placeholder="admin@globaltrade.net"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-brand-primary" /> Access Key / Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all placeholder:text-slate-300 pr-12"
+                    placeholder="••••••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-lg transition-all"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-14 bg-brand-primary text-white font-bold rounded-2xl hover:bg-brand-secondary hover:shadow-xl hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              >
+                {loading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    Initialize Connection 
+                    <ArrowRight className="h-5 w-5" />
+                  </>
                 )}
+              </button>
+            </form>
+          </div>
 
-                <div className="space-y-3">
-                    <label htmlFor="email" className="text-[9px] font-mono text-gray-500 uppercase tracking-[0.25em] flex items-center gap-3 cursor-pointer group/label">
-                    <Mail className="h-3.5 w-3.5 text-safety-amber group-hover/label:scale-110 transition-transform" /> 
-                    <span className="group-hover/label:text-safety-amber transition-colors">Admin Identity</span>
-                    </label>
-                    <div className="relative group/input">
-                    <input
-                        id="email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="input-premium"
-                        placeholder="ADMIN@GLOBALTRADE.NET"
-                    />
-                    <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-safety-amber group-focus-within/input:w-full transition-all duration-500" />
-                    </div>
-                </div>
-
-                <div className="space-y-3">
-                    <label htmlFor="password" className="text-[9px] font-mono text-gray-500 uppercase tracking-[0.25em] flex items-center gap-3 cursor-pointer group/label">
-                    <Lock className="h-3.5 w-3.5 text-safety-amber group-hover/label:scale-110 transition-transform" /> 
-                    <span className="group-hover/label:text-safety-amber transition-colors">Access Token</span>
-                    </label>
-                    <div className="relative group/input">
-                    <input
-                        id="password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="input-premium"
-                        placeholder="••••••••••••"
-                    />
-                    <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-safety-amber group-focus-within/input:w-full transition-all duration-500" />
-                    </div>
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="btn-premium group/btn"
-                >
-                    {loading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                    <>
-                        Authorize Session 
-                        <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1.5 transition-transform duration-300" />
-                    </>
-                    )}
-                </button>
-                </form>
+          {/* Footer Info */}
+          <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Secure-SSL</span>
             </div>
-
-            {/* Footer Status */}
-            <div className="px-10 py-6 border-t border-industrial-border/30 bg-black/40 flex items-center justify-between pointer-events-none">
-                <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                <span className="text-[8px] font-mono text-gray-500 uppercase tracking-[0.2em]">Secure Node: ACTIVE</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <ShieldAlert className="h-3 w-3 text-gray-600" />
-                    <span className="text-[8px] font-mono text-gray-600 uppercase tracking-[0.2em]">Encrypted-TLS</span>
-                </div>
-            </div>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">End-to-End Encrypted</span>
           </div>
         </div>
 
-        <div className="mt-12 flex items-center justify-center gap-8 opacity-20 group cursor-default">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-industrial-border" />
-          <span className="text-[8px] font-mono text-gray-500 uppercase tracking-[0.8em] group-hover:tracking-[1em] transition-all duration-700">
-            Global Trade Connect
-          </span>
-          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-industrial-border" />
+        <div className="mt-10 flex items-center justify-center space-x-6 opacity-30">
+          <div className="h-px w-12 bg-slate-200" />
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em]">Global Systems</span>
+          <div className="h-px w-12 bg-slate-200" />
         </div>
       </motion.div>
     </div>
