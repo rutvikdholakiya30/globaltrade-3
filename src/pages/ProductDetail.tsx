@@ -133,7 +133,7 @@ export function ProductDetail() {
                 </div>
               </div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-slate-900 mb-4 sm:mb-6 leading-tight">
+              <h1 className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-slate-900 mb-4 sm:mb-6 leading-tight">
                 {product.title}
               </h1>
               
