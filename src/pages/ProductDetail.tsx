@@ -202,25 +202,25 @@ export function ProductDetail() {
 
                 return (
                   <div key={spec.id} className="group transition-all duration-300">
-                    {/* Label Bar (Optimized Size & Bold) */}
+                    {/* Identity Label (16px, Bold, Uppercase) */}
                     <div className="bg-slate-50/50 px-8 sm:px-12 py-4 sm:py-5 border-b border-slate-50">
-                      <span className="text-[12px] sm:text-[14px] font-black text-slate-900 uppercase tracking-[0.2em]">{spec.spec_key}</span>
+                      <span className="text-[16px] font-bold text-slate-900 uppercase tracking-wider">{spec.spec_key}</span>
                     </div>
-                    {/* Value Content (Optimized Size & Weight) */}
+                    {/* Content Value (14px, Light Bold, Lowercase) */}
                     <div className="px-8 sm:px-12 py-6 sm:py-8 group-hover:bg-blue-50/30 transition-colors">
                       {isMultiLine ? (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           {lines.map((line, idx) => (
                             <div key={idx} className="flex items-start gap-4">
-                              <div className="mt-2 w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
-                              <span className="text-base sm:text-xl font-semibold text-slate-600 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
+                              <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
+                              <span className="text-[14px] font-medium text-slate-500 group-hover:text-blue-600 transition-colors lowercase tracking-tight leading-tight block">
                                 {line.replace(/^[-•*]\s*/, '')}
                               </span>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-lg sm:text-2xl font-semibold text-slate-600 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight block">
+                        <span className="text-[14px] font-medium text-slate-500 group-hover:text-blue-600 transition-colors lowercase tracking-tight leading-tight block">
                           {spec.spec_value}
                         </span>
                       )}
