@@ -59,6 +59,7 @@ export function GalleryAdmin() {
 
     const formData = new FormData(e.currentTarget);
     const baseCaption = formData.get('caption') as string;
+    const sectionTitle = formData.get('category') as string;
 
     const results = [];
     
@@ -71,6 +72,8 @@ export function GalleryAdmin() {
         results.push({
           image_url: url,
           caption: selectedFiles.length > 1 ? `${baseCaption} (${i + 1})` : baseCaption,
+          video_url: isVideo(file.name) ? url : null,
+          category: sectionTitle || null,
           created_at: new Date().toISOString()
         });
       } catch (err) {
@@ -152,7 +155,8 @@ export function GalleryAdmin() {
                 )}
                 
                 <div className="absolute inset-0 bg-gray-900/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center backdrop-blur-sm">
-                  <p className="text-white text-[10px] font-black uppercase tracking-widest mb-4 line-clamp-2">{item.caption || 'N/A'}</p>
+                  <p className="text-white text-[10px] font-black uppercase tracking-widest mb-1 line-clamp-1">{item.category || 'NO CATEGORY'}</p>
+                  <p className="text-white/60 text-[8px] font-bold uppercase tracking-widest mb-4 line-clamp-1">{item.caption || 'N/A'}</p>
                   <button
                     onClick={() => handleDelete(item.id)}
                     className="p-3 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all transform hover:scale-110 active:scale-90"
@@ -274,17 +278,30 @@ export function GalleryAdmin() {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
-                       <ImageIcon className="h-4 w-4 text-blue-600" /> Operational Context
-                    </label>
-                    <input
-                      name="caption"
-                      autoFocus
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs sm:text-sm uppercase transition-all"
-                      placeholder="ENTER GLOBAL BATCH CAPTION..."
-                      disabled={uploading}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                         <Layers className="h-4 w-4 text-blue-600" /> Section Title
+                      </label>
+                      <input
+                        name="category"
+                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs uppercase transition-all"
+                        placeholder="E.G., TEXTILE IMAGES..."
+                        disabled={uploading}
+                      />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                         <ImageIcon className="h-4 w-4 text-blue-600" /> Batch Caption
+                      </label>
+                      <input
+                        name="caption"
+                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs uppercase transition-all"
+                        placeholder="ENTER BATCH CAPTION..."
+                        disabled={uploading}
+                      />
+                    </div>
                   </div>
 
                   <div className="pt-4 flex gap-4">
