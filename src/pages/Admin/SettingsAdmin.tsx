@@ -15,7 +15,12 @@ import {
   Trash2,
   Globe,
   Key,
-  Loader2
+  Loader2,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -36,7 +41,14 @@ export function SettingsAdmin() {
     addresses: [''],
     phones: [''],
     emails: [''],
-    working_hours: ['']
+    working_hours: [''],
+    social_links: {
+      facebook: '',
+      twitter: '',
+      linkedin: '',
+      instagram: '',
+      youtube: ''
+    }
   });
 
   const [loading, setLoading] = useState(true);
@@ -74,6 +86,13 @@ export function SettingsAdmin() {
             phones: parsed.phones || [''],
             emails: parsed.emails || [''],
             working_hours: Array.isArray(parsed.working_hours) ? parsed.working_hours : [''],
+            social_links: parsed.social_links || {
+              facebook: '',
+              twitter: '',
+              linkedin: '',
+              instagram: '',
+              youtube: ''
+            }
           });
         } catch (e) {
           console.error('Failed to parse contact settings:', e);
@@ -280,6 +299,40 @@ export function SettingsAdmin() {
                     <button onClick={() => removeFromList('working_hours', idx)} className="p-4 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
                       <Trash2 className="h-5 w-5" />
                     </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="space-y-6 pt-6 border-t border-gray-50">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] flex items-center gap-3 px-2">
+                <Globe className="h-4 w-4 text-blue-600" /> Social Connectivity Manifest
+              </label>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { id: 'facebook', icon: Facebook, label: 'Facebook URL' },
+                  { id: 'twitter', icon: Twitter, label: 'Twitter / X URL' },
+                  { id: 'linkedin', icon: Linkedin, label: 'LinkedIn URL' },
+                  { id: 'instagram', icon: Instagram, label: 'Instagram URL' },
+                  { id: 'youtube', icon: Youtube, label: 'YouTube URL' },
+                ].map((input) => (
+                  <div key={input.id} className="space-y-3">
+                    <div className="flex items-center gap-3 px-2">
+                      <input.icon className="h-3.5 w-3.5 text-gray-400" />
+                      <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">{input.label}</span>
+                    </div>
+                    <input
+                      type="url"
+                      value={contactInfo.social_links?.[input.id as keyof typeof contactInfo.social_links] || ''}
+                      onChange={(e) => {
+                        const newLinks = { ...contactInfo.social_links, [input.id]: e.target.value };
+                        setContactInfo({ ...contactInfo, social_links: newLinks });
+                      }}
+                      placeholder={`https://${input.id}.com/globaltrade`}
+                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold text-xs sm:text-sm lowercase transition-all"
+                    />
                   </div>
                 ))}
               </div>

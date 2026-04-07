@@ -6,7 +6,14 @@ const DEFAULT_CONTACT_INFO: ContactInfo = {
   addresses: ['123 Trade Center, Logistics Bay, Dubai, United Arab Emirates'],
   phones: ['+971 4 123 4567'],
   emails: ['contact@globaltrade.com'],
-  working_hours: ['Mon - Fri: 9:00 AM - 6:00 PM (GMT)']
+  working_hours: ['Mon - Fri: 9:00 AM - 6:00 PM (GMT)'],
+  social_links: {
+    facebook: '',
+    twitter: '',
+    linkedin: '',
+    instagram: '',
+    youtube: ''
+  }
 };
 
 export function useCategories() {
@@ -215,6 +222,7 @@ export function useContactInfo() {
           working_hours: Array.isArray(parsed.working_hours) 
             ? parsed.working_hours 
             : DEFAULT_CONTACT_INFO.working_hours,
+          social_links: parsed.social_links || DEFAULT_CONTACT_INFO.social_links,
         });
       } catch (e) {
         console.error('Failed to parse contact settings:', e);

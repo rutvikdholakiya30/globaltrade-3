@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Globe, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram, ArrowUpRight } from 'lucide-react';
+import { Globe, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUpRight } from 'lucide-react';
 import { useContactInfo } from '@/hooks/useData';
 
 export function Footer() {
@@ -24,12 +24,29 @@ export function Footer() {
               Pioneering global logistics through precision engineering and verified supply chains. 
               Connecting markets with integrity since 2005.
             </p>
-            <div className="flex space-x-3">
-              {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
-                <a key={i} href="#" className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-brand-primary hover:border-brand-primary hover:shadow-lg hover:shadow-brand-primary/10 transition-all">
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+            <div className="flex flex-wrap gap-3">
+              {contactInfo.social_links && Object.entries(contactInfo.social_links).map(([platform, url]) => {
+                if (!url) return null;
+                const icons: Record<string, any> = {
+                  facebook: Facebook,
+                  twitter: Twitter,
+                  linkedin: Linkedin,
+                  instagram: Instagram,
+                  youtube: Youtube
+                };
+                const Icon = icons[platform] || Globe;
+                return (
+                  <a 
+                    key={platform} 
+                    href={url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-brand-primary hover:border-brand-primary hover:shadow-lg hover:shadow-brand-primary/10 transition-all group"
+                  >
+                    <Icon className="h-4 w-4 transition-transform group-hover:scale-110" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

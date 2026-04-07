@@ -88,6 +88,13 @@ export interface ContactInfo {
   phones: string[];
   emails: string[];
   working_hours: string[];
+  social_links?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+    youtube?: string;
+  };
 }
 
 export interface SiteSettings {
