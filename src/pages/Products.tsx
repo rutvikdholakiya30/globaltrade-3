@@ -185,7 +185,7 @@ export function Products() {
                           </div>
                           
                           <p className={cn(
-                            "text-slate-500 text-[10px] sm:text-xs leading-relaxed line-clamp-1 sm:line-clamp-2 mb-4",
+                            "text-slate-500 text-[10px] sm:text-xs leading-relaxed line-clamp-2 mb-4",
                             viewMode === 'grid' ? "hidden sm:block" : ""
                           )}>
                             {product.description || 'Professional grade industrial asset for international procurement.'}

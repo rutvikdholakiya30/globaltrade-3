@@ -163,7 +163,7 @@ export function Home() {
                     <h3 className="text-sm sm:text-xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-1 sm:mb-2">
                       {product.title}
                     </h3>
-                    <p className="hidden sm:block text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-1 sm:line-clamp-2 mb-6">
+                    <p className="hidden sm:block text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-2 mb-6">
                       {product.description || 'Professional grade industrial asset.'}
                     </p>
                     <div className="flex justify-between items-center pt-2 sm:pt-4 border-t border-slate-50">
