@@ -175,9 +175,9 @@ export function Products() {
                         )}>
                           {/* Title and In-Stock Row */}
                           <div className="mb-2 sm:mb-2.5">
-                            <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 mb-0.5 sm:mb-1 leading-tight">
-                              {product.title}
-                            </h3>
+                             <h3 className="text-[10px] sm:text-[11px] font-black text-slate-900 group-hover:text-brand-primary transition-colors mb-0.5 sm:mb-1 leading-[1.1] uppercase tracking-tight">
+                               {product.title}
+                             </h3>
                             <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 mb-1.5 sm:mb-2">
                               <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 w-fit">
                                 <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
