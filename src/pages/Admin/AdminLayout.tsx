@@ -15,7 +15,8 @@ import {
   Globe,
   Bell,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  AtSign
 } from 'lucide-react';
 import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { cn } from '@/lib/utils';
@@ -31,6 +32,7 @@ const menuItems = [
   { name: 'Partners', path: '/admin/partners', icon: Users },
   { name: 'Memberships', path: '/admin/memberships', icon: ShieldCheck },
   { name: 'Documents', path: '/admin/documents', icon: FileText },
+  { name: 'Subscribers', path: '/admin/subscribers', icon: AtSign },
   { name: 'Settings', path: '/admin/settings', icon: ShieldCheck },
 ];
 

@@ -25,6 +25,7 @@ import { PartnersAdmin } from '@/pages/Admin/PartnersAdmin';
 import { SettingsAdmin } from '@/pages/Admin/SettingsAdmin';
 import { DocumentsAdmin } from '@/pages/Admin/DocumentsAdmin';
 import { MembershipsAdmin } from '@/pages/Admin/MembershipsAdmin';
+import { SubscribersAdmin } from '@/pages/Admin/SubscribersAdmin';
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -67,6 +68,7 @@ export default function App() {
           <Route path="partners" element={<PartnersAdmin />} />
           <Route path="memberships" element={<MembershipsAdmin />} />
           <Route path="documents" element={<DocumentsAdmin />} />
+          <Route path="subscribers" element={<SubscribersAdmin />} />
           <Route path="settings" element={<SettingsAdmin />} />
         </Route>
       </Routes>

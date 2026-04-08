@@ -30,6 +30,11 @@ export function Contact() {
     try {
       const { error } = await supabase.from('contact_messages').insert([data]);
       if (!error) {
+        // Silently add email to subscribers list (ignore if already exists)
+        await supabase.from('subscribers').upsert(
+          [{ email: data.email.toLowerCase().trim(), name: data.name, source: 'contact_form' }],
+          { onConflict: 'email', ignoreDuplicates: true }
+        );
         setSubmitted(true);
         reset();
       }
