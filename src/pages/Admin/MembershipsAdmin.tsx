@@ -5,6 +5,7 @@ import { uploadImage } from '@/lib/upload';
 import { Plus, Trash2, Edit2, X, Loader2, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
+import { cn } from '@/lib/utils';
 import type { Membership } from '@/types';
 
 export function MembershipsAdmin() {

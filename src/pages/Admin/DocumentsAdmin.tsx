@@ -5,6 +5,7 @@ import { uploadImage } from '@/lib/upload';
 import { Plus, Trash2, Edit2, X, Loader2, FileText, CheckCircle2, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
+import { cn } from '@/lib/utils';
 import type { DocumentItem, DocumentCategory } from '@/types';
 
 export function DocumentsAdmin() {
@@ -450,6 +451,8 @@ function CategoriesManager() {
             </div>
           </div>
         )}
+      </AnimatePresence>
+
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
