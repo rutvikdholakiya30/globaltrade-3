@@ -63,9 +63,10 @@ function DocumentsManager() {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
-  // Deletion state
+  // Selection & Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -107,36 +108,78 @@ function DocumentsManager() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('documents').delete().eq('id', id);
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('documents').delete().in('id', ids);
     if (!error) {
-      setDocuments(documents.filter(d => d.id !== id));
+      setDocuments(documents.filter(d => !ids.includes(d.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
     }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === documents.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(documents.map(d => d.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   if (loading) return <div>Loading documents...</div>;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <button
-          onClick={() => {
-            setEditingDoc(null);
-            setFile(null);
-            setIsModalOpen(true);
-          }}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-blue-700 transition-all"
-        >
-          <Plus className="h-5 w-5" /> Add Document
-        </button>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+          <input
+            type="checkbox"
+            checked={selectedIds.length === documents.length && documents.length > 0}
+            onChange={handleToggleSelectAll}
+            className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+          />
+          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Select All</span>
+        </div>
+        
+        <div className="flex gap-4">
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-red-700 transition-all shadow-lg shadow-red-100"
+              >
+                <Trash2 className="h-4 w-4" /> Delete ({selectedIds.length})
+              </motion.button>
+            )}
+          </AnimatePresence>
+          <button
+            onClick={() => {
+              setEditingDoc(null);
+              setFile(null);
+              setIsModalOpen(true);
+            }}
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-blue-700 transition-all"
+          >
+            <Plus className="h-5 w-5" /> Add Document
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left text-sm text-gray-600">
           <thead className="bg-gray-50/50 text-gray-900 border-b border-gray-100">
             <tr>
+              <th className="px-6 py-4 w-10"></th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Title</th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Category</th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">File</th>
@@ -145,7 +188,18 @@ function DocumentsManager() {
           </thead>
           <tbody>
             {documents.map(doc => (
-              <tr key={doc.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+              <tr key={doc.id} className={cn(
+                "border-b border-gray-50 transition-colors",
+                selectedIds.includes(doc.id) ? "bg-blue-50/50" : "hover:bg-gray-50/50"
+              )}>
+                <td className="px-6 py-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(doc.id)}
+                    onChange={() => handleToggleSelect(doc.id)}
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+                  />
+                </td>
                 <td className="px-6 py-4 font-medium text-gray-900">{doc.title}</td>
                 <td className="px-6 py-4">
                   <span className="px-2 py-1 bg-blue-50 text-blue-700 text-[10px] uppercase font-bold tracking-widest rounded-md">
@@ -223,9 +277,11 @@ function DocumentsManager() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Document?"
-        message="This PDF will be permanently removed from the system. This action is irreversible."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Documents?" : "Delete Document?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} PDF documents from the system? This action is irreversible.`
+          : "This PDF will be permanently removed from the system. This action is irreversible."}
       />
     </div>
   );
@@ -237,9 +293,10 @@ function CategoriesManager() {
   const [editingCat, setEditingCat] = useState<DocumentCategory | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Deletion state
+  // Selection & Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -268,27 +325,71 @@ function CategoriesManager() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('document_categories').delete().eq('id', id);
-    if (!error) setCategories(categories.filter(c => c.id !== id));
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('document_categories').delete().in('id', ids);
+    if (!error) {
+      setCategories(categories.filter(c => !ids.includes(c.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+    }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === categories.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(categories.map(c => c.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <button onClick={() => { setEditingCat(null); setIsModalOpen(true); }} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700">
-          <Plus className="h-5 w-5" /> Add Category
-        </button>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+          <input
+            type="checkbox"
+            checked={selectedIds.length === categories.length && categories.length > 0}
+            onChange={handleToggleSelectAll}
+            className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+          />
+          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Select All</span>
+        </div>
+
+        <div className="flex gap-4">
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-red-700 transition-all shadow-lg shadow-red-100"
+              >
+                <Trash2 className="h-4 w-4" /> Delete ({selectedIds.length})
+              </motion.button>
+            )}
+          </AnimatePresence>
+          <button onClick={() => { setEditingCat(null); setIsModalOpen(true); }} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all">
+            <Plus className="h-5 w-5" /> Add Category
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left text-sm text-gray-600">
           <thead className="bg-gray-50/50 text-gray-900 border-b border-gray-100">
             <tr>
+              <th className="px-6 py-4 w-10"></th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Name</th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Slug</th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs text-right">Actions</th>
@@ -296,7 +397,18 @@ function CategoriesManager() {
           </thead>
           <tbody>
             {categories.map(cat => (
-              <tr key={cat.id} className="border-b border-gray-50">
+              <tr key={cat.id} className={cn(
+                "border-b border-gray-50 transition-colors",
+                selectedIds.includes(cat.id) ? "bg-blue-50/50" : "hover:bg-gray-50/50"
+              )}>
+                <td className="px-6 py-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(cat.id)}
+                    onChange={() => handleToggleSelect(cat.id)}
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+                  />
+                </td>
                 <td className="px-6 py-4 font-medium text-gray-900">{cat.name}</td>
                 <td className="px-6 py-4 font-mono text-xs text-gray-500">{cat.slug}</td>
                 <td className="px-6 py-4 flex items-center justify-end gap-2">
@@ -338,7 +450,15 @@ function CategoriesManager() {
             </div>
           </div>
         )}
-      </AnimatePresence>
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Categories?" : "Delete Category?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} document categories? This action is irreversible.`
+          : "Are you sure you want to delete this category? This action cannot be undone."}
+      />
     </div>
   );
 }

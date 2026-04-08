@@ -11,7 +11,8 @@ import {
   Clock
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 export function Dashboard() {
   const [stats, setStats] = useState({
@@ -138,18 +139,18 @@ export function Dashboard() {
           <div className="bg-gray-900 rounded-[2.5rem] p-8 text-white space-y-6">
             <h2 className="text-xl font-bold">Quick Actions</h2>
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
-                <span className="font-medium">Add New Product</span>
+              <Link to="/admin/products" className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
+                <span className="font-medium">Manage Products</span>
                 <ArrowUpRight className="h-5 w-5 text-gray-500 group-hover:text-blue-400" />
-              </button>
-              <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
+              </Link>
+              <Link to="/admin/categories" className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
                 <span className="font-medium">Manage Categories</span>
                 <ArrowUpRight className="h-5 w-5 text-gray-500 group-hover:text-blue-400" />
-              </button>
-              <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
+              </Link>
+              <Link to="/admin/gallery" className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
                 <span className="font-medium">Upload to Gallery</span>
                 <ArrowUpRight className="h-5 w-5 text-gray-500 group-hover:text-blue-400" />
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -166,6 +167,6 @@ export function Dashboard() {
   );
 }
 
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ');
-}
+
+
+

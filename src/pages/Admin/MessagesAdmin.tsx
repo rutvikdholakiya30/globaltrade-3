@@ -16,8 +16,9 @@ export function MessagesAdmin() {
   const [replySuccess, setReplySuccess] = useState(false);
 
   // Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   useEffect(() => {
     fetchMessages();
@@ -29,14 +30,31 @@ export function MessagesAdmin() {
     setLoading(false);
   }
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('contact_messages').delete().eq('id', id);
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('contact_messages').delete().in('id', ids);
     if (!error) {
-      setMessages(messages.filter(m => m.id !== id));
-      if (selectedMessage?.id === id) setSelectedMessage(null);
+      setMessages(messages.filter(m => !ids.includes(m.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+      if (ids.includes(selectedMessage?.id || '')) setSelectedMessage(null);
     }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === filteredMessages.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredMessages.map(m => m.id));
+    }
+  };
+
+  const handleToggleSelect = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const handleReply = async () => {
@@ -98,34 +116,77 @@ export function MessagesAdmin() {
             ))
           ) : filteredMessages.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-              <Mail className="h-12 w-12 text-gray-100 mx-auto mb-2" />
+              < Mail className="h-12 w-12 text-gray-100 mx-auto mb-2" />
               <p className="text-gray-400 text-sm">No messages found.</p>
             </div>
           ) : (
-            filteredMessages.map((msg) => (
-              <button
-                key={msg.id}
-                onClick={() => setSelectedMessage(msg)}
-                className={cn(
-                  "w-full text-left p-6 rounded-2xl border transition-all group",
-                  selectedMessage?.id === msg.id 
-                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100" 
-                    : "bg-white border-gray-100 hover:border-blue-200 shadow-sm"
-                )}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <p className={cn("font-bold truncate", selectedMessage?.id === msg.id ? "text-white" : "text-gray-900")}>
-                    {msg.name}
-                  </p>
-                  <span className={cn("text-[10px] font-medium", selectedMessage?.id === msg.id ? "text-blue-100" : "text-gray-400")}>
-                    {new Date(msg.created_at).toLocaleDateString()}
-                  </span>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length === filteredMessages.length && filteredMessages.length > 0}
+                    onChange={handleToggleSelectAll}
+                    className="w-4 h-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Select All</span>
                 </div>
-                <p className={cn("text-xs line-clamp-1", selectedMessage?.id === msg.id ? "text-blue-50" : "text-gray-500")}>
-                  {msg.subject || 'No Subject'}
-                </p>
-              </button>
-            ))
+                {selectedIds.length > 0 && (
+                  <button
+                    onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                    className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Delete ({selectedIds.length})</span>
+                  </button>
+                )}
+              </div>
+
+              {filteredMessages.map((msg) => (
+                <button
+                  key={msg.id}
+                  onClick={() => setSelectedMessage(msg)}
+                  className={cn(
+                    "w-full text-left p-6 rounded-2xl border transition-all group relative",
+                    selectedMessage?.id === msg.id 
+                      ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100" 
+                      : items.includes(msg.id)
+                        ? "bg-blue-50 border-blue-200 shadow-sm"
+                        : "bg-white border-gray-100 hover:border-blue-200 shadow-sm"
+                  )}
+                >
+                  <div className="flex items-center gap-4 mb-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(msg.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        setSelectedIds(prev => 
+                          prev.includes(msg.id) ? prev.filter(i => i !== msg.id) : [...prev, msg.id]
+                        );
+                      }}
+                      className={cn(
+                        "w-4 h-4 rounded border-gray-200 focus:ring-blue-500 cursor-pointer",
+                        selectedMessage?.id === msg.id ? "accent-white" : "text-blue-600"
+                      )}
+                    />
+                    <div className="flex-grow flex justify-between items-start">
+                      <p className={cn("font-bold truncate", selectedMessage?.id === msg.id ? "text-white" : "text-gray-900")}>
+                        {msg.name}
+                      </p>
+                      <span className={cn("text-[10px] font-medium shrink-0", selectedMessage?.id === msg.id ? "text-blue-100" : "text-gray-400")}>
+                        {new Date(msg.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="pl-8">
+                    <p className={cn("text-xs line-clamp-1", selectedMessage?.id === msg.id ? "text-blue-50" : "text-gray-500")}>
+                      {msg.subject || 'No Subject'}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
@@ -238,9 +299,11 @@ export function MessagesAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Inquiry?"
-        message="This message will be permanently removed from the system. This action cannot be undone."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Inquiries?" : "Delete Inquiry?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} messages? This action is irreversible.`
+          : "This message will be permanently removed from the system. This action cannot be undone."}
       />
     </div>
   );

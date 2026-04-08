@@ -26,9 +26,12 @@ export function ProductsAdmin() {
   // New States for Specs (Features array will be merged into specs)
   const [specifications, setSpecifications] = useState<Partial<ProductSpecification>[]>([{ spec_key: '', spec_value: '' }]);
 
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   // New States for Delete Dialog
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -44,11 +47,29 @@ export function ProductsAdmin() {
     setLoading(false);
   }
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('products').delete().eq('id', id);
-    if (!error) setProducts(products.filter(p => p.id !== id));
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('products').delete().in('id', ids);
+    if (!error) {
+      setProducts(products.filter(p => !ids.includes(p.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+    }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === filteredProducts.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredProducts.map(p => p.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const handleToggleStatus = async (product: Product) => {
@@ -245,17 +266,46 @@ export function ProductsAdmin() {
               </button>
             </div>
 
-            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="SEARCH MANIFEST / ID..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-6 py-3.5 sm:py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold placeholder:text-gray-300 uppercase text-base tracking-widest"
-                />
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-grow bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="SEARCH MANIFEST / ID..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-6 py-3.5 sm:py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 text-slate-900 font-bold placeholder:text-gray-300 uppercase text-base tracking-widest"
+                  />
+                </div>
               </div>
+
+              <AnimatePresence>
+                {selectedIds.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, x: 20 }}
+                    className="flex items-center gap-4 bg-red-50 border border-red-100 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm"
+                  >
+                    <div className="hidden sm:block">
+                      <p className="text-red-600 font-black text-xs uppercase tracking-widest">{selectedIds.length} Assets Selected</p>
+                    </div>
+                    <button
+                      onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                      className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 transition-all active:scale-95 flex items-center gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" /> Bulk Delete
+                    </button>
+                    <button
+                      onClick={() => setSelectedIds([])}
+                      className="p-3 text-red-400 hover:bg-red-100 rounded-xl transition-all"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden">
@@ -263,6 +313,16 @@ export function ProductsAdmin() {
                 <table className="w-full text-left min-w-[800px]">
                   <thead className="bg-gray-50/50 border-b border-gray-100">
                     <tr>
+                      <th className="px-6 sm:px-8 py-4 sm:py-6 w-10">
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.length === filteredProducts.length && filteredProducts.length > 0}
+                            onChange={handleToggleSelectAll}
+                            className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                          />
+                        </div>
+                      </th>
                       <th className="px-6 sm:px-8 py-4 sm:py-6 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Asset Information</th>
                       <th className="px-6 sm:px-8 py-4 sm:py-6 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Sector</th>
                       <th className="px-6 sm:px-8 py-4 sm:py-6 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Unit Value</th>
@@ -278,7 +338,20 @@ export function ProductsAdmin() {
                         </tr>
                       ))
                     ) : filteredProducts.map((product) => (
-                      <tr key={product.id} className="hover:bg-blue-50/30 transition-colors group">
+                      <tr key={product.id} className={cn(
+                        "hover:bg-blue-50/30 transition-colors group",
+                        selectedIds.includes(product.id) && "bg-blue-50/50"
+                      )}>
+                        <td className="px-6 sm:px-8 py-4 sm:py-6">
+                          <div className="flex items-center justify-center">
+                            <input
+                              type="checkbox"
+                              checked={selectedIds.includes(product.id)}
+                              onChange={() => handleToggleSelect(product.id)}
+                              className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                            />
+                          </div>
+                        </td>
                         <td className="px-6 sm:px-8 py-4 sm:py-6">
                           <div className="flex items-center gap-4 sm:gap-6">
                             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-[20px] overflow-hidden bg-gray-100 shrink-0 border border-gray-100 group-hover:scale-105 transition-transform">
@@ -647,9 +720,11 @@ export function ProductsAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Asset?"
-        message="This will permanently remove this asset from the inventory manifest. This action cannot be undone."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Bulk Delete Assets?" : "Delete Asset?"}
+        message={Array.isArray(itemToDelete) 
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} assets from the inventory manifest? This action is irreversible.`
+          : "This will permanently remove this asset from the inventory manifest. This action cannot be undone."}
       />
     </div>
   );

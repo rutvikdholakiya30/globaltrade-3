@@ -17,6 +17,7 @@ import {
   Users,
   ShieldCheck
 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
@@ -77,6 +78,8 @@ export function AdminLayout() {
     if (count !== null) setUnreadCount(count);
   }
 
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/admin/login');
@@ -132,15 +135,23 @@ export function AdminLayout() {
 
           <div className="p-4 border-t border-white/10">
             <button
-              onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
+              onClick={() => setIsLogoutDialogOpen(true)}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all font-bold uppercase tracking-widest text-[10px]"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
               <span>Sign Out</span>
             </button>
           </div>
         </div>
       </aside>
+      
+      <ConfirmDialog
+        isOpen={isLogoutDialogOpen}
+        onClose={() => setIsLogoutDialogOpen(false)}
+        onConfirm={handleLogout}
+        title="Sign Out?"
+        message="Are you sure you want to log out of the administrative dashboard? You will need to sign in again to manage content."
+      />
 
       {/* Main Content */}
       <div className="flex-grow flex flex-col min-w-0">

@@ -18,8 +18,9 @@ export function GalleryAdmin() {
   const [previews, setPreviews] = useState<{ url: string; type: string }[]>([]);
 
   // Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   useEffect(() => {
     fetchGallery();
@@ -31,11 +32,29 @@ export function GalleryAdmin() {
     setLoading(false);
   }
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('gallery').delete().eq('id', id);
-    if (!error) setItems(items.filter(item => item.id !== id));
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('gallery').delete().in('id', ids);
+    if (!error) {
+      setItems(items.filter(item => !ids.includes(item.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+    }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === items.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(items.map(item => item.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,6 +153,43 @@ export function GalleryAdmin() {
         </button>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-4">
+          <input
+            type="checkbox"
+            checked={selectedIds.length === items.length && items.length > 0}
+            onChange={handleToggleSelectAll}
+            className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+          />
+          <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Select All Assets</span>
+        </div>
+        
+        <AnimatePresence>
+          {selectedIds.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex items-center gap-4"
+            >
+              <p className="text-[10px] font-black uppercase text-red-600 tracking-[0.2em]">{selectedIds.length} Assets Targeted</p>
+              <button
+                onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                className="px-6 py-3 bg-red-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 hover:bg-red-700 transition-all active:scale-95 shadow-lg shadow-red-100"
+              >
+                <Trash2 className="h-4 w-4" /> Bulk Delete
+              </button>
+              <button
+                onClick={() => setSelectedIds([])}
+                className="p-3 text-gray-400 hover:bg-gray-100 rounded-xl transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {[...Array(12)].map((_, i) => (
@@ -150,12 +206,25 @@ export function GalleryAdmin() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="relative group aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm hover:shadow-xl transition-all"
+                className={cn(
+                  "relative group aspect-square rounded-3xl overflow-hidden bg-gray-50 border shadow-sm hover:shadow-xl transition-all",
+                  selectedIds.includes(item.id) ? "border-blue-500 ring-4 ring-blue-500/10" : "border-gray-100"
+                )}
               >
+                {/* Selection Overlay */}
+                <div className="absolute top-4 left-4 z-10">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(item.id)}
+                    onChange={() => handleToggleSelect(item.id)}
+                    className="w-5 h-5 rounded-lg border-2 border-white/50 bg-black/20 backdrop-blur-md text-blue-600 focus:ring-blue-500 transition-all cursor-pointer accent-blue-600"
+                  />
+                </div>
+
                 {isVideo(item.image_url) ? (
                   <div className="w-full h-full bg-slate-900 flex items-center justify-center relative">
                     <Video className="h-10 w-10 text-white/20" />
-                    <div className="absolute top-3 left-3 px-2 py-1 bg-blue-600 text-[8px] font-black uppercase text-white rounded-lg tracking-widest">Video</div>
+                    <div className="absolute top-3 right-3 px-2 py-1 bg-blue-600 text-[8px] font-black uppercase text-white rounded-lg tracking-widest">Video</div>
                   </div>
                 ) : (
                   <img src={item.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -164,12 +233,14 @@ export function GalleryAdmin() {
                 <div className="absolute inset-0 bg-gray-900/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center backdrop-blur-sm">
                   <p className="text-white text-[10px] font-black uppercase tracking-widest mb-1 line-clamp-1">{item.category || 'NO CATEGORY'}</p>
                   <p className="text-white/60 text-[8px] font-bold uppercase tracking-widest mb-4 line-clamp-1">{item.caption || 'N/A'}</p>
-                  <button
-                    onClick={() => { setItemToDelete(item.id); setIsDeleteDialogOpen(true); }}
-                    className="p-3 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all transform hover:scale-110 active:scale-90"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { setItemToDelete(item.id); setIsDeleteDialogOpen(true); }}
+                      className="p-3 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all transform hover:scale-110 active:scale-90"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -338,9 +409,11 @@ export function GalleryAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Media?"
-        message="Are you sure you want to remove this asset from the gallery? This action is irreversible."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Bulk Delete Media?" : "Delete Media?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} assets from the gallery? This action is irreversible.`
+          : "Are you sure you want to remove this asset from the gallery? This action is irreversible."}
       />
     </div>
   );

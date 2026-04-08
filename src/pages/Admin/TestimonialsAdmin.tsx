@@ -11,9 +11,10 @@ export function TestimonialsAdmin() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
-  // Deletion state
+  // Deletion and Selection state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   useEffect(() => {
     fetchTestimonials();
@@ -28,18 +29,38 @@ export function TestimonialsAdmin() {
     setLoading(false);
   }
 
-  const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
-    const { error } = await supabase.from('testimonials').update({ status }).eq('id', id);
+  const handleUpdateStatus = async (id: string | string[], status: 'approved' | 'rejected') => {
+    const ids = Array.isArray(id) ? id : [id];
+    const { error } = await supabase.from('testimonials').update({ status }).in('id', ids);
     if (!error) {
-      setTestimonials(testimonials.map(t => t.id === id ? { ...t, status } : t));
+      setTestimonials(testimonials.map(t => ids.includes(t.id) ? { ...t, status } : t));
+      if (Array.isArray(id)) setSelectedIds([]);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('testimonials').delete().eq('id', id);
-    if (!error) setTestimonials(testimonials.filter(t => t.id !== id));
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('testimonials').delete().in('id', ids);
+    if (!error) {
+      setTestimonials(testimonials.filter(t => !ids.includes(t.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+    }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === filteredTestimonials.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredTestimonials.map(t => t.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const filteredTestimonials = testimonials.filter(t => filter === 'all' || t.status === filter);
@@ -67,6 +88,56 @@ export function TestimonialsAdmin() {
         </div>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-4">
+          <input
+            type="checkbox"
+            checked={selectedIds.length === filteredTestimonials.length && filteredTestimonials.length > 0}
+            onChange={handleToggleSelectAll}
+            className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+          />
+          <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Select All {filter !== 'all' ? filter : ''} Testimonials</span>
+        </div>
+        
+        <AnimatePresence>
+          {selectedIds.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex flex-wrap items-center gap-4"
+            >
+              <div className="flex bg-gray-50 rounded-xl p-1 border border-gray-100">
+                <button
+                  onClick={() => handleUpdateStatus(selectedIds, 'approved')}
+                  className="px-4 py-2 bg-white text-green-600 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-green-50 transition-all border border-gray-100"
+                >
+                  Approve Selected
+                </button>
+                <button
+                  onClick={() => handleUpdateStatus(selectedIds, 'rejected')}
+                  className="px-4 py-2 text-red-600 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-red-50 transition-all"
+                >
+                  Reject Selected
+                </button>
+              </div>
+              <button
+                onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                className="px-6 py-3 bg-red-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 hover:bg-red-700 transition-all active:scale-95 shadow-lg shadow-red-100"
+              >
+                <Trash2 className="h-4 w-4" /> Bulk Delete
+              </button>
+              <button
+                onClick={() => setSelectedIds([])}
+                className="p-3 text-gray-400 hover:bg-gray-100 rounded-xl transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       <div className="grid grid-cols-1 gap-6">
         {loading ? (
           [...Array(3)].map((_, i) => (
@@ -82,9 +153,20 @@ export function TestimonialsAdmin() {
             <motion.div
               key={t.id}
               layout
-              className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-8 items-start md:items-center"
+              className={cn(
+                "bg-white p-8 rounded-[2rem] border transition-all flex flex-col md:flex-row gap-8 items-start md:items-center relative group",
+                selectedIds.includes(t.id) ? "border-blue-500 bg-blue-50/30" : "border-gray-100 shadow-sm hover:shadow-md"
+              )}
             >
-              <div className="flex-grow space-y-4">
+              <div className="absolute top-8 left-4">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(t.id)}
+                  onChange={() => handleToggleSelect(t.id)}
+                  className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                />
+              </div>
+              <div className="pl-6 flex-grow space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-bold">
                     {t.name[0]}
@@ -146,9 +228,11 @@ export function TestimonialsAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Testimonial?"
-        message="This will permanently remove the partner feedback from the system. This action cannot be undone."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Testimonials?" : "Delete Testimonial?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} testimonials from the system? This action is irreversible.`
+          : "This will permanently remove the partner feedback from the system. This action cannot be undone."}
       />
     </div>
   );

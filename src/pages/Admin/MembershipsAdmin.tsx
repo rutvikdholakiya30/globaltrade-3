@@ -14,9 +14,10 @@ export function MembershipsAdmin() {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   
-  // New States for Delete Dialog
+  // Selection & Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,15 +58,31 @@ export function MembershipsAdmin() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('memberships').delete().eq('id', id);
-    if (error) {
-      alert(`Delete failed: ${error.message}`);
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('memberships').delete().in('id', ids);
+    if (!error) {
+      setMemberships(memberships.filter(m => !ids.includes(m.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
     } else {
-      setMemberships(memberships.filter(m => m.id !== id));
+      alert(`Delete failed: ${error.message}`);
     }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === memberships.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(memberships.map(m => m.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   if (loading) return <div>Loading...</div>;
@@ -81,22 +98,45 @@ export function MembershipsAdmin() {
             Manage Government Memberships & Accreditations
           </p>
         </div>
-        <button
-          onClick={() => {
-            setEditingItem(null);
-            setFile(null);
-            setIsModalOpen(true);
-          }}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-blue-700 transition-all"
-        >
-          <Plus className="h-5 w-5" /> Add Membership
-        </button>
+        <div className="flex gap-4 items-center">
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-red-700 transition-all shadow-lg shadow-red-100"
+              >
+                <Trash2 className="h-4 w-4" /> Delete ({selectedIds.length})
+              </motion.button>
+            )}
+          </AnimatePresence>
+          <button
+            onClick={() => {
+              setEditingItem(null);
+              setFile(null);
+              setIsModalOpen(true);
+            }}
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-blue-700 transition-all"
+          >
+            <Plus className="h-5 w-5" /> Add Membership
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left text-sm text-gray-600">
           <thead className="bg-gray-50/50 text-gray-900 border-b border-gray-100">
             <tr>
+              <th className="px-6 py-4 w-10">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.length === memberships.length && memberships.length > 0}
+                  onChange={handleToggleSelectAll}
+                  className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                />
+              </th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Icon</th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Name</th>
               <th className="px-6 py-4 font-bold uppercase tracking-widest text-xs">Order</th>
@@ -105,7 +145,18 @@ export function MembershipsAdmin() {
           </thead>
           <tbody>
             {memberships.map(item => (
-              <tr key={item.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+              <tr key={item.id} className={cn(
+                "border-b border-gray-50 transition-colors",
+                selectedIds.includes(item.id) ? "bg-blue-50/50" : "hover:bg-gray-50/50"
+              )}>
+                <td className="px-6 py-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(item.id)}
+                    onChange={() => handleToggleSelect(item.id)}
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+                  />
+                </td>
                 <td className="px-6 py-4">
                   <img src={item.logo_url} alt={item.name} className="h-10 w-10 object-contain" />
                 </td>
@@ -175,9 +226,11 @@ export function MembershipsAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Membership?"
-        message="This action is irreversible. This accreditation/membership will be permanently removed from the public manifest."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Memberships?" : "Delete Membership?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} memberships/accreditations? This action is irreversible.`
+          : "This action is irreversible. This accreditation/membership will be permanently removed from the public manifest."}
       />
     </div>
   );

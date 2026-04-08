@@ -17,8 +17,9 @@ export function PartnersAdmin() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   useEffect(() => {
     fetchPartners();
@@ -30,11 +31,29 @@ export function PartnersAdmin() {
     setLoading(false);
   }
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('partners').delete().eq('id', id);
-    if (!error) setPartners(partners.filter(p => p.id !== id));
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('partners').delete().in('id', ids);
+    if (!error) {
+      setPartners(partners.filter(p => !ids.includes(p.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+    }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === partners.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(partners.map(p => p.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,16 +136,51 @@ export function PartnersAdmin() {
                 <h1 className="text-3xl font-bold text-gray-900">Our Partners</h1>
                 <p className="text-gray-600">Manage the companies you work with.</p>
               </div>
-              <button
-                onClick={() => {
-                  setEditingPartner(null);
-                  setPreviewUrl(null);
-                  setIsFormOpen(true);
-                }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
-              >
-                <Plus className="h-5 w-5" /> Add Partner
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                <AnimatePresence>
+                  {selectedIds.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: 20 }}
+                      className="flex items-center gap-4 bg-red-50 px-6 py-2 rounded-2xl border border-red-100"
+                    >
+                      <span className="text-xs font-bold text-red-600 uppercase tracking-widest">{selectedIds.length} Selected</span>
+                      <button
+                        onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                        className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => setSelectedIds([])}
+                        className="p-2 text-red-300 hover:text-red-400"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <div className="flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length === partners.length && partners.length > 0}
+                    onChange={handleToggleSelectAll}
+                    className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                  />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Select All</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setEditingPartner(null);
+                    setPreviewUrl(null);
+                    setIsFormOpen(true);
+                  }}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                >
+                  <Plus className="h-5 w-5" /> Add Partner
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -139,8 +193,19 @@ export function PartnersAdmin() {
                   <motion.div
                     key={partner.id}
                     layout
-                    className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all group relative"
+                    className={cn(
+                      "bg-white p-6 rounded-3xl border transition-all group relative",
+                      selectedIds.includes(partner.id) ? "border-blue-500 bg-blue-50/30" : "border-gray-100 shadow-sm hover:shadow-md"
+                    )}
                   >
+                    <div className="absolute top-4 left-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(partner.id)}
+                        onChange={() => handleToggleSelect(partner.id)}
+                        className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                      />
+                    </div>
                     <div className="flex flex-col items-center text-center space-y-4">
                       <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 flex items-center justify-center text-gray-400 shrink-0 border border-gray-100">
                         {partner.logo_url ? (
@@ -294,9 +359,11 @@ export function PartnersAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Partner?"
-        message="This partner will be permanently removed from your display manifest. This action cannot be undone."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Partners?" : "Delete Partner?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} partners from your display manifest? This action is irreversible.`
+          : "This partner will be permanently removed from your display manifest. This action cannot be undone."}
       />
     </div>
   );

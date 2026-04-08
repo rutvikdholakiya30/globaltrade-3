@@ -17,8 +17,9 @@ export function CategoriesAdmin() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Deletion state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | string[] | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -30,11 +31,29 @@ export function CategoriesAdmin() {
     setLoading(false);
   }
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (!error) setCategories(categories.filter(c => c.id !== id));
+  const handleDelete = async (target: string | string[]) => {
+    const ids = Array.isArray(target) ? target : [target];
+    const { error } = await supabase.from('categories').delete().in('id', ids);
+    if (!error) {
+      setCategories(categories.filter(c => !ids.includes(c.id)));
+      setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+    }
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === categories.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(categories.map(c => c.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,16 +131,51 @@ export function CategoriesAdmin() {
                 <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
                 <p className="text-gray-600">Organize your products into logical groups.</p>
               </div>
-              <button
-                onClick={() => {
-                  setEditingCategory(null);
-                  setPreviewUrl(null);
-                  setIsFormOpen(true);
-                }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
-              >
-                <Plus className="h-5 w-5" /> Add Category
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                <AnimatePresence>
+                  {selectedIds.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: 20 }}
+                      className="flex items-center gap-4 bg-red-50 px-6 py-2 rounded-2xl border border-red-100"
+                    >
+                      <span className="text-xs font-bold text-red-600 uppercase tracking-widest">{selectedIds.length} Selected</span>
+                      <button
+                        onClick={() => { setItemToDelete(selectedIds); setIsDeleteDialogOpen(true); }}
+                        className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => setSelectedIds([])}
+                        className="p-2 text-red-300 hover:text-red-400"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <div className="flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length === categories.length && categories.length > 0}
+                    onChange={handleToggleSelectAll}
+                    className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                  />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Select All</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setEditingCategory(null);
+                    setPreviewUrl(null);
+                    setIsFormOpen(true);
+                  }}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                >
+                  <Plus className="h-5 w-5" /> Add Category
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -134,9 +188,18 @@ export function CategoriesAdmin() {
                   <motion.div
                     key={category.id}
                     layout
-                    className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group"
+                    className={cn(
+                      "bg-white p-6 rounded-3xl border transition-all flex items-center justify-between group",
+                      selectedIds.includes(category.id) ? "border-blue-500 bg-blue-50/30" : "border-gray-100 shadow-sm hover:shadow-md"
+                    )}
                   >
                     <div className="flex items-center gap-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(category.id)}
+                        onChange={() => handleToggleSelect(category.id)}
+                        className="w-5 h-5 rounded-lg border-2 border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                      />
                       <div className="w-12 h-12 rounded-xl overflow-hidden bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                         {category.image_url ? (
                           <img src={category.image_url} alt="" className="w-full h-full object-cover" />
@@ -281,9 +344,11 @@ export function CategoriesAdmin() {
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
-        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
-        title="Delete Category?"
-        message="This action may affect products currently assigned to this category. This deletion is permanent."
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete as string | string[])}
+        title={Array.isArray(itemToDelete) ? "Delete Multiple Categories?" : "Delete Category?"}
+        message={Array.isArray(itemToDelete)
+          ? `Are you sure you want to permanently remove ${itemToDelete.length} categories? This action is irreversible and may affect products in these categories.`
+          : "This action may affect products currently assigned to this category. This deletion is permanent."}
       />
     </div>
   );
