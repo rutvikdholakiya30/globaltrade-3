@@ -4,6 +4,7 @@ import { useDocuments, useDocumentCategories } from '@/hooks/useDocuments';
 import { uploadImage } from '@/lib/upload';
 import { Plus, Trash2, Edit2, X, Loader2, FileText, CheckCircle2, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import type { DocumentItem, DocumentCategory } from '@/types';
 
 export function DocumentsAdmin() {
@@ -62,6 +63,10 @@ function DocumentsManager() {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUploading(true);
@@ -103,11 +108,12 @@ function DocumentsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this document?')) return;
     const { error } = await supabase.from('documents').delete().eq('id', id);
     if (!error) {
       setDocuments(documents.filter(d => d.id !== id));
     }
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   if (loading) return <div>Loading documents...</div>;
@@ -155,7 +161,7 @@ function DocumentsManager() {
                   <button onClick={() => { setEditingDoc(doc); setFile(null); setIsModalOpen(true); }} className="p-2 text-gray-400 hover:text-blue-600 transition-colors bg-white rounded-lg border border-gray-200">
                     <Edit2 className="h-4 w-4" />
                   </button>
-                  <button onClick={() => handleDelete(doc.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors bg-white rounded-lg border border-gray-200">
+                  <button onClick={() => { setItemToDelete(doc.id); setIsDeleteDialogOpen(true); }} className="p-2 text-gray-400 hover:text-red-600 transition-colors bg-white rounded-lg border border-gray-200">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </td>
@@ -213,6 +219,14 @@ function DocumentsManager() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Document?"
+        message="This PDF will be permanently removed from the system. This action is irreversible."
+      />
     </div>
   );
 }
@@ -222,6 +236,10 @@ function CategoriesManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCat, setEditingCat] = useState<DocumentCategory | null>(null);
   const [saving, setSaving] = useState(false);
+
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -251,9 +269,10 @@ function CategoriesManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this category? Associated documents will also be deleted.')) return;
     const { error } = await supabase.from('document_categories').delete().eq('id', id);
     if (!error) setCategories(categories.filter(c => c.id !== id));
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -284,7 +303,7 @@ function CategoriesManager() {
                   <button onClick={() => { setEditingCat(cat); setIsModalOpen(true); }} className="p-2 hover:text-blue-600 bg-white border border-gray-200 rounded-lg">
                     <Edit2 className="h-4 w-4" />
                   </button>
-                  <button onClick={() => handleDelete(cat.id)} className="p-2 hover:text-red-600 bg-white border border-gray-200 rounded-lg">
+                  <button onClick={() => { setItemToDelete(cat.id); setIsDeleteDialogOpen(true); }} className="p-2 hover:text-red-600 bg-white border border-gray-200 rounded-lg">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </td>

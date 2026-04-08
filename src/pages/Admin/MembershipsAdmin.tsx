@@ -4,6 +4,7 @@ import { useMemberships } from '@/hooks/useData';
 import { uploadImage } from '@/lib/upload';
 import { Plus, Trash2, Edit2, X, Loader2, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import type { Membership } from '@/types';
 
 export function MembershipsAdmin() {
@@ -12,6 +13,10 @@ export function MembershipsAdmin() {
   const [editingItem, setEditingItem] = useState<Membership | null>(null);
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  
+  // New States for Delete Dialog
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,13 +58,14 @@ export function MembershipsAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this membership?')) return;
     const { error } = await supabase.from('memberships').delete().eq('id', id);
     if (error) {
       alert(`Delete failed: ${error.message}`);
     } else {
       setMemberships(memberships.filter(m => m.id !== id));
     }
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -109,7 +115,7 @@ export function MembershipsAdmin() {
                   <button onClick={() => { setEditingItem(item); setFile(null); setIsModalOpen(true); }} className="p-2 text-gray-400 hover:text-blue-600 transition-colors bg-white rounded-lg border border-gray-200">
                     <Edit2 className="h-4 w-4" />
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors bg-white rounded-lg border border-gray-200">
+                  <button onClick={() => { setItemToDelete(item.id); setIsDeleteDialogOpen(true); }} className="p-2 text-gray-400 hover:text-red-600 transition-colors bg-white rounded-lg border border-gray-200">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </td>
@@ -165,6 +171,14 @@ export function MembershipsAdmin() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Membership?"
+        message="This action is irreversible. This accreditation/membership will be permanently removed from the public manifest."
+      />
     </div>
   );
 }

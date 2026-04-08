@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Trash2, Image as ImageIcon, X, Loader2, Upload, Video, Layers, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { uploadImage } from '@/lib/upload';
 import type { GalleryItem } from '@/types';
 import { cn } from '@/lib/utils';
@@ -16,6 +17,10 @@ export function GalleryAdmin() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<{ url: string; type: string }[]>([]);
 
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     fetchGallery();
   }, []);
@@ -27,9 +32,10 @@ export function GalleryAdmin() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this item?')) return;
     const { error } = await supabase.from('gallery').delete().eq('id', id);
     if (!error) setItems(items.filter(item => item.id !== id));
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +165,7 @@ export function GalleryAdmin() {
                   <p className="text-white text-[10px] font-black uppercase tracking-widest mb-1 line-clamp-1">{item.category || 'NO CATEGORY'}</p>
                   <p className="text-white/60 text-[8px] font-bold uppercase tracking-widest mb-4 line-clamp-1">{item.caption || 'N/A'}</p>
                   <button
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => { setItemToDelete(item.id); setIsDeleteDialogOpen(true); }}
                     className="p-3 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all transform hover:scale-110 active:scale-90"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -328,6 +334,14 @@ export function GalleryAdmin() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Media?"
+        message="Are you sure you want to remove this asset from the gallery? This action is irreversible."
+      />
     </div>
   );
 }

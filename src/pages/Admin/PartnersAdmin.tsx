@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Edit2, Trash2, X, Upload, Loader2, Image as ImageIcon, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { cn } from '@/lib/utils';
 import { uploadImage } from '@/lib/upload';
 import type { Partner } from '@/types';
@@ -15,6 +16,10 @@ export function PartnersAdmin() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     fetchPartners();
   }, []);
@@ -26,9 +31,10 @@ export function PartnersAdmin() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this partner?')) return;
     const { error } = await supabase.from('partners').delete().eq('id', id);
     if (!error) setPartners(partners.filter(p => p.id !== id));
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +172,7 @@ export function PartnersAdmin() {
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(partner.id)}
+                        onClick={() => { setItemToDelete(partner.id); setIsDeleteDialogOpen(true); }}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -284,6 +290,14 @@ export function PartnersAdmin() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Partner?"
+        message="This partner will be permanently removed from your display manifest. This action cannot be undone."
+      />
     </div>
   );
 }

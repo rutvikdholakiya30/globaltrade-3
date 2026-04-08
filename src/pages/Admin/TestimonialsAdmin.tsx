@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Check, X, Star, Trash2, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
+import { Check, X, Star, Trash2, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Testimonial } from '@/types';
 
@@ -9,6 +10,10 @@ export function TestimonialsAdmin() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTestimonials();
@@ -31,9 +36,10 @@ export function TestimonialsAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure?')) return;
     const { error } = await supabase.from('testimonials').delete().eq('id', id);
     if (!error) setTestimonials(testimonials.filter(t => t.id !== id));
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const filteredTestimonials = testimonials.filter(t => filter === 'all' || t.status === filter);
@@ -125,7 +131,7 @@ export function TestimonialsAdmin() {
                 )}
                 {t.status !== 'pending' && (
                   <button
-                    onClick={() => handleDelete(t.id)}
+                    onClick={() => { setItemToDelete(t.id); setIsDeleteDialogOpen(true); }}
                     className="p-3 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -136,6 +142,14 @@ export function TestimonialsAdmin() {
           ))
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Testimonial?"
+        message="This will permanently remove the partner feedback from the system. This action cannot be undone."
+      />
     </div>
   );
 }

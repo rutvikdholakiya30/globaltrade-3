@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Mail, Trash2, Calendar, User, MessageSquare, Search, X, Send, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { cn } from '@/lib/utils';
 import type { ContactMessage } from '@/types';
 
@@ -14,6 +15,10 @@ export function MessagesAdmin() {
   const [sendingReply, setSendingReply] = useState(false);
   const [replySuccess, setReplySuccess] = useState(false);
 
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -25,12 +30,13 @@ export function MessagesAdmin() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure?')) return;
     const { error } = await supabase.from('contact_messages').delete().eq('id', id);
     if (!error) {
       setMessages(messages.filter(m => m.id !== id));
       if (selectedMessage?.id === id) setSelectedMessage(null);
     }
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleReply = async () => {
@@ -145,7 +151,7 @@ export function MessagesAdmin() {
                     </div>
                   </div>
                   <button
-                    onClick={() => handleDelete(selectedMessage.id)}
+                    onClick={() => { setItemToDelete(selectedMessage.id); setIsDeleteDialogOpen(true); }}
                     className="p-3 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -228,6 +234,14 @@ export function MessagesAdmin() {
           </AnimatePresence>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Inquiry?"
+        message="This message will be permanently removed from the system. This action cannot be undone."
+      />
     </div>
   );
 }

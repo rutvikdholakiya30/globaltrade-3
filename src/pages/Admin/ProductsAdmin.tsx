@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { Plus, Search, Edit2, Trash2, ExternalLink, Image as ImageIcon, MoreVertical, Check, X, Upload, Loader2, List, Settings, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { formatPrice, cn, slugify } from '@/lib/utils';
 import { uploadImage } from '@/lib/upload';
 import type { Product, Category, ProductSpecification } from '@/types';
@@ -25,6 +26,10 @@ export function ProductsAdmin() {
   // New States for Specs (Features array will be merged into specs)
   const [specifications, setSpecifications] = useState<Partial<ProductSpecification>[]>([{ spec_key: '', spec_value: '' }]);
 
+  // New States for Delete Dialog
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -40,9 +45,10 @@ export function ProductsAdmin() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
     const { error } = await supabase.from('products').delete().eq('id', id);
     if (!error) setProducts(products.filter(p => p.id !== id));
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleToggleStatus = async (product: Product) => {
@@ -324,11 +330,11 @@ export function ProductsAdmin() {
                               <Edit2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             </button>
                             <button
-                              onClick={() => handleDelete(product.id)}
-                              className="p-2.5 sm:p-3 bg-white text-gray-400 shadow-sm border border-gray-100 hover:text-red-600 hover:border-red-100 rounded-xl transition-all hover:scale-110"
-                            >
-                              <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            </button>
+                               onClick={() => { setItemToDelete(product.id); setIsDeleteDialogOpen(true); }}
+                               className="p-2.5 sm:p-3 bg-white text-gray-400 shadow-sm border border-gray-100 hover:text-red-600 hover:border-red-100 rounded-xl transition-all hover:scale-110"
+                             >
+                               <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                             </button>
                             <Link
                               to={`/product/${product.slug}`}
                               target="_blank"
@@ -637,6 +643,14 @@ export function ProductsAdmin() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Asset?"
+        message="This will permanently remove this asset from the inventory manifest. This action cannot be undone."
+      />
     </div>
   );
 }

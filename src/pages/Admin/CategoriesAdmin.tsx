@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Edit2, Trash2, X, Layers, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 import { slugify, cn } from '@/lib/utils';
 import { uploadImage } from '@/lib/upload';
 import type { Category } from '@/types';
@@ -15,6 +16,10 @@ export function CategoriesAdmin() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // Deletion state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -26,9 +31,10 @@ export function CategoriesAdmin() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure? This may affect products in this category.')) return;
     const { error } = await supabase.from('categories').delete().eq('id', id);
     if (!error) setCategories(categories.filter(c => c.id !== id));
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,7 +166,7 @@ export function CategoriesAdmin() {
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(category.id)}
+                        onClick={() => { setItemToDelete(category.id); setIsDeleteDialogOpen(true); }}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -271,6 +277,14 @@ export function CategoriesAdmin() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => { setIsDeleteDialogOpen(false); setItemToDelete(null); }}
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Delete Category?"
+        message="This action may affect products currently assigned to this category. This deletion is permanent."
+      />
     </div>
   );
 }
