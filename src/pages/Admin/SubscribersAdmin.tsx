@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Trash2, Copy, Check, Users, Download, Search, ArrowUpDown } from 'lucide-react';
+import { Mail, Trash2, Copy, Check, Users, Download, Search, ArrowUpDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ConfirmDialog } from '@/components/Admin/ConfirmDialog';
 
@@ -21,6 +21,13 @@ export function SubscribersAdmin() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  
+  // Bulk Mail state
+  const [isBulkMailOpen, setIsBulkMailOpen] = useState(false);
+  const [bulkSubject, setBulkSubject] = useState('');
+  const [bulkMessage, setBulkMessage] = useState('');
+  const [sendingBulk, setSendingBulk] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
 
   useEffect(() => {
     fetchSubscribers();
@@ -47,6 +54,42 @@ export function SubscribersAdmin() {
     setSubscribers(prev => prev.filter(s => !selectedIds.includes(s.id)));
     setSelectedIds([]);
     setBulkDeleteOpen(false);
+  }
+
+  async function handleSendBulk() {
+    if (!bulkSubject.trim() || !bulkMessage.trim()) return;
+    
+    setSendingBulk(true);
+    const recipients = selectedIds.length > 0 
+      ? subscribers.filter(s => selectedIds.includes(s.id))
+      : filtered;
+
+    try {
+      const response = await fetch('/api/bulk-mail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipients: recipients.map(r => ({ email: r.email, name: r.name })),
+          subject: bulkSubject,
+          message: bulkMessage,
+          bccAdmin: true
+        }),
+      });
+
+      if (response.ok) {
+        setSendSuccess(true);
+        setTimeout(() => {
+          setIsBulkMailOpen(false);
+          setSendSuccess(false);
+          setBulkSubject('');
+          setBulkMessage('');
+        }, 2000);
+      }
+    } catch (err) {
+      console.error('Failed to send bulk mail:', err);
+    } finally {
+      setSendingBulk(false);
+    }
   }
 
   function copyAllEmails() {
@@ -90,10 +133,17 @@ export function SubscribersAdmin() {
           </div>
           <button
             onClick={copyAllEmails}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-700 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 text-gray-900 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all shadow-sm"
           >
-            {copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
-            {copied ? 'Copied!' : 'Copy All Emails'}
+            {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+            {copied ? 'Copied!' : 'Copy Emails'}
+          </button>
+          <button
+            onClick={() => setIsBulkMailOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+          >
+            <Mail className="h-4 w-4" />
+            Send Bulk Email
           </button>
         </div>
       </div>
@@ -229,6 +279,104 @@ export function SubscribersAdmin() {
         title={`Delete ${selectedIds.length} Subscribers?`}
         message="All selected emails will be permanently removed from your subscriber list."
       />
+
+      {/* Bulk Mail Modal */}
+      <AnimatePresence>
+        {isBulkMailOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !sendingBulk && setIsBulkMailOpen(false)}
+              className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100"
+            >
+              <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Compose Bulk Email</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Sending to {selectedIds.length > 0 ? selectedIds.length : filtered.length} recipients. Use <code className="bg-gray-100 px-1 rounded text-blue-600">{"{{name}}"}</code> for personalization.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setIsBulkMailOpen(false)}
+                  disabled={sendingBulk}
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors disabled:opacity-50"
+                >
+                  <X className="h-6 w-6 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="p-8 space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Subject</label>
+                  <input
+                    type="text"
+                    value={bulkSubject}
+                    onChange={(e) => setBulkSubject(e.target.value)}
+                    placeholder="e.g. Exclusive Update for {{name}}"
+                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Message</label>
+                  <textarea
+                    rows={8}
+                    value={bulkMessage}
+                    onChange={(e) => setBulkMessage(e.target.value)}
+                    placeholder="Write your message here..."
+                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium transition-all resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={() => setIsBulkMailOpen(false)}
+                    disabled={sendingBulk}
+                    className="flex-grow py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition-all disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSendBulk}
+                    disabled={sendingBulk || !bulkSubject.trim() || !bulkMessage.trim()}
+                    className={cn(
+                      "flex-grow py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
+                      sendSuccess 
+                        ? "bg-green-500 text-white shadow-green-100" 
+                        : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-100 disabled:bg-gray-300 disabled:shadow-none"
+                    )}
+                  >
+                    {sendingBulk ? (
+                      <>
+                        <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Sending...
+                      </>
+                    ) : sendSuccess ? (
+                      <>
+                        <Check className="h-5 w-5" />
+                        Sent Successfully!
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="h-5 w-5" />
+                        Send to {selectedIds.length > 0 ? selectedIds.length : filtered.length} Emails
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
