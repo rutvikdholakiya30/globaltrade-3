@@ -29,6 +29,22 @@ export function Dashboard() {
   useEffect(() => {
     async function logAccess() {
       try {
+        // Check if we've already logged a session for this browser tab
+        const currentSessionFlag = sessionStorage.getItem('admin_session_logged');
+        
+        if (currentSessionFlag) {
+          // If already logged in this tab, fetch the log BEFORE that one (offset 1)
+          const { data: previous } = await supabase
+            .from('admin_access_logs')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .range(1, 1) // Get the 2nd most recent (the true previous session)
+            .single();
+          
+          if (previous) setLastSession(previous);
+          return;
+        }
+
         // Fetch location data from ipapi.co
         const res = await fetch('https://ipapi.co/json/');
         const locationData = await res.json();
@@ -41,7 +57,7 @@ export function Dashboard() {
 
         setCurrentSession(sessionInfo);
 
-        // Fetch the PREVIOUS session before logging the new one
+        // Fetch the LATEST session (this is the true previous session before we insert the new one)
         const { data: previous } = await supabase
           .from('admin_access_logs')
           .select('*')
@@ -51,8 +67,9 @@ export function Dashboard() {
         
         if (previous) setLastSession(previous);
 
-        // Log the current session
+        // Log the current session and mark as logged in this tab
         await supabase.from('admin_access_logs').insert([sessionInfo]);
+        sessionStorage.setItem('admin_session_logged', 'true');
       } catch (err) {
         console.error('Failed to log access session:', err);
       }
