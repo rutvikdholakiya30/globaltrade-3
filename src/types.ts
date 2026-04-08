@@ -122,3 +122,12 @@ export interface DocumentItem {
   created_at: string;
   category?: DocumentCategory;
 }
+
+export interface Membership {
+  id: string;
+  name: string;
+  logo_url: string;
+  status: boolean;
+  order: number;
+  created_at: string;
+}

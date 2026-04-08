@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Category, Product, Testimonial, Page, GalleryItem, Partner, ContactInfo } from '@/types';
+import type { Category, Product, Testimonial, Page, GalleryItem, Partner, ContactInfo, Membership } from '@/types';
 
 const DEFAULT_CONTACT_INFO: ContactInfo = {
   addresses: ['123 Trade Center, Logistics Bay, Dubai, United Arab Emirates'],
@@ -278,4 +278,25 @@ export function useContactInfo() {
   }, []);
 
   return { contactInfo, loading };
+}
+
+export function useMemberships() {
+  const [memberships, setMemberships] = useState<Membership[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMemberships() {
+      const { data, error } = await supabase
+        .from('memberships')
+        .select('*')
+        .eq('status', true)
+        .order('order');
+      
+      if (!error && data) setMemberships(data);
+      setLoading(false);
+    }
+    fetchMemberships();
+  }, []);
+
+  return { memberships, loading };
 }

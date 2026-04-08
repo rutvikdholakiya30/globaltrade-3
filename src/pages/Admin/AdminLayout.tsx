@@ -28,6 +28,7 @@ const menuItems = [
   { name: 'Pages', path: '/admin/pages', icon: FileText },
   { name: 'Messages', path: '/admin/messages', icon: Mail },
   { name: 'Partners', path: '/admin/partners', icon: Users },
+  { name: 'Memberships', path: '/admin/memberships', icon: ShieldCheck },
   { name: 'Documents', path: '/admin/documents', icon: FileText },
   { name: 'Settings', path: '/admin/settings', icon: ShieldCheck },
 ];

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, Globe, ShieldCheck, Truck, Star, ArrowUpRight, ChevronRight, Box, Zap, Activity } from 'lucide-react';
-import { useCategories, useProducts, useTestimonials, usePartners } from '@/hooks/useData';
+import { useCategories, useProducts, useTestimonials, usePartners, useMemberships } from '@/hooks/useData';
 import { formatPrice, cn } from '@/lib/utils';
 
 const getInitials = (name: string) =>
@@ -358,6 +358,9 @@ export function Home() {
         </div>
       </section>
 
+      {/* Government Memberships */}
+      <MembershipsSection />
+
       {/* CTA Section */}
       <section className="py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -378,5 +381,46 @@ export function Home() {
         </div>
       </section>
     </div>
+  );
+}
+
+function MembershipsSection() {
+  const { memberships, loading } = useMemberships();
+
+  if (loading || memberships.length === 0) return null;
+
+  return (
+    <section className="py-24 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <span className="section-label">Accreditations</span>
+          <h2 className="text-2xl md:text-5xl font-extrabold text-slate-900 mt-4">Government Memberships</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 max-w-5xl mx-auto">
+          {memberships.map((item) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center group"
+            >
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-slate-50 flex items-center justify-center p-6 mb-6 group-hover:bg-brand-primary/5 transition-all duration-500 border border-slate-100 group-hover:border-brand-primary/20 group-hover:shadow-xl group-hover:shadow-brand-primary/5">
+                <img
+                  src={item.logo_url}
+                  alt={item.name}
+                  className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <h3 className="text-sm sm:text-lg font-bold text-slate-900 group-hover:text-brand-primary transition-colors text-center uppercase tracking-wider">
+                {item.name}
+              </h3>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
