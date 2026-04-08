@@ -8,7 +8,9 @@ import {
   TrendingUp, 
   ArrowUpRight, 
   ArrowDownRight,
-  Clock
+  Clock,
+  Smartphone,
+  Monitor
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { formatPrice, cn } from '@/lib/utils';
@@ -29,6 +31,14 @@ export function Dashboard() {
   useEffect(() => {
     async function logAccess() {
       try {
+        const getDeviceType = () => {
+          const ua = navigator.userAgent;
+          if (/android/i.test(ua)) return "Android Mobile";
+          if (/iPhone|iPad|iPod/i.test(ua)) return "iPhone";
+          if (/windows|macintosh|linux/i.test(ua)) return "Desktop";
+          return "Mobile Device";
+        };
+
         // Check if we've already logged a session for this browser tab
         const currentSessionFlag = sessionStorage.getItem('admin_session_logged');
         
@@ -52,6 +62,7 @@ export function Dashboard() {
         const sessionInfo = {
           ip_address: locationData.ip,
           location: `${locationData.city}, ${locationData.country_name}`,
+          device: getDeviceType(),
           user_agent: navigator.userAgent
         };
 
@@ -217,19 +228,31 @@ export function Dashboard() {
             
             {lastSession ? (
               <div className="space-y-4">
-                <div className="p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
+                <div className="p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm relative overflow-hidden group/session">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/session:opacity-20 transition-opacity">
+                    {lastSession.device?.includes('Desktop') ? <Monitor className="h-12 w-12" /> : <Smartphone className="h-12 w-12" />}
+                  </div>
+                  
                   <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest mb-1">Previous Admin Access</p>
+                  
                   <div className="flex items-center gap-3 mb-2">
                     <Clock className="h-4 w-4 text-blue-200" />
                     <span className="text-sm font-bold">{new Date(lastSession.created_at).toLocaleString()}</span>
                   </div>
-                  <div className="flex items-center gap-3">
+
+                  <div className="flex items-center gap-3 mb-2">
                     <TrendingUp className="h-4 w-4 text-blue-200 rotate-90" />
                     <span className="text-xs font-medium">{lastSession.location || 'Unknown Location'}</span>
                   </div>
-                  <p className="text-[10px] text-blue-200/60 mt-2 font-mono">{lastSession.ip_address}</p>
+
+                  <div className="flex items-center gap-3">
+                    {lastSession.device?.includes('Desktop') ? <Monitor className="h-4 w-4 text-blue-200" /> : <Smartphone className="h-4 w-4 text-blue-200" />}
+                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-200">{lastSession.device || 'Unknown Device'}</span>
+                  </div>
+
+                  <p className="text-[10px] text-blue-200/60 mt-3 font-mono">{lastSession.ip_address}</p>
                 </div>
-                <p className="text-[10px] text-blue-100 italic">If this wasn't you, please change your password in settings.</p>
+                <p className="text-[10px] text-blue-100 italic font-medium">If this wasn't you, please change your password in settings.</p>
               </div>
             ) : (
               <div className="space-y-4">

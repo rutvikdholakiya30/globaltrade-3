@@ -4,6 +4,7 @@ CREATE TABLE admin_access_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     ip_address VARCHAR(255),
     location TEXT,
+    device VARCHAR(100),
     user_agent TEXT,
     is_success BOOLEAN DEFAULT true
 );
