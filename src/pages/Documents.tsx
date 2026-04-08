@@ -34,8 +34,7 @@ export function Documents() {
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error('Download failed:', error);
-      // Fallback to direct link in new tab if blob fetch fails
-      window.open(url, '_blank');
+      alert('Download failed. Please try again.');
     } finally {
       setDownloading(null);
     }
