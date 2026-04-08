@@ -25,7 +25,7 @@ export function Dashboard() {
   });
   const [recentMessages, setRecentMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastSession, setLastSession] = useState<any>(null);
+  const [recentSessions, setRecentSessions] = useState<any[]>([]);
   const [currentSession, setCurrentSession] = useState<any>(null);
 
   useEffect(() => {
@@ -43,15 +43,14 @@ export function Dashboard() {
         const currentSessionFlag = sessionStorage.getItem('admin_session_logged');
         
         if (currentSessionFlag) {
-          // If already logged in this tab, fetch the log BEFORE that one (offset 1)
-          const { data: previous } = await supabase
+          // If already logged in this tab, fetch the logs BEFORE that one (offset 1, limit 3)
+          const { data: previousData } = await supabase
             .from('admin_access_logs')
             .select('*')
             .order('created_at', { ascending: false })
-            .range(1, 1) // Get the 2nd most recent (the true previous session)
-            .single();
+            .range(1, 3); // Get the 2nd, 3rd, and 4th most recent
           
-          if (previous) setLastSession(previous);
+          if (previousData) setRecentSessions(previousData);
           return;
         }
 
@@ -68,15 +67,16 @@ export function Dashboard() {
 
         setCurrentSession(sessionInfo);
 
-        // Fetch the LATEST session (this is the true previous session before we insert the new one)
-        const { data: previous } = await supabase
+        setCurrentSession(sessionInfo);
+
+        // Fetch the LATEST sessions (these are the true previous sessions before we insert the new one)
+        const { data: previousData } = await supabase
           .from('admin_access_logs')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+          .limit(3);
         
-        if (previous) setLastSession(previous);
+        if (previousData) setRecentSessions(previousData);
 
         // Log the current session and mark as logged in this tab
         await supabase.from('admin_access_logs').insert([sessionInfo]);
@@ -219,40 +219,46 @@ export function Dashboard() {
 
           <div className={cn(
             "rounded-[2.5rem] p-8 text-white shadow-xl transition-all duration-500",
-            lastSession ? "bg-blue-600 shadow-blue-100" : "bg-blue-600 shadow-blue-100"
+            recentSessions.length > 0 ? "bg-blue-600 shadow-blue-100" : "bg-blue-600 shadow-blue-100"
           )}>
             <div className="flex justify-between items-start mb-6">
               <h2 className="text-xl font-bold">Security Monitor</h2>
               <div className="bg-white/20 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">Live</div>
             </div>
             
-            {lastSession ? (
+            {recentSessions.length > 0 ? (
               <div className="space-y-4">
-                <div className="p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm relative overflow-hidden group/session">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/session:opacity-20 transition-opacity">
-                    {lastSession.device?.includes('Desktop') ? <Monitor className="h-12 w-12" /> : <Smartphone className="h-12 w-12" />}
-                  </div>
-                  
-                  <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest mb-1">Previous Admin Access</p>
-                  
-                  <div className="flex items-center gap-3 mb-2">
-                    <Clock className="h-4 w-4 text-blue-200" />
-                    <span className="text-sm font-bold">{new Date(lastSession.created_at).toLocaleString()}</span>
-                  </div>
+                <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest mb-2">Previous Admin Access</p>
+                
+                <div className="space-y-3">
+                  {recentSessions.map((session, idx) => (
+                    <div key={session.id || idx} className="p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm relative overflow-hidden group/session">
+                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/session:opacity-20 transition-opacity">
+                        {session.device?.includes('Desktop') ? <Monitor className="h-10 w-10" /> : <Smartphone className="h-10 w-10" />}
+                      </div>
+                      
+                      <div className="flex items-center gap-3 mb-2">
+                        <Clock className="h-4 w-4 text-blue-200" />
+                        <span className="text-sm font-bold">{new Date(session.created_at).toLocaleString()}</span>
+                      </div>
 
-                  <div className="flex items-center gap-3 mb-2">
-                    <TrendingUp className="h-4 w-4 text-blue-200 rotate-90" />
-                    <span className="text-xs font-medium">{lastSession.location || 'Unknown Location'}</span>
-                  </div>
+                      <div className="grid grid-cols-2 gap-2 mt-3">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-3 w-3 text-blue-200 rotate-90" />
+                          <span className="text-xs font-medium truncate">{session.location || 'Unknown Location'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {session.device?.includes('Desktop') ? <Monitor className="h-3 w-3 text-blue-200" /> : <Smartphone className="h-3 w-3 text-blue-200" />}
+                          <span className="text-[10px] font-black uppercase tracking-widest text-blue-200 truncate">{session.device || 'Unknown Device'}</span>
+                        </div>
+                      </div>
 
-                  <div className="flex items-center gap-3">
-                    {lastSession.device?.includes('Desktop') ? <Monitor className="h-4 w-4 text-blue-200" /> : <Smartphone className="h-4 w-4 text-blue-200" />}
-                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-200">{lastSession.device || 'Unknown Device'}</span>
-                  </div>
-
-                  <p className="text-[10px] text-blue-200/60 mt-3 font-mono">{lastSession.ip_address}</p>
+                      <p className="text-[10px] text-blue-200/60 mt-3 font-mono border-t border-white/10 pt-2">IP: {session.ip_address}</p>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-[10px] text-blue-100 italic font-medium">If this wasn't you, please change your password in settings.</p>
+
+                <p className="text-[10px] text-blue-100 italic font-medium pt-2">If any of these weren't you, please change your password in settings.</p>
               </div>
             ) : (
               <div className="space-y-4">
