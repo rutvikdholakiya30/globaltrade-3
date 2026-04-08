@@ -397,16 +397,17 @@ function MembershipsSection() {
           <h2 className="text-2xl md:text-5xl font-extrabold text-slate-900 mt-4">Government Memberships</h2>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-y-12 sm:gap-x-12 max-w-6xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-12 max-w-6xl mx-auto">
           {memberships.map((item) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex flex-col items-center group w-1/3 sm:w-1/4 lg:w-1/6 min-w-[120px] sm:min-w-[200px]"
+              className="flex flex-col items-center group"
+              style={{ width: 'calc(33.33% - 12px)', maxWidth: '200px' }}
             >
-              <div className="w-16 h-16 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl bg-slate-50 flex items-center justify-center p-3 sm:p-6 mb-3 sm:mb-6 group-hover:bg-brand-primary/5 transition-all duration-500 border border-slate-100 group-hover:border-brand-primary/20 group-hover:shadow-xl group-hover:shadow-brand-primary/5">
+              <div className="w-16 h-16 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl bg-slate-50 flex items-center justify-center p-3 sm:p-5 mb-3 sm:mb-5 group-hover:bg-brand-primary/5 transition-all duration-500 border border-slate-100 group-hover:border-brand-primary/20 group-hover:shadow-xl group-hover:shadow-brand-primary/5">
                 <img
                   src={item.logo_url}
                   alt={item.name}
@@ -414,7 +415,7 @@ function MembershipsSection() {
                   referrerPolicy="no-referrer"
                 />
               </div>
-              <h3 className="text-sm sm:text-lg font-bold text-slate-900 group-hover:text-brand-primary transition-colors text-center uppercase tracking-wider">
+              <h3 className="text-[10px] sm:text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors text-center uppercase tracking-wider leading-tight px-1">
                 {item.name}
               </h3>
             </motion.div>

@@ -1,26 +1,31 @@
 -- Create memberships table
 CREATE TABLE IF NOT EXISTS memberships (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   logo_url TEXT NOT NULL,
   status BOOLEAN DEFAULT true,
   "order" INTEGER DEFAULT 0,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- Enable RLS
 ALTER TABLE memberships ENABLE ROW LEVEL SECURITY;
 
--- Public read access
-CREATE POLICY "Public memberships viewable by everyone" ON memberships 
-FOR SELECT USING (status = true);
+-- Drop existing policies if any (to avoid duplicate error)
+DROP POLICY IF EXISTS "Public memberships viewable by everyone" ON memberships;
+DROP POLICY IF EXISTS "Admins have full access to memberships" ON memberships;
 
--- Admin full access
-CREATE POLICY "Admins have full access to memberships" ON memberships 
-FOR ALL USING (auth.role() = 'authenticated');
+-- Public read access (only active ones)
+CREATE POLICY "Public memberships viewable by everyone"
+ON memberships FOR SELECT
+USING (status = true);
 
--- Insert initial dummy data
-INSERT INTO memberships (name, logo_url, "order") VALUES 
-('Export Promotion Council', 'https://api.placeholder.com/100', 1),
-('Commerce & Industry Chamber', 'https://api.placeholder.com/100', 2),
-('Trade Certification Bureau', 'https://api.placeholder.com/100', 3);
+-- Authenticated admin can do everything
+CREATE POLICY "Admins have full access to memberships"
+ON memberships FOR ALL
+TO authenticated
+USING (true)
+WITH CHECK (true);
+
+-- Notify PostgREST to reload schema cache
+NOTIFY pgrst, 'reload schema';
