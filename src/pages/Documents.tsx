@@ -9,6 +9,7 @@ export function Documents() {
   const { documents, loading: docsLoading } = useDocuments(true);
   const { categories, loading: catsLoading } = useDocumentCategories(true);
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [selectedPDF, setSelectedPDF] = useState<DocumentItem | null>(null);
 
   const loading = docsLoading || catsLoading;
 
@@ -98,7 +99,7 @@ export function Documents() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
                   <AnimatePresence mode="popLayout">
-                    {filteredDocuments.map((doc, idx) => (
+                    {filteredDocuments.map((doc) => (
                       <motion.div
                         key={doc.id}
                         layout
@@ -122,14 +123,12 @@ export function Documents() {
                           </h3>
                           
                           <div className="flex items-center gap-3 mt-auto pt-6 border-t border-slate-100">
-                            <a
-                              href={doc.file_url}
-                              target="_blank"
-                              rel="noreferrer"
+                            <button
+                              onClick={() => setSelectedPDF(doc)}
                               className="flex-1 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-colors"
                             >
                               <Eye className="h-4 w-4" /> View
-                            </a>
+                            </button>
                             <a
                               href={doc.file_url}
                               download
@@ -149,6 +148,70 @@ export function Documents() {
           </div>
         )}
       </div>
+
+      {/* PDF Viewer Modal */}
+      <AnimatePresence>
+        {selectedPDF && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedPDF(null)}
+              className="absolute inset-0 bg-slate-900/90 backdrop-blur-md"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-6xl h-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col"
+            >
+              {/* Modal Header */}
+              <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-50 rounded-2xl text-blue-600">
+                    <FileText className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 line-clamp-1">{selectedPDF.title}</h2>
+                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{selectedPDF.category?.name}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <a
+                    href={selectedPDF.file_url}
+                    download
+                    className="hidden sm:flex px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-widest items-center gap-2 transition-all"
+                  >
+                    <Download className="h-4 w-4" /> Download
+                  </a>
+                  <button
+                    onClick={() => setSelectedPDF(null)}
+                    className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all shadow-lg"
+                  >
+                    <Eye className="h-6 w-6 rotate-45" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Viewer Content */}
+              <div className="flex-1 bg-slate-200 relative overflow-hidden">
+                <iframe
+                  src={`${selectedPDF.file_url}#toolbar=0&navpanes=0`}
+                  className="w-full h-full border-none"
+                  title={selectedPDF.title}
+                />
+                
+                {/* Fallback for mobile if iframe doesn't work well */}
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                   {/* This is just a helper for some browsers */}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
