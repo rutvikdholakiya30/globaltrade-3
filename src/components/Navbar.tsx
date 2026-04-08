@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Globe, ShoppingBag, Image, MessageSquare, ShieldCheck, ArrowUpRight, ChevronRight, Mail } from 'lucide-react';
+import { Menu, X, Globe, ShoppingBag, Image, MessageSquare, ShieldCheck, ArrowUpRight, ChevronRight, Mail, FileText } from 'lucide-react';
 import { usePages } from '@/hooks/useData';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -11,6 +11,7 @@ const navItems = [
   { name: 'Gallery', path: '/gallery', icon: Image, slug: 'gallery' },
   { name: 'Testimonials', path: '/testimonials', icon: MessageSquare },
   { name: 'About', path: '/about-us', icon: ShieldCheck, slug: 'about-us' },
+  { name: 'Documents', path: '/documents', icon: FileText },
   { name: 'Contact', path: '/contact-us', icon: Mail },
 ];
 

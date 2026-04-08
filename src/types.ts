@@ -104,3 +104,21 @@ export interface SiteSettings {
   data: any; // JSONB storage
   updated_at: string;
 }
+
+export interface DocumentCategory {
+  id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  created_at: string;
+}
+
+export interface DocumentItem {
+  id: string;
+  category_id: string;
+  title: string;
+  file_url: string;
+  status: boolean;
+  created_at: string;
+  category?: DocumentCategory;
+}

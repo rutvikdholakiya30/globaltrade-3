@@ -9,6 +9,7 @@ import { Testimonials } from '@/pages/Testimonials';
 import { StaticPage } from '@/pages/StaticPage';
 import { Contact } from '@/pages/Contact';
 import { About } from '@/pages/About';
+import { Documents } from '@/pages/Documents';
 
 // Admin Pages
 import { AdminLayout } from '@/pages/Admin/AdminLayout';
@@ -22,6 +23,7 @@ import { PagesAdmin } from '@/pages/Admin/PagesAdmin';
 import { MessagesAdmin } from '@/pages/Admin/MessagesAdmin';
 import { PartnersAdmin } from '@/pages/Admin/PartnersAdmin';
 import { SettingsAdmin } from '@/pages/Admin/SettingsAdmin';
+import { DocumentsAdmin } from '@/pages/Admin/DocumentsAdmin';
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -47,6 +49,7 @@ export default function App() {
         <Route path="/testimonials" element={<PublicLayout><Testimonials /></PublicLayout>} />
         <Route path="/about-us" element={<PublicLayout><About /></PublicLayout>} />
         <Route path="/contact-us" element={<PublicLayout><Contact /></PublicLayout>} />
+        <Route path="/documents" element={<PublicLayout><Documents /></PublicLayout>} />
         <Route path="/:slug" element={<PublicLayout><StaticPage /></PublicLayout>} />
 
         {/* Admin Routes */}
@@ -61,6 +64,7 @@ export default function App() {
           <Route path="pages" element={<PagesAdmin />} />
           <Route path="messages" element={<MessagesAdmin />} />
           <Route path="partners" element={<PartnersAdmin />} />
+          <Route path="documents" element={<DocumentsAdmin />} />
           <Route path="settings" element={<SettingsAdmin />} />
         </Route>
       </Routes>
