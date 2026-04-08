@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useMemberships } from '@/hooks/useData';
 import { uploadImage } from '@/lib/upload';
@@ -55,7 +55,9 @@ export function MembershipsAdmin() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this membership?')) return;
     const { error } = await supabase.from('memberships').delete().eq('id', id);
-    if (!error) {
+    if (error) {
+      alert(`Delete failed: ${error.message}`);
+    } else {
       setMemberships(memberships.filter(m => m.id !== id));
     }
   };
@@ -181,9 +183,9 @@ function useMembershipsAPI() {
     setLoading(false);
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchData();
-  });
+  }, []);
 
   return { memberships, loading, setMemberships };
 }
