@@ -150,7 +150,7 @@ export function MessagesAdmin() {
                     "w-full text-left p-6 rounded-2xl border transition-all group relative",
                     selectedMessage?.id === msg.id 
                       ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100" 
-                      : items.includes(msg.id)
+                      : selectedIds.includes(msg.id)
                         ? "bg-blue-50 border-blue-200 shadow-sm"
                         : "bg-white border-gray-100 hover:border-blue-200 shadow-sm"
                   )}
