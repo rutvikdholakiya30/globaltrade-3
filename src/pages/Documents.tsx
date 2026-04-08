@@ -10,6 +10,7 @@ export function Documents() {
   const { categories, loading: catsLoading } = useDocumentCategories(true);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedPDF, setSelectedPDF] = useState<DocumentItem | null>(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
 
   const loading = docsLoading || catsLoading;
 
@@ -17,6 +18,28 @@ export function Documents() {
     if (activeCategory === 'all') return documents;
     return documents.filter(doc => doc.category_id === activeCategory);
   }, [documents, activeCategory]);
+
+  const handleDownload = async (url: string, filename: string) => {
+    setDownloading(url);
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback to direct link in new tab if blob fetch fails
+      window.open(url, '_blank');
+    } finally {
+      setDownloading(null);
+    }
+  };
 
   return (
     <div className="pt-20 lg:pt-32 pb-24 bg-slate-50 min-h-screen">
@@ -129,13 +152,18 @@ export function Documents() {
                             >
                               <Eye className="h-4 w-4" /> View
                             </button>
-                            <a
-                              href={doc.file_url}
-                              download
-                              className="flex-1 py-3 bg-brand-primary hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-600/20"
+                            <button
+                              onClick={() => handleDownload(doc.file_url, doc.title)}
+                              disabled={downloading === doc.file_url}
+                              className="flex-1 py-3 bg-brand-primary hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-50"
                             >
-                              <Download className="h-4 w-4" /> Save
-                            </a>
+                              {downloading === doc.file_url ? (
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Download className="h-4 w-4" />
+                              )}
+                              Save
+                            </button>
                           </div>
                         </div>
                       </motion.div>
@@ -179,13 +207,18 @@ export function Documents() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <a
-                    href={selectedPDF.file_url}
-                    download
-                    className="hidden sm:flex px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-widest items-center gap-2 transition-all"
+                  <button
+                    onClick={() => handleDownload(selectedPDF.file_url, selectedPDF.title)}
+                    disabled={downloading === selectedPDF.file_url}
+                    className="hidden sm:flex px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-widest items-center gap-2 transition-all disabled:opacity-50"
                   >
-                    <Download className="h-4 w-4" /> Download
-                  </a>
+                    {downloading === selectedPDF.file_url ? (
+                      <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                    Download
+                  </button>
                   <button
                     onClick={() => setSelectedPDF(null)}
                     className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all shadow-lg"
@@ -202,11 +235,6 @@ export function Documents() {
                   className="w-full h-full border-none"
                   title={selectedPDF.title}
                 />
-                
-                {/* Fallback for mobile if iframe doesn't work well */}
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                   {/* This is just a helper for some browsers */}
-                </div>
               </div>
             </motion.div>
           </div>
