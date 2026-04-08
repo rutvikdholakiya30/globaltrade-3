@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { AlertTriangle, X, Trash2 } from 'lucide-react';
+import { AlertTriangle, X, Trash2, LogOut } from 'lucide-react';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -9,7 +9,8 @@ interface ConfirmDialogProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'danger' | 'warning';
+  variant?: 'danger' | 'warning' | 'info';
+  icon?: React.ReactNode;
 }
 
 export function ConfirmDialog({
@@ -20,8 +21,11 @@ export function ConfirmDialog({
   message,
   confirmText = 'Delete',
   cancelText = 'Cancel',
-  variant = 'danger'
+  variant = 'danger',
+  icon
 }: ConfirmDialogProps) {
+  const Icon = icon || (variant === 'danger' ? <Trash2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -49,7 +53,11 @@ export function ConfirmDialog({
             <div className="p-8 sm:p-10">
               {/* Icon & Close */}
               <div className="flex justify-between items-start mb-6">
-                <div className={`p-4 rounded-2xl ${variant === 'danger' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                <div className={`p-4 rounded-2xl ${
+                  variant === 'danger' ? 'bg-red-50 text-red-600' : 
+                  variant === 'warning' ? 'bg-amber-50 text-amber-600' :
+                  'bg-blue-50 text-blue-600'
+                }`}>
                   <AlertTriangle className="h-8 w-8" />
                 </div>
                 <button
@@ -83,11 +91,14 @@ export function ConfirmDialog({
                     onConfirm();
                     onClose();
                   }}
-                  className={`flex-1 px-6 py-4 ${
-                    variant === 'danger' ? 'bg-red-600 hover:bg-red-700 shadow-red-200' : 'bg-amber-500 hover:bg-amber-600 shadow-amber-200'
-                  } text-white font-black rounded-2xl text-sm uppercase tracking-widest shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2`}
+                  className={cn(
+                    "flex-1 px-6 py-4 text-white font-black rounded-2xl text-sm uppercase tracking-widest shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2",
+                    variant === 'danger' ? "bg-red-600 hover:bg-red-700 shadow-red-200" : 
+                    variant === 'warning' ? "bg-amber-500 hover:bg-amber-600 shadow-amber-200" :
+                    "bg-blue-600 hover:bg-blue-700 shadow-blue-200"
+                  )}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  {Icon}
                   {confirmText}
                 </button>
               </div>

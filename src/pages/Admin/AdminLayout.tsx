@@ -151,6 +151,9 @@ export function AdminLayout() {
         onConfirm={handleLogout}
         title="Sign Out?"
         message="Are you sure you want to log out of the administrative dashboard? You will need to sign in again to manage content."
+        confirmText="Sign Out"
+        variant="warning"
+        icon={<LogOut className="h-4 w-4" />}
       />
 
       {/* Main Content */}
