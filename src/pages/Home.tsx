@@ -397,16 +397,16 @@ function MembershipsSection() {
           <h2 className="text-2xl md:text-5xl font-extrabold text-slate-900 mt-4">Government Memberships</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 max-w-5xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-y-12 sm:gap-x-12 max-w-6xl mx-auto">
           {memberships.map((item) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex flex-col items-center group"
+              className="flex flex-col items-center group w-1/3 sm:w-1/4 lg:w-1/6 min-w-[120px] sm:min-w-[200px]"
             >
-              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-slate-50 flex items-center justify-center p-6 mb-6 group-hover:bg-brand-primary/5 transition-all duration-500 border border-slate-100 group-hover:border-brand-primary/20 group-hover:shadow-xl group-hover:shadow-brand-primary/5">
+              <div className="w-16 h-16 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl bg-slate-50 flex items-center justify-center p-3 sm:p-6 mb-3 sm:mb-6 group-hover:bg-brand-primary/5 transition-all duration-500 border border-slate-100 group-hover:border-brand-primary/20 group-hover:shadow-xl group-hover:shadow-brand-primary/5">
                 <img
                   src={item.logo_url}
                   alt={item.name}
